@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+    <meta name="robots" content="noindex, follow"/>
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Envy-Clothings Online</title>
+
+    <style>
+        html, body {
+            overflow: hidden;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+<section class="h-screen flex flex-col md:flex-row">
+
+    <!-- LEFT: SIGN IN -->
+    <div class="flex flex-col justify-center items-center w-full md:w-1/2 px-6 md:px-20 py-3 bg-gray-100 text-center md:text-left" id="signInBox">
+        <div class="w-full max-w-md">
+
+            <div class="flex justify-center md:justify-center mb-6">
+                <img src="assets/images/logo/envy.png" alt="Envy Clothing Logo" class="w-32 logo">
+            </div>
+
+            <h2 class="text-[#5C4742] font-bold text-2xl md:text-3xl text-center md:text-center headline">
+                Get Access To Your Account
+            </h2>
+            <p class="text-[#5C4742] text-sm mt-2 mb-8 text-center md:text-center sub">
+                Your style essentials, all in one place.
+            </p>
+
+            <form class="flex flex-col gap-5 form">
+                <div class="form-row">
+                    <label class="block text-sm font-medium text-[#5C4742] mb-1 text-left">Email Address</label>
+                    <input class="p-2 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-[#5C4742]/50 transition"
+                           type="email" name="email" placeholder="Enter your email"/>
+                </div>
+
+                <div class="form-row">
+                    <label class="block text-sm font-medium text-[#5C4742] mb-1 text-left">Password</label>
+                    <input class="p-2 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-[#5C4742]/50 transition"
+                           type="password" name="password" placeholder="Enter your password"/>
+                </div>
+
+                <button type="button"
+                        class="bg-[#5C4742] hover:bg-[#483531] transition text-white rounded-xl py-2 font-semibold login-btn">
+                    Log In
+                </button>
+            </form>
+
+            <div class="text-xs flex justify-between items-center mt-5 remember">
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" class="accent-[#5C4742]"/>
+                    <span>Remember Me</span>
+                </label>
+                <a href="#" class="text-[#5C4742] hover:underline">Forgot your password?</a>
+            </div>
+
+            <div class="mt-6 flex items-center text-gray-500 line">
+                <hr class="flex-grow border-gray-300"/>
+                <span class="px-2 text-sm">or</span>
+                <hr class="flex-grow border-gray-300"/>
+            </div>
+
+            <button class="bg-white border py-2 w-full rounded-xl text-sm mt-5 flex justify-center items-center hover:bg-gray-50 transition social-btn">
+                <svg class="mr-3" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25px" height="25px"
+                     viewBox="0 0 48 48">
+                    <path fill="#FFC107"
+                          d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path>
+                    <path fill="#FF3D00"
+                          d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path>
+                    <path fill="#4CAF50"
+                          d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path>
+                    <path fill="#1976D2"
+                          d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path>
+                </svg>
+                Login with Google
+            </button>
+
+            <button class="bg-white border py-2 w-full rounded-xl text-sm mt-3 flex justify-center items-center hover:bg-gray-50 transition social-btn">
+                <svg class="mr-3" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25px" height="25px"
+                     viewBox="0 0 48 48">
+                    <path fill="#039be5" d="M24 5A19 19 0 1 0 24 43A19 19 0 1 0 24 5Z"></path>
+                    <path fill="#fff"
+                          d="M26.572,29.036h4.917l0.772-4.995h-5.69v-2.73c0-2.075,0.678-3.915,2.619-3.915h3.119v-4.359c-0.548-0.074-1.707-0.236-3.897-0.236c-4.573,0-7.254,2.415-7.254,7.917v3.323h-4.701v4.995h4.701v13.729C22.089,42.905,23.032,43,24,43c0.875,0,1.729-0.08,2.572-0.194V29.036z"></path>
+                </svg>
+                Login with Facebook
+            </button>
+
+            <div class="text-xs text-center mt-5 register">
+                <p>Don't have an account? <a href="#" class="text-[#5C4742] hover:underline" onclick="changeView();">Register</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <!-- LEFT: SIGN IN -->
+
+    <!-- LEFT: SIGN UP -->
+    <div class="flex flex-col justify-center items-center w-full md:w-1/2 px-6 md:px-20 py-3 bg-gray-100 text-center md:text-left hidden" id="signUpBox">
+        <div class="w-full max-w-md">
+
+            <div class="flex justify-center md:justify-center mb-6">
+                <img src="assets/images/logo/envy.png" alt="Envy Clothing Logo" class="w-32 logo">
+            </div>
+
+            <h2 class="text-[#5C4742] font-bold text-2xl md:text-3xl text-center md:text-center headline">
+                Create A New Account
+            </h2>
+            <p class="text-[#5C4742] text-sm mt-2 mb-8 text-center md:text-center sub">
+                Your style essentials, all in one place.
+            </p>
+
+            <form class="flex flex-col gap-5 form">
+                <div class="form-row">
+                    <label class="block text-sm font-medium text-[#5C4742] mb-1 text-left">First Name</label>
+                    <input class="p-2 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-[#5C4742]/50 transition"
+                           type="text" name="f_name" placeholder="Enter your first name"/>
+                </div>
+
+                <div class="form-row">
+                    <label class="block text-sm font-medium text-[#5C4742] mb-1 text-left">Last Name</label>
+                    <input class="p-2 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-[#5C4742]/50 transition"
+                           type="text" name="l_name" placeholder="Enter your email"/>
+                </div>
+
+                <div class="form-row">
+                    <label class="block text-sm font-medium text-[#5C4742] mb-1 text-left">Email Address</label>
+                    <input class="p-2 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-[#5C4742]/50 transition"
+                           type="email" name="email" placeholder="Enter your email"/>
+                </div>
+
+                <div class="form-row">
+                    <label class="block text-sm font-medium text-[#5C4742] mb-1 text-left">Password</label>
+                    <input class="p-2 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-[#5C4742]/50 transition"
+                           type="password" name="password" placeholder="Enter your password"/>
+                </div>
+
+                <button type="button"
+                        class="bg-[#5C4742] hover:bg-[#483531] transition text-white rounded-xl py-2 font-semibold login-btn">
+                    Register
+                </button>
+            </form>
+
+            <div class="mt-6 flex items-center text-gray-500 line">
+                <hr class="flex-grow border-gray-300"/>
+                <span class="px-2 text-sm">or</span>
+                <hr class="flex-grow border-gray-300"/>
+            </div>
+
+            <div class="text-xs text-center mt-5 register">
+                <p>Already have an account? <a href="#" class="text-[#5C4742] hover:underline" onclick="changeView();">Log In</a></p>
+            </div>
+        </div>
+    </div>
+    <!-- LEFT: SIGN UP -->
+
+    <!-- RIGHT: IMAGE -->
+    <div class="hidden md:block w-1/2">
+        <img src="assets/images/bg/loginbg.jpg" alt="Login background" class="w-full h-full object-cover right-img">
+    </div>
+    <!-- RIGHT: IMAGE -->
+
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+<script>
+    (function () {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        const logo = document.querySelector('.logo');
+        const headline = document.querySelector('.headline');
+        const sub = document.querySelector('.sub');
+        const formRows = document.querySelectorAll('.form-row');
+        const loginBtn = document.querySelector('.login-btn');
+        const remember = document.querySelector('.remember');
+        const line = document.querySelector('.line');
+        const socialBtns = document.querySelectorAll('.social-btn');
+        const register = document.querySelector('.register');
+        const rightImg = document.querySelector('.right-img');
+
+        // Make sure hidden elements are visible before animating
+        gsap.set([logo, headline, sub, formRows, loginBtn, remember, line, socialBtns, register, rightImg], {opacity: 1});
+
+        const tl = gsap.timeline({defaults: {duration: 0.5, ease: "power3.out"}});
+
+        tl.from(logo, {y: -20, opacity: 0})
+            .from(headline, {x: -40, opacity: 0}, "-=0.4")
+            .from(sub, {x: -20, opacity: 0}, "-=0.4.5")
+            .from(formRows, {y: 14, opacity: 0, stagger: 0.12}, "-=0.25")
+            .from(loginBtn, {y: 5, opacity: 0, duration: 0.5}, "-=0.2")
+            .from(remember, {y: 14, opacity: 0, duration: 0.5}, "-=0.25")
+            .from(line, {y: 18, opacity: 0, duration: 0.5}, "-=0.25")
+            .from(socialBtns, {y: 14, opacity: 0, stagger: 0.15, duration: 0.5}, "-=0.2")
+            .from(register, {y: 18, opacity: 0, duration: 0.5}, "-=0.15")
+            .from(rightImg, {scale: 1.06, opacity: 0, duration: 1.0, ease: "power2.out"}, 0);
+    })();
+</script>
+
+<script src="assets/js/register.js"></script>
+</body>
+</html>
