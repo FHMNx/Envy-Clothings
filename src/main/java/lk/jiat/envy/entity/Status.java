@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 
 @Entity
+@NamedQuery(name = "Status.findByName" , query = "FROM Status s WHERE s.name=:name")
 public class Status implements Serializable {
 
     @Id

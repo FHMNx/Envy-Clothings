@@ -75,33 +75,6 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const elements = document.querySelectorAll("img, h2, p, form, button, div");
-        gsap.set(elements, {opacity: 1, y: 1});
-
-        gsap.from(elements, {
-            opacity: 0,
-            y: 3,
-            duration: 0.6,
-            stagger: 0.10,
-            ease: "power2.out",
-            delay: 0.1
-        });
-    });
-</script>
-
-<script>
-    const inputs = document.querySelectorAll('.otp-input');
-    inputs.forEach((input, index) => {
-        input.addEventListener('input', () => {
-            if (input.value && index < inputs.length - 1) inputs[index + 1].focus();
-        });
-        input.addEventListener('keydown', (e) => {
-            if (e.key === "Backspace" && !input.value && index > 0) inputs[index - 1].focus();
-        });
-    });
-</script>
 
 </body>
 </html>
