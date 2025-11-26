@@ -42,6 +42,12 @@
             <version>9.0.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>8.0.0.Final</version>
+        </dependency>
+
         <!-- JERSEY -->
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>

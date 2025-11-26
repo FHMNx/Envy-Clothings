@@ -864,7 +864,7 @@
 .carousel-wrapper {
     display: flex;
     gap: 60px;
-    animation: scrollLeft 60s linear infinite;
+    animation: scrollLeft 35s linear infinite;
 }
 
 .carousel-item {

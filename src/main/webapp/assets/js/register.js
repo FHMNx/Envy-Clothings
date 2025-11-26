@@ -19,7 +19,6 @@ async function signUp() {
         password: password.value
     }
 
-    const notification = new Notification();
     try {
         const response = await fetch("api/users", {
             method: "POST",
@@ -33,12 +32,13 @@ async function signUp() {
             const data = await response.json();
             console.log(data);
         } else {
-            notification.error({
-                title: "Error",
-                message: "OOPS! something went wrong"
+            Notiflix.Notify.failure("Something went wrong", {
+                position: 'center-top'
             });
         }
     } catch (e) {
-        console.log(e);
+        Notiflix.Notify.failure(e.message, {
+            position: 'center-top'
+        });
     }
 }

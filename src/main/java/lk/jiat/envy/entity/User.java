@@ -7,6 +7,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
+@NamedQuery(name = "user.getByEmail" , query = "FROM User u WHERE u.email=:email")
 public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

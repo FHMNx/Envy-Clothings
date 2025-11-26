@@ -7,18 +7,25 @@
     <title>Envy Clothings - Home Page</title>
 
     <link rel="stylesheet" href="assets/css/home.css">
+    <link rel="stylesheet" href="assets/css/header.css">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,200,0,0" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,200,0,0"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
 
 </head>
 
 <body>
+
+<header>
+    <header-content></header-content>
+</header>
 
 <!-- SLIDER -->
 <div class="slider-container">
@@ -30,7 +37,8 @@
             <div class="slide-content">
                 <h3 class="slide-subtitle">New Arrival</h3>
                 <h2 class="slide-title">Elevate Your Everyday Style</h2>
-                <p class="slide-description">Discover our latest collection crafted for comfort, confidence, and modern fashion enthusiasts.</p>
+                <p class="slide-description">Discover our latest collection crafted for comfort, confidence, and modern
+                    fashion enthusiasts.</p>
                 <a href="#" class="slide-button"><span>Shop Now</span></a>
             </div>
         </div>
@@ -39,7 +47,8 @@
             <div class="slide-content">
                 <h3 class="slide-subtitle">Men's Collection</h3>
                 <h2 class="slide-title">Redefine Your Wardrobe Essentials</h2>
-                <p class="slide-description">Premium shirts, denims, and casual wear designed to match your bold and timeless personality.</p>
+                <p class="slide-description">Premium shirts, denims, and casual wear designed to match your bold and
+                    timeless personality.</p>
                 <a href="#" class="slide-button"><span>Explore Men's</span></a>
             </div>
         </div>
@@ -48,7 +57,8 @@
             <div class="slide-content">
                 <h3 class="slide-subtitle">Women's Collection</h3>
                 <h2 class="slide-title">Where Elegance Meets Comfort</h2>
-                <p class="slide-description">From everyday basics to standout looks—find fashion that feels as good as it looks.</p>
+                <p class="slide-description">From everyday basics to standout looks—find fashion that feels as good as
+                    it looks.</p>
                 <a href="#" class="slide-button"><span>Explore Women's</span></a>
             </div>
         </div>
@@ -57,7 +67,8 @@
             <div class="slide-content">
                 <h3 class="slide-subtitle">Exclusive Deals</h3>
                 <h2 class="slide-title">Fashion You Love at Prices You’ll Love</h2>
-                <p class="slide-description">Shop trending outfits and get access to limited-time offers on top collections.</p>
+                <p class="slide-description">Shop trending outfits and get access to limited-time offers on top
+                    collections.</p>
                 <a href="#" class="slide-button"><span>View Offers</span></a>
             </div>
         </div>
@@ -66,7 +77,8 @@
             <div class="slide-content">
                 <h3 class="slide-subtitle">Premium Quality</h3>
                 <h2 class="slide-title">Designed for Those Who Demand the Best</h2>
-                <p class="slide-description">Every piece is crafted with care, quality fabrics, and attention to detail to ensure long-lasting wear.</p>
+                <p class="slide-description">Every piece is crafted with care, quality fabrics, and attention to detail
+                    to ensure long-lasting wear.</p>
                 <a href="#" class="slide-button"><span>Learn More</span></a>
             </div>
         </div>
@@ -713,12 +725,60 @@
 </section>
 <!-- INFINITE SCROLLING LOGO -->
 
+<footer>
+    <footer-content></footer-content>
+</footer>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
 <script src="assets/js/script.js"></script>
+<script src="assets/js/header.js"></script>
+<script src="assets/js/footer.js"></script>
 
+<script>
+    const navMenu = document.querySelector('.nav-menu');
+    const toggleNavbar = document.querySelector('.toggle-navbar');
+
+    // Handle mobile dropdowns (Men, Women, Profile)
+    document.querySelectorAll('.nav-menu > li').forEach(item => {
+        const link = item.querySelector('a');
+        const dropdown = item.querySelector('.dropdown-menu');
+        const closeBtn = item.querySelector('.dropdown-close');
+
+        if (link && dropdown) {
+            link.addEventListener('click', function (e) {
+                if (window.innerWidth < 576) {
+                    e.preventDefault();
+                    dropdown.classList.add('show');
+                    toggleNavbar.classList.add('hide');
+                }
+            });
+        }
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function () {
+                if (window.innerWidth < 576) {
+                    dropdown.classList.remove('show');
+                    toggleNavbar.classList.remove('hide');
+                }
+            });
+        }
+    });
+
+    // Toggle menu (hamburger)
+    toggleNavbar.addEventListener('click', function () {
+        if (window.innerWidth < 576) {
+            navMenu.classList.toggle('show');
+
+            if (navMenu.classList.contains('show')) {
+                this.classList.replace('bx-menu', 'bx-x');
+            } else {
+                this.classList.replace('bx-x', 'bx-menu');
+            }
+        }
+    });
+</script>
 
 </body>
 
