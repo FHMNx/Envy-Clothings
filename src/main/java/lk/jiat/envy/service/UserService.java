@@ -2,8 +2,8 @@ package lk.jiat.envy.service;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import jakarta.servlet.http.HttpSession;
 import lk.jiat.envy.dto.UserDTO;
+import lk.jiat.envy.entity.Status;
 import lk.jiat.envy.entity.User;
 import lk.jiat.envy.util.AppUtil;
 import lk.jiat.envy.util.HibernateUtil;
@@ -12,11 +12,52 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.time.LocalDateTime;
+
 public class UserService {
     private static final Gson GSON = new Gson();
 
+    public String userLogin(UserDTO userDTO) {
+        JsonObject responseObject = new JsonObject();
+        boolean status = false;
+        String message = "";
+
+
+
+        responseObject.addProperty("status", status);
+        responseObject.addProperty("message", message);
+        return GSON.toJson(responseObject);
+    }
+
+    public String verifyUserAccount(String code) {
+        JsonObject responseObject = new JsonObject();
+
+        boolean status = false;
+        String message = "";
+
+        if (code == null) {
+            message = "verification code is required";
+        } else if (code.isBlank()) {
+            message = "verification code cannot be empty";
+        } else if (!code.matches(Validator.VERIFICATION_CODE_VALIDATION)) {
+            message = "please provide a valid verification code. verification code must have 6 digits";
+        } else {
+            Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+            hibernateSession.createQuery("FROM User u WHERE u.verificationCode=:verificationCode", User.class)
+                    .setParameter("verificationCode", Integer.parseInt(code))
+                    .getSingleResultOrNull();
+            hibernateSession.close();
+        }
+
+
+        responseObject.addProperty("status", status);
+        responseObject.addProperty("message", message);
+        return GSON.toJson(responseObject);
+    }
+
     public String addNewUser(UserDTO userDto) {
         JsonObject responseObject = new JsonObject();
+
 
         boolean status = false;
         String message;
@@ -61,12 +102,21 @@ public class UserService {
                 String verificationCode = AppUtil.generateCode();
                 user.setVerificationCode(verificationCode);
 
+                user.setCreatedAt(LocalDateTime.now());
+                user.setUpdatedAt(LocalDateTime.now());
+
+                Status pendingStatus = hibernateSession.createNamedQuery("Status.findByName", Status.class)
+                        .setParameter("name", String.valueOf(Status.Type.PENDING))
+                        .getSingleResult();
+                user.setStatus(pendingStatus);
+
                 Transaction transaction = hibernateSession.beginTransaction();
                 try {
                     hibernateSession.persist(user);
                     transaction.commit();
 
                     status = true;
+                    responseObject.addProperty("uId", user.getId());
                     message = "User has been registered successfully. verification code has been sent to your mail. " +
                             "please verify it for activate your account";
 
@@ -87,4 +137,5 @@ public class UserService {
         responseObject.addProperty("message", message);
         return GSON.toJson(responseObject);
     }
+
 }
