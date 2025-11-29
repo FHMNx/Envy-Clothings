@@ -23,4 +23,13 @@ public class UserController {
         String responseJson = new UserService().addNewUser(userDto);
         return Response.ok().entity(responseJson).build();
     }
+
+    @Path("/login")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response userLogin(String jsonData) {
+        UserDTO userDTO = gson.fromJson(jsonData, UserDTO.class);
+        return Response.ok().entity("").build();
+    }
 }
