@@ -37,3 +37,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+# DO NOT COMMIT APP CONFIG
+src/main/resources/app.properties

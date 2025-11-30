@@ -6,7 +6,7 @@ class FooterContent extends  HTMLElement{
 
             <!-- BRAND / ABOUT -->
             <div class="footer-section about">
-                <img src="envy.png" class="footer-logo" alt="Logo">
+                <img src="http://localhost:8080/Envy_Clothings/assets/images/logo/envy.png" class="footer-logo" alt="Logo">
                 <p>
                     Your clothing brand offers a world-class retail experience with
                     the latest fashion and accessories focused on high-quality design.
@@ -60,10 +60,10 @@ class FooterContent extends  HTMLElement{
                 </p>
 
                 <div class="payments">
-                    <img src="visa.png" alt="">
-                    <img src="mastercard.png" alt="">
-                    <img src="paypal.png" alt="">
-                    <img src="american-express.png" alt="">
+                    <img src="http://localhost:8080/Envy_Clothings/assets/images/logo/visa.png" alt="">
+                    <img src="http://localhost:8080/Envy_Clothings/assets/images/logo/mastercard.png" alt="">
+                    <img src="http://localhost:8080/Envy_Clothings/assets/images/logo/paypal.png" alt="">
+                    <img src="http://localhost:8080/Envy_Clothings/assets/images/logo/american-express.png" alt="">
                 </div>
             </div>
         </div>
