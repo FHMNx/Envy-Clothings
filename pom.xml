@@ -68,6 +68,35 @@
         </dependency>
         <!-- JERSEY -->
 
+        <!-- JAKARTA MAIL -->
+        <dependency>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>jakarta.mail</artifactId>
+            <version>2.0.2</version>
+        </dependency>
+        <!-- JAKARTA MAIL -->
+
+
+        <!-- MAIL-TEMPLATE ROCKET BASE -->
+        <dependency>
+            <groupId>io.rocketbase.mail</groupId>
+            <artifactId>email-template-builder</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>jakarta.mail</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.activation</groupId>
+            <artifactId>jakarta.activation-api</artifactId>
+            <version>2.1.2</version>
+        </dependency>
+        <!-- MAIL-TEMPLATE ROCKET BASE -->
+
     </dependencies>
 
     <build>

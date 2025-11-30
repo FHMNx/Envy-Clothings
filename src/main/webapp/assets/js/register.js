@@ -7,6 +7,12 @@ function changeView() {
 }
 
 async function signUp() {
+
+    Notiflix.Loading.standard("loading...", {
+        clickToClose: false,
+        svgColor: '#0284c7'
+    });
+
     let firstName = document.getElementById("firstName");
     let lastName = document.getElementById("lastName");
     let email = document.getElementById("email");
@@ -28,13 +34,8 @@ async function signUp() {
             body: JSON.stringify(user)
         });
 
-        Notiflix.Loading.standard("loading...", {
-            clickToClose: false,
-            svgColor: '#0284c7'
-        });
-
         if (response.ok) {
-            Notiflix.Loading.remove(1000);
+
             const data = await response.json();
             if (data.status) {
                 Notiflix.Report.success(
@@ -60,6 +61,8 @@ async function signUp() {
         Notiflix.Notify.failure(e.message, {
             position: 'center-top'
         });
+    } finally {
+        Notiflix.Loading.remove(1000);
     }
 }
 
@@ -88,7 +91,20 @@ async function signIn() {
 
         if (response.ok) {
             const data = await response.json();
-            console.log(data);
+            if (data.status) {
+                Notiflix.Report.success(
+                    'Envy Clothings',
+                    data.message,
+                    "okay",
+                    () => {
+                        window.location = "index.html"
+                    },
+                );
+            } else {
+                Notiflix.Notify.failure(data.message, {
+                    position: 'center-top'
+                });
+            }
         } else {
             Notiflix.Notify.failure("Login failed! please try again", {
                 position: 'center-top'

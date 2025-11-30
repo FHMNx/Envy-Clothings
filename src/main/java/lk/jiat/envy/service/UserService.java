@@ -2,6 +2,9 @@ package lk.jiat.envy.service;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.ws.rs.core.Context;
 import lk.jiat.envy.dto.UserDTO;
 import lk.jiat.envy.entity.Status;
 import lk.jiat.envy.entity.User;
@@ -17,12 +20,54 @@ import java.time.LocalDateTime;
 public class UserService {
     private static final Gson GSON = new Gson();
 
-    public String userLogin(UserDTO userDTO) {
+    public String userLogin(UserDTO userDTO , @Context HttpServletRequest request) {
         JsonObject responseObject = new JsonObject();
         boolean status = false;
         String message = "";
 
+        if (userDTO.getEmail() == null) {
+            message = "email is required";
+        } else if (userDTO.getEmail().isBlank()) {
+            message = "email address cannot be empty";
+        } else if (!userDTO.getEmail().matches(Validator.EMAIL_VALIDATION)) {
+            message = "email address is not valid";
+        } else if (userDTO.getPassword() == null) {
+            message = "Password is required";
+        } else if (userDTO.getPassword().isBlank()) {
+            message = "Password cannot be empty";
+        } else if (!userDTO.getPassword().matches(Validator.PASSWORD_VALIDATION)) {
+            message = "please enter a valid password. \n" +
+                    " The password must contain at least 6 characters with one Capital letter , One Simple letter , One Digit" +
+                    " and One Special Character";
+        } else {
+            Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+            User singleUser = hibernateSession.createNamedQuery("user.getByEmail", User.class)
+                    .setParameter("email", userDTO.getEmail())
+                    .getSingleResultOrNull();
 
+            if (singleUser == null) {
+                message = "account not found, please register first";
+            } else {
+                if (!singleUser.getPassword().equals(userDTO.getPassword())) {
+                    message = "something went wrong, please check your login credentials";
+                } else {
+                    Status verifiedStatus = hibernateSession.createNamedQuery("Status.findByName", Status.class)
+                            .setParameter("name", String.valueOf(Status.Type.VERIFIED))
+                            .getSingleResult();
+
+                    if (!singleUser.getStatus().equals(verifiedStatus)) {
+                        message = "your account is not verified, please verified first";
+                    }else{
+                       HttpSession httpSession = request.getSession();
+                       httpSession.setAttribute("user", singleUser);
+                       status = true;
+                       message = "login successfully";
+                    }
+                }
+            }
+
+            hibernateSession.close();
+        }
 
         responseObject.addProperty("status", status);
         responseObject.addProperty("message", message);
