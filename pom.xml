@@ -77,7 +77,7 @@
         <!-- JAKARTA MAIL -->
 
 
-        <!-- MAIL-TEMPLATE ROCKET BASE -->
+        <!-- MAIL-TEMPLATE -->
         <dependency>
             <groupId>io.rocketbase.mail</groupId>
             <artifactId>email-template-builder</artifactId>
@@ -95,7 +95,13 @@
             <artifactId>jakarta.activation-api</artifactId>
             <version>2.1.2</version>
         </dependency>
-        <!-- MAIL-TEMPLATE ROCKET BASE -->
+
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf</artifactId>
+            <version>3.1.1.RELEASE</version>
+        </dependency>
+        <!-- MAIL-TEMPLATE -->
 
     </dependencies>
 

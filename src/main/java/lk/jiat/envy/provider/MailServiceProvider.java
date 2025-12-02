@@ -2,6 +2,7 @@ package lk.jiat.envy.provider;
 
 import jakarta.mail.Authenticator;
 import jakarta.mail.PasswordAuthentication;
+import lk.jiat.envy.mail.Mailable;
 import lk.jiat.envy.util.Env;
 
 import java.util.Properties;
@@ -13,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class MailServiceProvider {
     private ThreadPoolExecutor executor;
     private Authenticator authenticator;
-    private BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<>();
     private final Properties properties = new Properties();
     private static MailServiceProvider mailServiceProvider;
 
@@ -22,6 +23,7 @@ public class MailServiceProvider {
         properties.put("mail.smtp.starttls.enable", true);
         properties.put("mail.smtp.host", Env.get("mail.host"));
         properties.put("mail.smtp.port", Env.get("mail.port"));
+        properties.put("mail.smtp.ssl.trust", Env.get("mail.host"));
     }
 
     public static MailServiceProvider getInstance() {
@@ -41,7 +43,7 @@ public class MailServiceProvider {
         executor = new ThreadPoolExecutor(2, 5, 5,
                 TimeUnit.SECONDS, blockingQueue, new ThreadPoolExecutor.AbortPolicy());
         executor.prestartCoreThread();
-        System.out.println("\\u001B[32m Email service provider initialized... \\u001B[32m");
+        System.out.println("\u001B[32mEmail service provider initialized...\u001B[32m");
     }
 
     public Properties getProperties() {
@@ -57,4 +59,9 @@ public class MailServiceProvider {
             executor.shutdown();
         }
     }
+
+    public void sendMail(Mailable mailable) {
+        boolean offer = blockingQueue.offer(mailable);
+    }
+
 }
