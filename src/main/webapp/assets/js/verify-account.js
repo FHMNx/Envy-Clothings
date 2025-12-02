@@ -1,19 +1,40 @@
-async function verifyAccount() {
+let params = new URLSearchParams(window.location.search);
+const verificationInputs = document.querySelectorAll("#verificationCode input");
+const code = params.get("verificationCode");
+const userEmail = params.get("email");
 
-    let verificationCode = document.querySelectorAll("#verificationCode input");
+if (code && code.length === verificationInputs.length) {
+    verificationInputs.forEach((input, index) => {
+        input.value = code[index];
+    });
+}
+
+async function verifyAccount() {
+    Notiflix.Loading.standard("loading...", {
+        clickToClose: false,
+        svgColor: '#0284c7'
+    });
+
+    const enteredCode = Array.from(verificationInputs).map(i => i.value).join("");
+
+    const verifyObject = {
+        email: userEmail,
+        verificationCode: enteredCode
+    }
 
     try {
-        const response = await fetch("api/verify-account?verificationCode=" + verificationCode.value);
-
-        Notiflix.Loading.standard("loading...", {
-            clickToClose: false,
-            svgColor: '#0284c7'
+        const response = await fetch("api/verify-account", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(verifyObject)
         });
+
 
         if (response.ok) {
             const data = await response.json();
             if (data.status) {
-                Notiflix.Loading.remove();
                 Notiflix.Report.success(
                     'Envy Clothings',
                     data.message,
@@ -23,7 +44,9 @@ async function verifyAccount() {
                     },
                 );
             } else {
-
+                Notiflix.Notify.failure(data.message,{
+                    position: 'center-top'
+                });
             }
         } else {
             Notiflix.Notify.failure("Verification process failed", {
@@ -35,5 +58,7 @@ async function verifyAccount() {
         Notiflix.Notify.failure(e, {
             position: 'center-top'
         });
+    } finally {
+        Notiflix.Loading.remove(1000);
     }
 }

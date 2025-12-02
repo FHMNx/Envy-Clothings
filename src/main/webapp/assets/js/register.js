@@ -40,10 +40,10 @@ async function signUp() {
             if (data.status) {
                 Notiflix.Report.success(
                     'Envy Clothings',
-                    data.message,
-                    "okay",
+                    'Welcome to Envy Clothings!<br><br>Your account has been created successfully.<br>We have sent a verification link to your email.<br>Please verify your account before logging in.',
+                    "Okay",
                     () => {
-                        window.location = "verify-account.html?uId=" + data.uId;
+                        window.location = "sign-in.html";
                     },
                 );
             } else {

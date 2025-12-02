@@ -1,4 +1,5 @@
 import lk.jiat.envy.config.AppConfig;
+import lk.jiat.envy.listener.ContextPathListener;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
@@ -19,7 +20,10 @@ public class Main {
 
             Context context = tomcat.addWebapp(CONTEXT_PATH, new File("src/main/webapp").getAbsolutePath());
             Tomcat.addServlet(context, "JerseyServlet", new ServletContainer(new AppConfig()));
-            context.addServletMappingDecoded("/api/*","JerseyServlet");
+            context.addServletMappingDecoded("/api/*", "JerseyServlet");
+
+            context.addApplicationListener(ContextPathListener.class.getName());
+
             tomcat.start();
             System.out.println("App URL: http://localhost:" + SERVER_PORT + CONTEXT_PATH);
             tomcat.getServer().await();
