@@ -26,7 +26,8 @@ public class VerificationMailTemplate extends Mailable {
         HtmlTextEmail htmlTextEmail = getEmailTemplateBuilder()
 
                 .header()
-                .logo("https://w7.pngwing.com/pngs/977/730/png-transparent-logo-brand-envy-angle-child-text.png").logoHeight(90)
+                .logo("https://cdn.venngage.com/template/thumbnail/small/16e72e35-d54b-4d3d-b574-972050954cba.webp").logoWidth(600)
+                .logoHeight(250)
                 .and()
 
                 .text("Welcome To," + Env.get("app.name")).h1().center().and()
@@ -38,7 +39,7 @@ public class VerificationMailTemplate extends Mailable {
                 .text(verificationCode).h1().center().and()
                 .button("Verify Account", verifyUrl).blue().center().and()
 
-                .text("If the button does not work, click this link:").center().and()
+                .text("If the button does not work, click below link:").center().and()
 
                 .html("Having trouble with the <strong>Verify Account</strong> button? No worries - you can <a href=" + verifyUrl + ">click here</a> to verify your account and start shopping at " + Env.get("app.name") + ".",
                         " Click this link to verify your account and start exploring all the amazing products at" + Env.get("app.name")).and()
@@ -53,6 +54,7 @@ public class VerificationMailTemplate extends Mailable {
                 .footerText("Envy Clothings\n" +
                         "Colombo Rd.\n" +
                         "Kandy 1234").and()
+                .footerImage("https://www.envypost.co.uk/wp-content/uploads/2022/03/shareimage.jpg").width(100).linkUrl("https://fhmnx.github.io/Portfolio/").and()
                 .build();
 
         message.setContent(htmlTextEmail.getHtml(), "text/html; charset=utf-8");
