@@ -1,10 +1,10 @@
 class HeaderContent extends HTMLElement{
     connectedCallback(){
         this.innerHTML = `<nav>
-        <div class="container">
+        <div class="header-wrapper">
 
             <!-- BRAND / LOGO -->
-            <a href="#" class="brand">
+            <a href="index.html" class="brand">
                 <img src="http://localhost:8080/Envy_Clothings/assets/images/logo/envy.png" style="height:60px;" />
             </a>
 
@@ -18,7 +18,7 @@ class HeaderContent extends HTMLElement{
                     <a href="#">Men <i class='bx bx-chevron-down'></i></a>
 
                     <div class="dropdown-menu">
-                        <div class="container">
+                        <div class="header-wrapper">
                             <div class="left-section">
                                 <span class="dropdown-close"><i class='bx bx-chevron-left'></i> Back</span>
                                 <h1>Men's Collection</h1>
@@ -69,7 +69,7 @@ class HeaderContent extends HTMLElement{
                     <a href="#">Women <i class='bx bx-chevron-down'></i></a>
 
                     <div class="dropdown-menu">
-                        <div class="container">
+                        <div class="header-wrapper">
                             <div class="left-section">
                                 <span class="dropdown-close"><i class='bx bx-chevron-left'></i> Back</span>
                                 <h1>Women's Collection</h1>
@@ -125,12 +125,12 @@ class HeaderContent extends HTMLElement{
                     <a href="#">Profile <i class='bx bx-chevron-down'></i></a>
 
                     <div class="dropdown-menu">
-                        <div class="container">
+                        <div class="header-wrapper">
                             <div class="left-section">
                                 <span class="dropdown-close"><i class='bx bx-chevron-left'></i> Back</span>
                                 <h1>Your Account</h1>
                                 <p>Manage your personal details, orders, addresses and more.</p>
-                                <a href="#" class="btn-see-all">Manage Profile</a>
+                                <a href="userAccount.html" class="btn-see-all">Manage Profile</a>
                             </div>
 
                             <div class="right-section">
@@ -172,7 +172,7 @@ class HeaderContent extends HTMLElement{
                                             </div>
                                         </a></li>
 
-                                    <li><a href="#"><i class='bx bx-cog'></i>
+                                    <li><a href="userAccount.html"><i class='bx bx-cog'></i>
                                             <div>
                                                 <h5>Account Settings</h5>
                                                 <p>Update profile settings.</p>

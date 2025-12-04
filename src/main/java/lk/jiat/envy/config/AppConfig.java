@@ -6,5 +6,6 @@ public class AppConfig extends ResourceConfig {
 
     public AppConfig() {
         packages("lk.jiat.envy.controller");
+        packages("lk.jiat.envy.middleware");
     }
 }
