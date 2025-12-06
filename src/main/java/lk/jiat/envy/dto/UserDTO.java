@@ -9,6 +9,14 @@ public class UserDTO implements Serializable {
     private String email;
     private String password;
     private String verificationCode;
+    private String lineOne;
+    private String lineTwo;
+    private String postalCode;
+    private boolean isPrimary;
+    private int cityId;
+    private String cityName;
+    private String newPassword;
+    private String confirmPassword;
 
     public UserDTO() {
     }
@@ -75,5 +83,77 @@ public class UserDTO implements Serializable {
 
     public void setVerificationCode(String verificationCode) {
         this.verificationCode = verificationCode;
+    }
+
+    public String getLineOne() {
+        return lineOne;
+    }
+
+    public void setLineOne(String lineOne) {
+        this.lineOne = lineOne;
+    }
+
+    public String getLineTwo() {
+        return lineTwo;
+    }
+
+    public void setLineTwo(String lineTwo) {
+        this.lineTwo = lineTwo;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public boolean getIsPrimary() {
+        return isPrimary;
+    }
+
+    public void setIsPrimary(boolean isPrimary) {
+        this.isPrimary = isPrimary;
+    }
+
+    public int getCityId() {
+        return cityId;
+    }
+
+    public void setCityId(int cityId) {
+        this.cityId = cityId;
+    }
+
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
+
+    public boolean isPrimary() {
+        return isPrimary;
+    }
+
+    public void setPrimary(boolean primary) {
+        isPrimary = primary;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
 }

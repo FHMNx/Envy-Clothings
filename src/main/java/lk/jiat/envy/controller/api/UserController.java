@@ -1,6 +1,5 @@
 package lk.jiat.envy.controller.api;
 
-import com.google.gson.Gson;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.*;
@@ -10,12 +9,12 @@ import jakarta.ws.rs.core.Response;
 import lk.jiat.envy.annotation.IsUser;
 import lk.jiat.envy.dto.UserDTO;
 import lk.jiat.envy.service.UserService;
+import lk.jiat.envy.util.AppUtil;
 
 @Path("/users")
 public class UserController {
 
-    private final Gson gson = new Gson();
-
+    @IsUser
     @Path("/logout")
     @GET
     public Response logout(@Context HttpServletRequest request) {
@@ -28,24 +27,23 @@ public class UserController {
         }
     }
 
-    @IsUser
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createNewAccount(String jsonData) {
-        UserDTO userDto = gson.fromJson(jsonData, UserDTO.class);
+        UserDTO userDto = AppUtil.GSON.fromJson(jsonData, UserDTO.class);
         String responseJson = new UserService().addNewUser(userDto);
         return Response.ok().entity(responseJson).build();
     }
 
 
-    @IsUser
     @Path("/login")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response userLogin(String jsonData, @Context HttpServletRequest request) {
-        UserDTO userDTO = gson.fromJson(jsonData, UserDTO.class);
+        UserDTO userDTO = AppUtil.GSON.fromJson(jsonData, UserDTO.class);
         String responseJson = new UserService().userLogin(userDTO, request);
         return Response.ok().entity(responseJson).build();
     }

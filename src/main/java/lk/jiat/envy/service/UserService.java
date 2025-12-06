@@ -1,11 +1,11 @@
 package lk.jiat.envy.service;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.core.Context;
 import lk.jiat.envy.dto.UserDTO;
+import lk.jiat.envy.entity.Address;
 import lk.jiat.envy.entity.Status;
 import lk.jiat.envy.entity.User;
 import lk.jiat.envy.mail.VerificationMailTemplate;
@@ -18,9 +18,55 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 public class UserService {
-    private static final Gson GSON = new Gson();
+
+    public String userProfile(@Context HttpServletRequest request) {
+        JsonObject responseObject = new JsonObject();
+        boolean status = false;
+        String message = "";
+
+        HttpSession httpSession = request.getSession(false);
+        User user = (User) httpSession.getAttribute("user");
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setFirstName(user.getFirstName());
+        userDTO.setLastName(user.getLastName());
+        userDTO.setPassword(user.getPassword());
+        userDTO.setEmail(user.getEmail());
+
+        Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+        List<Address> addressList = hibernateSession.createQuery("FROM Address a WHERE a.user=:user", Address.class)
+                .setParameter("user", user)
+                .getResultList();
+
+        Address primaryAddress = null;
+        for (Address address : addressList) {
+            if (address.isPrimary()) {
+                primaryAddress = address;
+                break;
+            }
+        }
+
+        if (primaryAddress != null) {
+            userDTO.setLineOne(primaryAddress.getLineOne());
+            userDTO.setLineTwo(primaryAddress.getLineTwo());
+            userDTO.setPostalCode(primaryAddress.getPostalCode());
+            userDTO.setIsPrimary(primaryAddress.isPrimary());
+            userDTO.setCityId(primaryAddress.getCity().getId());
+            userDTO.setCityName(primaryAddress.getCity().getName());
+        }
+
+        responseObject.add("user", AppUtil.GSON.toJsonTree(userDTO));
+
+        hibernateSession.close();
+        responseObject.addProperty("status", status);
+        responseObject.addProperty("message", message);
+        return AppUtil.GSON.toJson(responseObject);
+    }
 
     public String userLogin(UserDTO userDTO, @Context HttpServletRequest request) {
         JsonObject responseObject = new JsonObject();
@@ -73,7 +119,7 @@ public class UserService {
 
         responseObject.addProperty("status", status);
         responseObject.addProperty("message", message);
-        return GSON.toJson(responseObject);
+        return AppUtil.GSON.toJson(responseObject);
     }
 
     public String verifyUserAccount(UserDTO userDTO) {
@@ -129,7 +175,7 @@ public class UserService {
 
         responseObject.addProperty("status", status);
         responseObject.addProperty("message", message);
-        return GSON.toJson(responseObject);
+        return AppUtil.GSON.toJson(responseObject);
     }
 
     public String addNewUser(UserDTO userDto) {
@@ -211,7 +257,7 @@ public class UserService {
 
         responseObject.addProperty("status", status);
         responseObject.addProperty("message", message);
-        return GSON.toJson(responseObject);
+        return AppUtil.GSON.toJson(responseObject);
     }
 
 }

@@ -30,6 +30,17 @@ public class Address implements Serializable {
     @JoinColumn(name = "users_id")
     private User user;
 
+    @Column(name = "is_primary", nullable = false)
+    private boolean isPrimary = false;
+
+    public boolean isPrimary() {
+        return isPrimary;
+    }
+
+    public void setPrimary(boolean primary) {
+        isPrimary = primary;
+    }
+
     public int getId() {
         return id;
     }
