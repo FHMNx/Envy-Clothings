@@ -1,5 +1,6 @@
 package lk.jiat.envy.middleware;
 
+
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -7,7 +8,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-public class AuthAccessFilter implements Filter {
+public class AccessControlFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
@@ -15,12 +16,9 @@ public class AuthAccessFilter implements Filter {
 
         HttpSession httpSession = request.getSession(false);
         if (httpSession != null && httpSession.getAttribute("user") != null) {
-            response.sendRedirect(request.getContextPath() + "index.html");
-        } else {
             filterChain.doFilter(servletRequest, servletResponse);
-            response.setHeader("Cache-Control", "no-cache, no-store , revalidate");
-            response.setHeader("Pragma", "no-cache");
-            response.setDateHeader("Expires", 0);
+        } else {
+            response.sendRedirect(request.getContextPath() + "/sign-in.html");
         }
     }
 }

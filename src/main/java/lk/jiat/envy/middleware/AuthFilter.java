@@ -12,6 +12,7 @@ import jakarta.ws.rs.ext.Provider;
 import lk.jiat.envy.annotation.IsUser;
 
 import java.io.IOException;
+import java.net.URI;
 
 @Provider
 @Priority(Priorities.AUTHENTICATION)
@@ -24,8 +25,9 @@ public class AuthFilter implements ContainerRequestFilter {
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
         HttpSession httpSession = request.getSession(false);
 
-        if (httpSession != null && httpSession.getAttribute("user") != null) {
-            containerRequestContext.abortWith(Response.status(Response.Status.FORBIDDEN).entity("user already logged in, please logout before process this request").build());
+        if (httpSession == null || httpSession.getAttribute("user") == null) {
+            containerRequestContext.abortWith(Response.status(Response.Status.TEMPORARY_REDIRECT)
+                    .location(URI.create(request.getContextPath() + "/sign-in.html")).build());
         }
     }
 }
