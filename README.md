@@ -40,9 +40,6 @@ Open the project in **IntelliJ IDEA** (recommended) or any preferred Java IDE.
 ### 4. Build and Run the project
 Use **Maven** or your IDE's build tools to run the application.
 
-### 5. Access the application
-``` http://localhost:8080/EnvyClothings ```
-
 ## Technologies Used
 ### **Frontend**
 * HTML5
