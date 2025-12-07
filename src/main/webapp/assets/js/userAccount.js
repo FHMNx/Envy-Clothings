@@ -21,10 +21,24 @@ async function loadUserData() {
                 return;
             }
             const data = await response.json();
+
+            const fullName = `${data.user.firstName} ${data.user.lastName}`;
+
+            document.getElementById("bill_name").innerText = fullName;
+            document.getElementById("bill_line1").innerText = data.user.lineOne ?? "";
+            document.getElementById("bill_line2").innerText = data.user.lineTwo ?? "";
+            document.getElementById("bill_city").innerText = data.user.cityName ?? "";
+
+            document.getElementById("ship_name").innerText = fullName;
+            document.getElementById("ship_line1").innerText = data.user.lineOne ?? "";
+            document.getElementById("ship_line2").innerText = data.user.lineTwo ?? "";
+            document.getElementById("ship_city").innerText = data.user.cityName ?? "";
+
             document.getElementById("username").innerHTML = `Hello, ${data.user.firstName} ${data.user.lastName}`
             document.getElementById("firstName").value = data.user.firstName;
             document.getElementById("lastName").value = data.user.lastName;
             document.getElementById("mobile").value = data.user.mobile ? data.user.mobile : "";
+            document.getElementById("email").value = data.user.email ? data.user.email : "";
             document.getElementById("lineOne").value = data.user.lineOne === undefined ? "" : data.user.lineOne;
             document.getElementById("lineTwo").value = data.user.lineTwo === undefined ? "" : data.user.lineTwo;
             document.getElementById("postalCode").value = data.user.postalCode === undefined ? "" : data.user.postalCode;
@@ -55,6 +69,7 @@ async function saveProfileChanges() {
     let lineTwo = document.getElementById("lineTwo");
     let postalCode = document.getElementById("postalCode");
     let citySelect = document.getElementById("citySelect");
+    let mobile = document.getElementById("mobile");
     let currentPassword = document.getElementById("currentPassword");
     let newPassword = document.getElementById("newPassword");
     let confirmPassword = document.getElementById("confirmPassword");
@@ -65,8 +80,9 @@ async function saveProfileChanges() {
         lineOne: lineOne.value,
         lineTwo: lineTwo.value,
         postalCode: postalCode.value,
+        mobile: mobile.value,
         cityId: citySelect.value,
-        currentPassword: currentPassword.value,
+        password: currentPassword.value,
         newPassword: newPassword.value,
         confirmPassword: confirmPassword.value
     }
@@ -87,12 +103,12 @@ async function saveProfileChanges() {
                     data.message,
                     "okay",
                 );
-            }else{
+            } else {
                 Notiflix.Notify.failure(e.message, {
                     position: 'center-top'
                 });
             }
-        }else{
+        } else {
             Notiflix.Notify.failure("profile updated failed", {
                 position: 'center-top'
             });
