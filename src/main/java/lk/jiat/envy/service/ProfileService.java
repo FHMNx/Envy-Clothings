@@ -41,10 +41,14 @@ public class ProfileService {
 
         Address primaryAddress = null;
         for (Address address : addressList) {
-            if (address.isPrimary()) {
+            if (address.getAddressType().equals("billing")) {
                 primaryAddress = address;
                 break;
             }
+        }
+
+        if (primaryAddress == null && !addressList.isEmpty()) {
+            primaryAddress = addressList.get(0);
         }
 
         if (primaryAddress != null) {
@@ -52,7 +56,7 @@ public class ProfileService {
             userDTO.setLineTwo(primaryAddress.getLineTwo());
             userDTO.setPostalCode(primaryAddress.getPostalCode());
             userDTO.setMobile(primaryAddress.getMobile());
-            userDTO.setIsPrimary(primaryAddress.isPrimary());
+            userDTO.setAddressType(primaryAddress.getAddressType());
             userDTO.setCityId(primaryAddress.getCity().getId());
             userDTO.setCityName(primaryAddress.getCity().getName());
         }
@@ -88,7 +92,7 @@ public class ProfileService {
             message = "Address Line One cannot be empty";
         } else if (userDTO.getPostalCode() != null && !userDTO.getPostalCode().isBlank() && !userDTO.getPostalCode().matches(Validator.POSTAL_CODE_VALIDATION)) {
             message = "provide a valid Postal Code";
-        } else if (userDTO.getCityId() == 0) {
+        } else if (userDTO.getCityId() == null || userDTO.getCityId() == 0) {
             message = "Please select a city";
         } else if (userDTO.getPassword() == null) {
             message = "Password is required";
@@ -117,26 +121,18 @@ public class ProfileService {
                         .getSingleResult();
                 dbUser.setFirstName(userDTO.getFirstName());
                 dbUser.setLastName(userDTO.getLastName());
-                dbUser.setPassword(userDTO.getConfirmPassword().isBlank() ? userDTO.getConfirmPassword() : userDTO.getPassword());
-
-                List<Address> addressList = hibernateSession.createQuery("FROM Address a WHERE a.user=:user", Address.class)
-                        .setParameter("user", dbUser)
-                        .getResultList();
-
-                Address currentAddress = null;
-                for (Address address : addressList) {
-                    if (address.getLineOne().equals(userDTO.getLineOne()) &&
-                            address.getLineTwo().equals(userDTO.getLineTwo() != null ? userDTO.getLineTwo() : "") &&
-                            address.getPostalCode().equals(userDTO.getPostalCode() != null ? userDTO.getPostalCode() : "") &&
-                            address.getCity().getId() == userDTO.getCityId()) {
-
-                        currentAddress = address;
-                        break;
-                    }
+                if (userDTO.getNewPassword() != null && !userDTO.getNewPassword().isBlank()) {
+                    dbUser.setPassword(userDTO.getNewPassword());
                 }
+
+                Address currentAddress = hibernateSession.createQuery("FROM Address a WHERE a.user = :user AND a.addressType = :type", Address.class)
+                        .setParameter("user", dbUser)
+                        .setParameter("type", userDTO.getAddressType())
+                        .uniqueResult();
 
                 if (currentAddress == null) {
                     currentAddress = new Address();
+                    currentAddress.setUser(dbUser);
                 }
 
                 currentAddress.setLineOne(userDTO.getLineOne());
@@ -147,12 +143,14 @@ public class ProfileService {
 
                 City city = hibernateSession.find(City.class, userDTO.getCityId());
                 currentAddress.setCity(city);
+                currentAddress.setAddressType(userDTO.getAddressType());
 
                 Transaction transaction = hibernateSession.beginTransaction();
                 try {
                     hibernateSession.merge(dbUser);
                     hibernateSession.merge(currentAddress);
                     transaction.commit();
+                    httpSession.setAttribute("user", dbUser); //UPDATE SESSION USER
                     status = true;
                     message = "profile details updated successful";
                 } catch (HibernateException e) {

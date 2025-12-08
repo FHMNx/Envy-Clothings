@@ -8,7 +8,6 @@ import jakarta.ws.rs.core.Response;
 import lk.jiat.envy.annotation.IsUser;
 import lk.jiat.envy.dto.UserDTO;
 import lk.jiat.envy.service.ProfileService;
-import lk.jiat.envy.service.UserService;
 import lk.jiat.envy.util.AppUtil;
 
 @Path("/profiles")

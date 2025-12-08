@@ -13,8 +13,8 @@ public class UserDTO implements Serializable {
     private String lineOne;
     private String lineTwo;
     private String postalCode;
-    private boolean isPrimary;
-    private int cityId;
+    private String addressType;
+    private Integer cityId;
     private String cityName;
     private String newPassword;
     private String confirmPassword;
@@ -94,19 +94,19 @@ public class UserDTO implements Serializable {
         this.postalCode = postalCode;
     }
 
-    public boolean getIsPrimary() {
-        return isPrimary;
+    public String getAddressType() {
+        return addressType;
     }
 
-    public void setIsPrimary(boolean isPrimary) {
-        this.isPrimary = isPrimary;
+    public void setAddressType(String addressType) {
+        this.addressType = addressType;
     }
 
-    public int getCityId() {
+    public Integer getCityId() {
         return cityId;
     }
 
-    public void setCityId(int cityId) {
+    public void setCityId(Integer cityId) {
         this.cityId = cityId;
     }
 
@@ -118,13 +118,6 @@ public class UserDTO implements Serializable {
         this.cityName = cityName;
     }
 
-    public boolean isPrimary() {
-        return isPrimary;
-    }
-
-    public void setPrimary(boolean primary) {
-        isPrimary = primary;
-    }
 
     public String getNewPassword() {
         return newPassword;

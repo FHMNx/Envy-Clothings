@@ -30,15 +30,15 @@ public class Address implements Serializable {
     @JoinColumn(name = "users_id")
     private User user;
 
-    @Column(name = "is_primary", nullable = false)
-    private boolean isPrimary = false;
+    @Column(name = "address_type", nullable = false , length = 15)
+    private String addressType;
 
-    public boolean isPrimary() {
-        return isPrimary;
+    public String getAddressType() {
+        return addressType;
     }
 
-    public void setPrimary(boolean primary) {
-        isPrimary = primary;
+    public void setAddressType(String addressType) {
+        this.addressType = addressType;
     }
 
     public int getId() {

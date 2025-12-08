@@ -12,6 +12,34 @@ window.addEventListener("load", async () => {
     }
 });
 
+async function getCities() {
+
+    try {
+        const response = await fetch("api/data/cities");
+
+        if (response.ok) {
+            const data = await response.json();
+            const citySelect = document.getElementById("citySelect");
+
+            data.cities.forEach((city) => {
+                const option = document.createElement("option");
+                option.value = city.id;
+                option.innerHTML = city.name;
+                citySelect.appendChild(option);
+            })
+        } else {
+            Notiflix.Notify.failure("city loading failed", {
+                position: 'center-top'
+            });
+        }
+
+    } catch (e) {
+        Notiflix.Notify.failure(e.message, {
+            position: 'center-top'
+        });
+    }
+}
+
 async function loadUserData() {
     try {
         const response = await fetch("api/profiles/userProfile");
@@ -42,7 +70,8 @@ async function loadUserData() {
             document.getElementById("lineOne").value = data.user.lineOne === undefined ? "" : data.user.lineOne;
             document.getElementById("lineTwo").value = data.user.lineTwo === undefined ? "" : data.user.lineTwo;
             document.getElementById("postalCode").value = data.user.postalCode === undefined ? "" : data.user.postalCode;
-            document.getElementById("citySelect").value = data.user.cityId ? data.user.cityId : 0;
+            const citySelect = document.getElementById("citySelect");
+            citySelect.value = data.user.cityId != null ? String(data.user.cityId) : "";
             document.getElementById("currentPassword").value = data.user.password;
 
         } else {
@@ -68,8 +97,15 @@ async function saveProfileChanges() {
     let lineOne = document.getElementById("lineOne");
     let lineTwo = document.getElementById("lineTwo");
     let postalCode = document.getElementById("postalCode");
+
     let citySelect = document.getElementById("citySelect");
+    const cityValue = citySelect.value === "" ? null : parseInt(citySelect.value, 10);
+
     let mobile = document.getElementById("mobile");
+
+    const addressTypeElem = document.querySelector("input[name='addressType']:checked");
+    let addressType = addressTypeElem ? addressTypeElem.value : null;
+
     let currentPassword = document.getElementById("currentPassword");
     let newPassword = document.getElementById("newPassword");
     let confirmPassword = document.getElementById("confirmPassword");
@@ -81,10 +117,11 @@ async function saveProfileChanges() {
         lineTwo: lineTwo.value,
         postalCode: postalCode.value,
         mobile: mobile.value,
-        cityId: citySelect.value,
+        cityId: cityValue,
         password: currentPassword.value,
         newPassword: newPassword.value,
-        confirmPassword: confirmPassword.value
+        confirmPassword: confirmPassword.value,
+        addressType: addressType
     }
 
     try {
@@ -103,8 +140,9 @@ async function saveProfileChanges() {
                     data.message,
                     "okay",
                 );
+                await loadUserData();
             } else {
-                Notiflix.Notify.failure(e.message, {
+                Notiflix.Notify.failure(data.message, {
                     position: 'center-top'
                 });
             }
@@ -119,34 +157,6 @@ async function saveProfileChanges() {
         });
     } finally {
         Notiflix.Loading.remove(1000);
-    }
-}
-
-async function getCities() {
-
-    try {
-        const response = await fetch("api/data/cities");
-
-        if (response.ok) {
-            const data = await response.json();
-            const citySelect = document.getElementById("citySelect");
-
-            data.cities.forEach((city) => {
-                const option = document.createElement("option");
-                option.value = city.id;
-                option.innerHTML = city.name;
-                citySelect.appendChild(option);
-            })
-        } else {
-            Notiflix.Notify.failure("city loading failed", {
-                position: 'center-top'
-            });
-        }
-
-    } catch (e) {
-        Notiflix.Notify.failure(e.message, {
-            position: 'center-top'
-        });
     }
 }
 
