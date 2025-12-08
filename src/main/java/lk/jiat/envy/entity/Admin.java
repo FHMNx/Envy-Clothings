@@ -24,7 +24,7 @@ public class Admin implements Serializable {
     @Column(length = 100)
     private String password;
 
-    @Column(name = "verification_code", nullable = false, length = 15)
+    @Column(name = "verification_code", length = 15, nullable = true)
     private String verificationCode;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

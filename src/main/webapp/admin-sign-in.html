@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+    <meta name="robots" content="noindex, follow"/>
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Envy-Clothings Online</title>
+
+    <style>
+        html, body {
+            overflow: hidden;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+<section class="min-h-screen flex justify-center items-center px-4">
+    <!-- LEFT: SIGN IN -->
+    <div class="flex flex-col justify-center items-center w-full max-w-md py-6 text-center rounded-lg">
+        <div class="flex justify-center mb-6">
+            <img src="assets/images/logo/envy.png" alt="Envy Clothing Logo" class="w-32 logo">
+        </div>
+
+        <h2 class="text-[#5C4742] font-bold text-2xl md:text-3xl mb-2">
+            Get Access To Admin Account
+        </h2>
+        <p class="text-[#5C4742] text-sm mb-6">
+            Manage everything, at one place.
+        </p>
+
+        <form class="flex flex-col gap-5 w-full">
+            <div class="form-row">
+                <label class="block text-sm font-medium text-[#5C4742] mb-1 text-left">Email Address</label>
+                <input class="p-2 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-[#5C4742]/50 transition"
+                       type="email" name="email" id="email_input" placeholder="Enter your email"/>
+            </div>
+
+            <div class="form-row">
+                <label class="block text-sm font-medium text-[#5C4742] mb-1 text-left">Password</label>
+                <input class="p-2 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-[#5C4742]/50 transition"
+                       type="password" name="password" id="password_input" placeholder="Enter your password"/>
+            </div>
+
+            <button type="button"
+                    class="bg-[#5C4742] hover:bg-[#483531] transition text-white rounded-xl py-2 font-semibold login-btn"
+                    onclick="signIn();">
+                Log In
+            </button>
+        </form>
+    </div>
+</section>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+<script src="assets/js/notification.js"></script>
+<script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
+<script src="assets/js/register.js"></script>
+</body>
+</html>

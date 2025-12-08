@@ -6,7 +6,9 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lk.jiat.envy.annotation.IsUser;
-import lk.jiat.envy.service.UserService;
+import lk.jiat.envy.dto.UserDTO;
+import lk.jiat.envy.service.ProfileService;
+import lk.jiat.envy.util.AppUtil;
 
 @Path("/profiles")
 public class ProfileController {
@@ -17,7 +19,9 @@ public class ProfileController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateProfile(String jsonData, @Context HttpServletRequest request) {
-        return Response.ok().entity("").build();
+        UserDTO userDTO = AppUtil.GSON.fromJson(jsonData, UserDTO.class);
+        String responseJson = new ProfileService().updateProfile(userDTO, request);
+        return Response.ok().entity(responseJson).build();
     }
 
     @IsUser
@@ -25,7 +29,7 @@ public class ProfileController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response loadUserProfile(@Context HttpServletRequest request) {
-        String responseJson = new UserService().userProfile(request);
+        String responseJson = new ProfileService().userProfile(request);
         return Response.ok().entity(responseJson).build();
     }
 
