@@ -43,42 +43,50 @@ async function getCities() {
 async function loadUserData() {
     try {
         const response = await fetch("api/profiles/userProfile");
-        if (response.ok) {
-            if (response.redirected) {
-                window.location.href = response.url;
-                return;
-            }
-            const data = await response.json();
 
-            const fullName = `${data.user.firstName} ${data.user.lastName}`;
-
-            document.getElementById("bill_name").innerText = fullName;
-            document.getElementById("bill_line1").innerText = data.user.lineOne ?? "";
-            document.getElementById("bill_line2").innerText = data.user.lineTwo ?? "";
-            document.getElementById("bill_city").innerText = data.user.cityName ?? "";
-
-            document.getElementById("ship_name").innerText = fullName;
-            document.getElementById("ship_line1").innerText = data.user.lineOne ?? "";
-            document.getElementById("ship_line2").innerText = data.user.lineTwo ?? "";
-            document.getElementById("ship_city").innerText = data.user.cityName ?? "";
-
-            document.getElementById("username").innerHTML = `Hello, ${data.user.firstName} ${data.user.lastName}`
-            document.getElementById("firstName").value = data.user.firstName;
-            document.getElementById("lastName").value = data.user.lastName;
-            document.getElementById("mobile").value = data.user.mobile ? data.user.mobile : "";
-            document.getElementById("email").value = data.user.email ? data.user.email : "";
-            document.getElementById("lineOne").value = data.user.lineOne === undefined ? "" : data.user.lineOne;
-            document.getElementById("lineTwo").value = data.user.lineTwo === undefined ? "" : data.user.lineTwo;
-            document.getElementById("postalCode").value = data.user.postalCode === undefined ? "" : data.user.postalCode;
-            const citySelect = document.getElementById("citySelect");
-            citySelect.value = data.user.cityId != null ? String(data.user.cityId) : "";
-            document.getElementById("currentPassword").value = data.user.password;
-
-        } else {
+        if (!response.ok) {
             Notiflix.Notify.failure("profile data loading failed", {
                 position: 'center-top'
             });
+            return;
         }
+
+        if (response.redirected) {
+            window.location.href = response.url;
+            return;
+        }
+
+        const data = await response.json();
+        const fullName = `${data.user.firstName} ${data.user.lastName}`;
+
+        // Billing info
+        document.getElementById("bill_name").innerText = fullName;
+        document.getElementById("bill_line1").innerText = data.billingAddress?.lineOne ?? "";
+        document.getElementById("bill_line2").innerText = data.billingAddress?.lineTwo ?? "";
+        document.getElementById("bill_city").innerText = data.billingAddress?.cityName ?? "";
+
+        // Shipping info
+        document.getElementById("ship_name").innerText = fullName;
+        document.getElementById("ship_line1").innerText = data.shippingAddress?.lineOne ?? "";
+        document.getElementById("ship_line2").innerText = data.shippingAddress?.lineTwo ?? "";
+        document.getElementById("ship_city").innerText = data.shippingAddress?.cityName ?? "";
+
+        // Form fields
+        document.getElementById("username").innerHTML = `Hello, ${data.user.firstName} ${data.user.lastName}`
+        document.getElementById("firstName").value = data.user.firstName;
+        document.getElementById("lastName").value = data.user.lastName;
+        document.getElementById("mobile").value = data.billingAddress.mobile ?? "";
+
+        document.getElementById("email").value = data.user.email ?? "";
+        document.getElementById("lineOne").value = data.billingAddress?.lineOne ?? "";
+        document.getElementById("lineTwo").value = data.billingAddress?.lineTwo ?? "";
+        document.getElementById("postalCode").value = data.billingAddress?.postalCode ?? "";
+
+        const citySelect = document.getElementById("citySelect");
+        citySelect.value = data.billingAddress?.cityId ? String(data.billingAddress.cityId) : "";
+
+        document.getElementById("currentPassword").value = data.user.password;
+
     } catch (e) {
         Notiflix.Notify.failure(e.message, {
             position: 'center-top'

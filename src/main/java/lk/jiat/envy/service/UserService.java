@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.core.Context;
 import lk.jiat.envy.dto.UserDTO;
-import lk.jiat.envy.entity.Address;
 import lk.jiat.envy.entity.Status;
 import lk.jiat.envy.entity.User;
 import lk.jiat.envy.mail.VerificationMailTemplate;
@@ -18,7 +17,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class UserService {
 

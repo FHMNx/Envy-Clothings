@@ -314,15 +314,16 @@
                                class="w-full border border-gray-300 px-4 py-2 focus:border-[var(--brand-dark)] outline-none transition">
                     </div>
 
-                    <label class="flex items-center gap-2">
-                        <input type="radio" name="addressType" value="billing" checked>
+                    <label>
+                        <input type="radio" name="addressType" value="billing" checked onchange="toggleAddressType()">
                         Billing Address
                     </label>
 
-                    <label class="flex items-center gap-2 mt-2">
-                        <input type="radio" name="addressType" value="shipping">
+                    <label>
+                        <input type="radio" name="addressType" value="shipping" onchange="toggleAddressType()">
                         Shipping Address
                     </label>
+
 
                 </div>
 

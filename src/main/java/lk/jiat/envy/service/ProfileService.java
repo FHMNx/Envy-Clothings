@@ -39,29 +39,42 @@ public class ProfileService {
                 .setParameter("user", user)
                 .getResultList();
 
-        Address primaryAddress = null;
+
+        Address billingAddress = null;
+        Address shippingAddress = null;
+
         for (Address address : addressList) {
-            if (address.getAddressType().equals("billing")) {
-                primaryAddress = address;
-                break;
+            if ("billing".equals(address.getAddressType())) {
+                billingAddress = address;
+            } else if ("shipping".equals(address.getAddressType())) {
+                shippingAddress = address;
             }
         }
 
-        if (primaryAddress == null && !addressList.isEmpty()) {
-            primaryAddress = addressList.get(0);
-        }
-
-        if (primaryAddress != null) {
-            userDTO.setLineOne(primaryAddress.getLineOne());
-            userDTO.setLineTwo(primaryAddress.getLineTwo());
-            userDTO.setPostalCode(primaryAddress.getPostalCode());
-            userDTO.setMobile(primaryAddress.getMobile());
-            userDTO.setAddressType(primaryAddress.getAddressType());
-            userDTO.setCityId(primaryAddress.getCity().getId());
-            userDTO.setCityName(primaryAddress.getCity().getName());
-        }
-
         responseObject.add("user", AppUtil.GSON.toJsonTree(userDTO));
+
+        JsonObject billingJson = new JsonObject();
+        if (billingAddress != null) {
+            billingJson.addProperty("lineOne", billingAddress.getLineOne());
+            billingJson.addProperty("lineTwo", billingAddress.getLineTwo());
+            billingJson.addProperty("postalCode", billingAddress.getPostalCode());
+            billingJson.addProperty("mobile", billingAddress.getMobile());
+            billingJson.addProperty("cityId", billingAddress.getCity().getId());
+            billingJson.addProperty("cityName", billingAddress.getCity().getName());
+        }
+        responseObject.add("billingAddress", billingJson);
+
+        JsonObject shippingJson = new JsonObject();
+        if (shippingAddress != null) {
+            shippingJson.addProperty("lineOne", shippingAddress.getLineOne());
+            shippingJson.addProperty("lineTwo", shippingAddress.getLineTwo());
+            shippingJson.addProperty("postalCode", shippingAddress.getPostalCode());
+            shippingJson.addProperty("mobile", shippingAddress.getMobile());
+            shippingJson.addProperty("cityId", shippingAddress.getCity().getId());
+            shippingJson.addProperty("cityName", shippingAddress.getCity().getName());
+        }
+        responseObject.add("shippingAddress", shippingJson);
+
 
         hibernateSession.close();
         responseObject.addProperty("status", status);

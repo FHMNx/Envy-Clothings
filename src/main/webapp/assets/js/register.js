@@ -119,3 +119,57 @@ async function signIn() {
         Notiflix.Loading.remove(1000);
     }
 }
+
+async function adminSignIn() {
+    Notiflix.Loading.standard("loading...", {
+        clickToClose: false,
+        svgColor: '#0284c7'
+    });
+
+    let email = document.getElementById("email");
+    let password = document.getElementById("password");
+
+    const adminLoginObj = {
+        email: email.value,
+        password: password.value
+    }
+
+    try {
+        const response = await fetch("api/admin/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(adminLoginObj)
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            if (data.status) {
+                Notiflix.Report.success(
+                    'Envy Clothings',
+                    data.message,
+                    "okay",
+                    () => {
+                        window.location = "admin-panel.html"
+                    },
+                );
+            } else {
+                Notiflix.Notify.failure(data.message, {
+                    position: 'center-top'
+                });
+            }
+        } else {
+            Notiflix.Notify.failure("Login failed! please try again", {
+                position: 'center-top'
+            });
+        }
+
+    } catch (e) {
+        Notiflix.Notify.failure(e.message, {
+            position: 'center-top'
+        });
+    } finally {
+        Notiflix.Loading.remove(1000);
+    }
+}
