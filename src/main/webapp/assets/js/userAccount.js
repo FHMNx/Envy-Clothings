@@ -1,3 +1,6 @@
+let billingAddressGlobal = null;
+let shippingAddressGlobal = null;
+
 window.addEventListener("load", async () => {
     Notiflix.Loading.standard("loading...", {
         clickToClose: false,
@@ -10,6 +13,14 @@ window.addEventListener("load", async () => {
     } finally {
         Notiflix.Loading.remove(1000);
     }
+});
+
+document.getElementById("editBilling").addEventListener("click", () => {
+    openAccountDetailsTab("billing");
+})
+
+document.getElementById("editShipping").addEventListener("click", () => {
+    openAccountDetailsTab("shipping");
 });
 
 async function getCities() {
@@ -65,6 +76,9 @@ async function loadUserData() {
         document.getElementById("bill_line2").innerText = data.billingAddress?.lineTwo ?? "";
         document.getElementById("bill_city").innerText = data.billingAddress?.cityName ?? "";
 
+        billingAddressGlobal = data.billingAddress;
+        shippingAddressGlobal = data.shippingAddress;
+
         // Shipping info
         document.getElementById("ship_name").innerText = fullName;
         document.getElementById("ship_line1").innerText = data.shippingAddress?.lineOne ?? "";
@@ -92,6 +106,30 @@ async function loadUserData() {
             position: 'center-top'
         });
     }
+}
+
+function toggleAddressType() {
+    const selectedType = document.querySelector("input[name='addressType']:checked").value;
+
+    let address = selectedType === "billing" ? billingAddressGlobal : shippingAddressGlobal;
+
+    if (!address) {
+        address = {
+            lineOne: "",
+            lineTwo: "",
+            postalCode: "",
+            mobile: "",
+            cityId: ""
+        };
+    }
+
+    document.getElementById("lineOne").value = address.lineOne ?? "";
+    document.getElementById("lineTwo").value = address.lineTwo ?? "";
+    document.getElementById("postalCode").value = address.postalCode ?? "";
+    document.getElementById("mobile").value = address.mobile ?? "";
+
+    const citySelect = document.getElementById("citySelect");
+    citySelect.value = address.cityId ? String(address.cityId) : "";
 }
 
 async function saveProfileChanges() {
@@ -149,6 +187,7 @@ async function saveProfileChanges() {
                     "okay",
                 );
                 await loadUserData();
+                toggleAddressType();
             } else {
                 Notiflix.Notify.failure(data.message, {
                     position: 'center-top'
@@ -166,6 +205,12 @@ async function saveProfileChanges() {
     } finally {
         Notiflix.Loading.remove(1000);
     }
+}
+
+function openAccountDetailsTab(type) {
+    document.querySelector('button[data-tab="general"]').click();
+    document.querySelector(`input[name="addressType"][value="${type}"]`).checked = true;
+    toggleAddressType();
 }
 
 async function userLogOut() {
