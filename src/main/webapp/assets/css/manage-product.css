@@ -1,0 +1,39 @@
+.page-title {
+    font-weight: 600;
+    color: var(--pc-heading-color);
+}
+
+
+.table td, .table th {
+    vertical-align: middle;
+    font-size: 14px;
+}
+
+
+.table tbody tr:hover {
+    background-color: rgba(114, 103, 239, 0.05);
+}
+
+
+.btn-light {
+    border: 1px solid #e3e6ef;
+}
+
+
+.pagination .page-item.active .page-link {
+    background-color: var(--pc-sidebar-active-color);
+    border-color: var(--pc-sidebar-active-color);
+}
+
+
+.pc-container {
+    margin-left: 260px;
+    padding: 24px;
+}
+
+
+@media (max-width: 991px) {
+    .pc-container {
+        margin-left: 0;
+    }
+}
