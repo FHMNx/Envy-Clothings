@@ -26,8 +26,8 @@ public class VerificationMailTemplate extends Mailable {
         HtmlTextEmail htmlTextEmail = getEmailTemplateBuilder()
 
                 .header()
-                .logo("https://cdn.venngage.com/template/thumbnail/small/16e72e35-d54b-4d3d-b574-972050954cba.webp").logoWidth(600)
-                .logoHeight(250)
+                .logo("https://cdn.venngage.com/template/thumbnail/small/16e72e35-d54b-4d3d-b574-972050954cba.webp").logoWidth(500)
+                .logoHeight(200)
                 .and()
 
                 .text("Welcome To," + Env.get("app.name")).h1().center().and()
