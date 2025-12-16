@@ -450,31 +450,35 @@
 
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Brand</label>
-                                    <select class="form-select" id="brandSelect">
+                                    <select class="form-select" id="brandSelect" onchange="loadModels();">
                                         <option value="0">Select brand</option>
                                     </select>
                                 </div>
 
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Model</label>
-                                    <select class="form-select" id="modelSelect" onchange="loadModels();">
+                                    <select class="form-select" id="modelSelect">
                                         <option value="0">Select Model</option>
                                     </select>
                                 </div>
 
+
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Colour</label>
-                                    <select class="form-select">
-                                        <option selected disabled>Select colour</option>
-                                        <option>Black</option>
-                                        <option>White</option>
-                                        <option>Blue</option>
-                                        <option>Red</option>
+                                    <select class="form-select" id="colorSelect">
+                                        <option value="0">Select colour</option>
                                     </select>
                                 </div>
 
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Price ($)</label>
+                                    <label class="form-label">Size</label>
+                                    <select class="form-select" id="sizeSelect">
+                                        <option value="0">Select Size</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Price</label>
                                     <input type="number" class="form-control"
                                            placeholder="Enter price">
                                 </div>
@@ -497,7 +501,7 @@
                                 <button type="reset" class="btn btn-light me-2">
                                     Reset
                                 </button>
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary" onclick="saveProduct();">
                                     Add Product
                                 </button>
                             </div>
