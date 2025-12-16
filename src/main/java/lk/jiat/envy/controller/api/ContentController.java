@@ -7,7 +7,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lk.jiat.envy.service.CityService;
-import lk.jiat.envy.service.ProductService;
+import lk.jiat.envy.service.ContentService;
 
 @Path("/data")
 public class ContentController {
@@ -24,7 +24,7 @@ public class ContentController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response loadBrands() {
-        String responseJson = new ProductService().loadBrandDetails();
+        String responseJson = new ContentService().loadBrandDetails();
         return Response.ok().entity(responseJson).build();
     }
 
@@ -32,8 +32,17 @@ public class ContentController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response loadModels(@PathParam("brandId") int id) {
-        String responseJson = new ProductService().loadModelDetails(id);
+        String responseJson = new ContentService().loadModelDetails(id);
         return Response.ok().entity(responseJson).build();
     }
+
+    @Path("/specifications")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response loadSpecifications() {
+        String responseJson = new ContentService().loadProductSpecifications();
+        return Response.ok().entity(responseJson).build();
+    }
+
 
 }

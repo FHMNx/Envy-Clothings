@@ -2,23 +2,24 @@ package lk.jiat.envy.service;
 
 import com.google.gson.JsonObject;
 import lk.jiat.envy.entity.Brand;
+import lk.jiat.envy.entity.Color;
 import lk.jiat.envy.entity.Model;
+import lk.jiat.envy.entity.Size;
 import lk.jiat.envy.util.AppUtil;
 import lk.jiat.envy.util.HibernateUtil;
 import org.hibernate.Session;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductService {
+public class ContentService {
 
     public String loadBrandDetails() {
         JsonObject responseObject = new JsonObject();
 
         Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
         List<Brand> brandList = hibernateSession.createQuery("FROM Brand b", Brand.class).getResultList();
-        responseObject.add("brands", AppUtil.GSON.toJsonTree(ProductService.brands(brandList)));
+        responseObject.add("brands", AppUtil.GSON.toJsonTree(ContentService.brands(brandList)));
         hibernateSession.close();
 
         return AppUtil.GSON.toJson(responseObject);
@@ -45,7 +46,7 @@ public class ProductService {
                 if (modelList.isEmpty()) {
                     message = "no moels found";
                 } else {
-                    responseObject.add("models", AppUtil.GSON.toJsonTree(modelList));
+                    responseObject.add("models", AppUtil.GSON.toJsonTree(ContentService.models(modelList)));
                     status = true;
                     message = "models data loading successful";
                 }
@@ -70,5 +71,30 @@ public class ProductService {
         return brandJson;
     }
 
+    private static List<JsonObject> models(List<Model> modelList) {
+        List<JsonObject> modelJson = new ArrayList<>();
+        for (Model m : modelList) {
+            JsonObject object = new JsonObject();
+            object.addProperty("id", m.getId());
+            object.addProperty("name", m.getName());
+            modelJson.add(object);
+        }
+        return modelJson;
+    }
+
+    public String loadProductSpecifications() {
+        JsonObject responseObject = new JsonObject();
+
+        Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+        List<Color> colorList = hibernateSession.createQuery("FROM Color c", Color.class).getResultList();
+        responseObject.add("color", AppUtil.GSON.toJsonTree(colorList));
+
+        List<Size> sizeList = hibernateSession.createQuery("FROM Size s", Size.class).getResultList();
+        responseObject.add("size", AppUtil.GSON.toJsonTree(sizeList));
+
+        hibernateSession.close();
+
+        return AppUtil.GSON.toJson(responseObject);
+    }
 
 }
