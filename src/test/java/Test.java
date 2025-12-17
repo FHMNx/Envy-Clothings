@@ -10,6 +10,7 @@ import lk.jiat.envy.provider.MailServiceProvider;
 import lk.jiat.envy.util.AppUtil;
 import lk.jiat.envy.util.HibernateUtil;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 public class Test {
@@ -28,20 +29,22 @@ public class Test {
 //
 //        MailServiceProvider.getInstance().sendMail(testMail);
 
+        SessionFactory session = HibernateUtil.getSessionFactory();
+
 //        VerificationMailTemplate verificationMailTemplate = new VerificationMailTemplate("fhmnx35888@gmail.com", "123456");
 //        MailServiceProvider.getInstance().sendMail(verificationMailTemplate);
 
 //       String s =  AppUtil.generateCode();
 //        System.out.println(s);
 
-        try (Session s = HibernateUtil.getSessionFactory().openSession()) {
-
-            User user = s.createQuery("FROM User u WHERE u.id=:id", User.class)
-                    .setParameter("id", 3)
-                    .getSingleResult();
-
-
-
-        }
+//        try (Session s = HibernateUtil.getSessionFactory().openSession()) {
+//
+//            User user = s.createQuery("FROM User u WHERE u.id=:id", User.class)
+//                    .setParameter("id", 3)
+//                    .getSingleResult();
+//
+//
+//
+//        }
     }
 }

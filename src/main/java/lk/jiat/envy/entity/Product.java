@@ -3,6 +3,7 @@ package lk.jiat.envy.entity;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -26,14 +27,6 @@ public class Product extends BaseEntity {
     private Size size;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "quality_id")
-    private Quality quality;
-
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "storage_id")
-    private Storage storage;
-
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "model_id")
     private Model model;
 
@@ -43,6 +36,11 @@ public class Product extends BaseEntity {
 
     @OneToMany(mappedBy = "product")
     private Set<Stock> stocks = new HashSet<>();
+
+    @Column(name = "images")
+    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "pr_id"))
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> images;
 
     public int getId() {
         return id;
@@ -84,22 +82,6 @@ public class Product extends BaseEntity {
         this.size = size;
     }
 
-    public Quality getQuality() {
-        return quality;
-    }
-
-    public void setQuality(Quality quality) {
-        this.quality = quality;
-    }
-
-    public Storage getStorage() {
-        return storage;
-    }
-
-    public void setStorage(Storage storage) {
-        this.storage = storage;
-    }
-
     public Model getModel() {
         return model;
     }
@@ -118,5 +100,13 @@ public class Product extends BaseEntity {
 
     public Set<Stock> getStocks() {
         return stocks;
+    }
+
+    public List<String> getImages() {
+        return images;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
     }
 }

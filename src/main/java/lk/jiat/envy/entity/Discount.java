@@ -6,12 +6,13 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
+@NamedQuery(name = "Discount.findDefault", query = "FROM Discount d WHERE d.couponCode='DEFAULT'")
 public class Discount implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "coupon_code", length = 45 , unique = true, nullable = false)
+    @Column(name = "coupon_code", length = 45, unique = true, nullable = false)
     private String couponCode;
 
     @Column(nullable = false)
