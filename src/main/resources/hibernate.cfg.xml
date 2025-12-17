@@ -20,8 +20,6 @@
         <mapping class="lk.jiat.envy.entity.Brand"/>
         <mapping class="lk.jiat.envy.entity.Model"/>
         <mapping class="lk.jiat.envy.entity.Color"/>
-        <mapping class="lk.jiat.envy.entity.Quality"/>
-        <mapping class="lk.jiat.envy.entity.Storage"/>
         <mapping class="lk.jiat.envy.entity.Size"/>
         <mapping class="lk.jiat.envy.entity.Product"/>
         <mapping class="lk.jiat.envy.entity.DeliveryType"/>

@@ -414,22 +414,62 @@
         <!-- Add Product Form -->
         <div class="row">
             <div class="col-lg-4">
-                <!-- Product Image -->
                 <div class="card">
-                    <div class="card-body text-center">
-                        <h6 class="mb-3">Product Image</h6>
+                    <div class="card-body">
+                        <h6 class="mb-3 text-center">Product Images</h6>
 
-                        <div class="product-image-preview mb-3">
-                            <img src="assets/images/logo/addProduct.png"
-                                 id="previewImage"
-                                 class="img-fluid rounded"
-                                 alt="Product Image">
+                        <div class="row g-3">
+                            <!-- Image 1 -->
+                            <div class="col-12">
+                                <div class="text-center">
+                                    <div class="product-image-preview mb-2">
+                                        <img src="assets/images/logo/addProduct.png"
+                                             id="previewImage1"
+                                             class="img-fluid rounded"
+                                             alt="Product Image 1">
+                                    </div>
+                                    <input type="file"
+                                           id="img1"
+                                           class="form-control form-control-sm"
+                                           accept="image/*"
+                                           onchange="previewMultiImage(event, 'previewImage1')">
+                                </div>
+                            </div>
+
+                            <!-- Image 2 -->
+                            <div class="col-12 col-sm-6">
+                                <div class="text-center">
+                                    <div class="product-image-preview mb-2">
+                                        <img src="assets/images/logo/addProduct.png"
+                                             id="previewImage2"
+                                             class="img-fluid rounded"
+                                             alt="Product Image 2">
+                                    </div>
+                                    <input type="file"
+                                           id="img2"
+                                           class="form-control form-control-sm"
+                                           accept="image/*"
+                                           onchange="previewMultiImage(event, 'previewImage2')">
+                                </div>
+                            </div>
+
+                            <!-- Image 3 -->
+                            <div class="col-12 col-sm-6">
+                                <div class="text-center">
+                                    <div class="product-image-preview mb-2">
+                                        <img src="assets/images/logo/addProduct.png"
+                                             id="previewImage3"
+                                             class="img-fluid rounded"
+                                             alt="Product Image 3">
+                                    </div>
+                                    <input type="file"
+                                           id="img3"
+                                           class="form-control form-control-sm"
+                                           accept="image/*"
+                                           onchange="previewMultiImage(event, 'previewImage3')">
+                                </div>
+                            </div>
                         </div>
-
-                        <input type="file"
-                               class="form-control"
-                               accept="image/*"
-                               onchange="previewProductImage(event)">
                     </div>
                 </div>
             </div>
@@ -444,8 +484,7 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Product Name</label>
-                                    <input type="text" class="form-control"
-                                           placeholder="Enter product name">
+                                    <input type="text" class="form-control" placeholder="Enter product name" id="title">
                                 </div>
 
                                 <div class="col-md-6 mb-3">
@@ -479,20 +518,17 @@
 
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Price</label>
-                                    <input type="number" class="form-control"
-                                           placeholder="Enter price">
+                                    <input type="text" class="form-control" placeholder="Enter price" id="price">
                                 </div>
 
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Quantity</label>
-                                    <input type="number" class="form-control"
-                                           placeholder="Enter quantity">
+                                    <input type="number" class="form-control" placeholder="Enter quantity" id="quantity">
                                 </div>
 
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label">Description</label>
-                                    <textarea class="form-control" rows="4"
-                                              placeholder="Product description"></textarea>
+                                    <textarea class="form-control" id="description" rows="4" placeholder="Product description"></textarea>
                                 </div>
                             </div>
 
@@ -501,7 +537,7 @@
                                 <button type="reset" class="btn btn-light me-2">
                                     Reset
                                 </button>
-                                <button type="submit" class="btn btn-primary" onclick="saveProduct();">
+                                <button type="button" class="btn btn-primary" onclick="saveProduct();">
                                     Add Product
                                 </button>
                             </div>
@@ -526,11 +562,12 @@
 <script src="assets/js/product-management.js"></script>
 
 <script>
-    function previewProductImage(event) {
-        const image = document.getElementById('previewImage');
+    function previewMultiImage(event, imageId) {
+        const image = document.getElementById(imageId);
         image.src = URL.createObjectURL(event.target.files[0]);
     }
 </script>
+
 
 
 </body>

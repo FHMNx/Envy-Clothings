@@ -12,7 +12,6 @@ window.addEventListener("load", async () => {
     }
 });
 
-
 async function loadBrands() {
     try {
         const response = await fetch("api/data/brands");
@@ -21,14 +20,7 @@ async function loadBrands() {
             const data = await response.json();
 
             const brandSelect = document.getElementById("brandSelect");
-            brandSelect.innerHTML = `<option value="0">Select</option>`;
-
-            data.brands.forEach((brand) => {
-                const option = document.createElement("option");
-                option.value = brand.id;
-                option.innerHTML = brand.name;
-                brandSelect.appendChild(option);
-            })
+            renderDropdowns(brandSelect , data.brands);
         } else {
             Notiflix.Notify.failure("brands loading failed", {
                 position: 'center-top'
@@ -116,7 +108,7 @@ async function loadProductSpecifications() {
     }
 }
 
-function renderDropdowns(selector, list, suffix) {
+function renderDropdowns(selector, list) {
     selector.innerHTML = `<option value="0">Select</option>`;
     list.forEach((item) => {
         const option = document.createElement("option");
@@ -132,7 +124,51 @@ async function saveProduct() {
         svgColor: '#0284c7'
     });
 
+    let productName = document.getElementById("title");
+    let brandSelect = document.getElementById("brandSelect");
+    let modelSelect = document.getElementById("modelSelect");
+    let colorSelect = document.getElementById("colorSelect");
+    let sizeSelect = document.getElementById("sizeSelect");
+    let price = document.getElementById("price");
+    let quantity = document.getElementById("quantity");
+    let description = document.getElementById("description");
+
+    let image1 = document.getElementById("img1");
+    let image2 = document.getElementById("img2");
+    let image3 = document.getElementById("img3");
+
+
+    const productDataObject = {
+        productName: productName.value,
+        brandId: brandSelect.value,
+        modelId: modelSelect.value,
+        colorId: colorSelect.value,
+        sizeId: sizeSelect.value,
+        price: parseFloat(price.value),
+        quantity: parseInt(quantity.value),
+        description: description.value
+    };
+
+    const formData = new FormData();
+    formData.append("product", JSON.stringify(productDataObject));
+    formData.append("images[]", image1.files[0]);
+    formData.append("images[]", image2.files[0]);
+    formData.append("images[]", image3.files[0]);
+
     try {
+        const response = await fetch("api/products/save-product", {
+            method: "POST",
+            body: formData
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data);
+        } else {
+            Notiflix.Notify.failure("", {
+                position: 'center-top'
+            });
+        }
 
     } catch (e) {
         Notiflix.Notify.failure(e.message, {
