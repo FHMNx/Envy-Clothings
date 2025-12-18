@@ -110,6 +110,15 @@
         </dependency>
         <!-- MAIL-TEMPLATE -->
 
+
+        <!-- FILE-EXTENSION -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.16.1</version>
+        </dependency>
+        <!-- FILE-EXTENSION -->
+
     </dependencies>
 
     <build>

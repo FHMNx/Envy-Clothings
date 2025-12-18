@@ -16,6 +16,41 @@ import java.time.LocalDateTime;
 
 public class ProductService {
 
+    public String updateProductTable(Product product) {
+
+        JsonObject responseObject = new JsonObject();
+        boolean status = false;
+        String message = "";
+
+        Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = hibernateSession.beginTransaction();
+        try {
+            hibernateSession.merge(product);
+            transaction.commit();
+            status = true;
+            message = "Product images uploading successfull";
+
+        } catch (HibernateException e) {
+            transaction.rollback();
+            message = "Product images uploading failed";
+        } finally {
+            hibernateSession.close();
+        }
+
+        responseObject.addProperty("status", status);
+        responseObject.addProperty("message", message);
+
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
+    public Product getProductById(int id) {
+        Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+        Product product = hibernateSession.find(Product.class, id);
+        hibernateSession.close();
+
+        return product;
+    }
+
     public String addNewProduct(ProductDTO productDTO, @Context HttpServletRequest request) {
         JsonObject responseObject = new JsonObject();
         boolean status = false;
