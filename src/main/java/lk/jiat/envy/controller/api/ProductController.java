@@ -1,20 +1,55 @@
 package lk.jiat.envy.controller.api;
 
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lk.jiat.envy.dto.ProductDTO;
+import lk.jiat.envy.entity.Product;
+import lk.jiat.envy.service.FileUploadService;
 import lk.jiat.envy.service.ProductService;
 import lk.jiat.envy.util.AppUtil;
+import org.glassfish.jersey.media.multipart.ContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 @Path("/products")
 public class ProductController {
+
+    @Path("/{productId}/upload-images")
+    @PUT
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response uploadProductImages(@PathParam("productId") int productId,
+                                        @FormDataParam("images[]") FormDataBodyPart formDataBodyPart,
+                                        @Context ServletContext context) {
+
+        List<FileUploadService.FileItem> fileItems = new ArrayList<>();
+        FileUploadService fileUploadService = new FileUploadService(context);
+        ProductService productService = new ProductService();
+        Product product = productService.getProductById(productId);
+
+        formDataBodyPart.getParent().getBodyParts().forEach(bodyPart -> {
+            InputStream inputStream = bodyPart.getEntityAs(InputStream.class);
+            ContentDisposition contentDisposition = bodyPart.getContentDisposition();
+            System.out.println(contentDisposition.getFileName());
+
+            FileUploadService.FileItem fileItem = fileUploadService.uploadFile("product/" + productId, inputStream, contentDisposition);
+            fileItems.add(fileItem);
+            product.getImages().add(fileItem.getFilePath());
+        });
+
+        String responseJson = productService.updateProductTable(product);
+        return Response.ok().entity(responseJson).build();
+    }
+
 
     @Path("/save-product")
     @POST
@@ -25,4 +60,5 @@ public class ProductController {
         String responseJson = new ProductService().addNewProduct(productDTO, request);
         return Response.ok().entity(responseJson).build();
     }
+
 }
