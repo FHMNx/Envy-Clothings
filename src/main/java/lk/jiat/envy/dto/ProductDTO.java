@@ -1,6 +1,7 @@
 package lk.jiat.envy.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class ProductDTO implements Serializable {
     private int productId;
@@ -13,9 +14,14 @@ public class ProductDTO implements Serializable {
     private String colorName;
     private int sizeId;
     private String sizeName;
+    private int categoryId;
+    private String categoryName;
     private double price;
     private int quantity;
     private String description;
+    private List<StockDTO> stockDTOList;
+    private List<String> images;
+
 
     public int getProductId() {
         return productId;
@@ -97,6 +103,22 @@ public class ProductDTO implements Serializable {
         this.sizeName = sizeName;
     }
 
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
     public double getPrice() {
         return price;
     }
@@ -119,5 +141,21 @@ public class ProductDTO implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<StockDTO> getStockDTOList() {
+        return stockDTOList;
+    }
+
+    public void setStockDTOList(List<StockDTO> stockDTOList) {
+        this.stockDTOList = stockDTOList;
+    }
+
+    public List<String> getImages() {
+        return images;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
     }
 }

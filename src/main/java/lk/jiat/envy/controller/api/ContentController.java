@@ -12,6 +12,14 @@ import lk.jiat.envy.service.ContentService;
 @Path("/data")
 public class ContentController {
 
+    @Path("/new-arrivals")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response loadNewArrivals() {
+        String responseJson = new ContentService().loadNewProductArrival();
+        return Response.ok().entity(responseJson).build();
+    }
+
     @Path("/cities")
     @GET
     @Produces(MediaType.APPLICATION_JSON)

@@ -1,10 +1,9 @@
 package lk.jiat.envy.service;
 
 import com.google.gson.JsonObject;
-import lk.jiat.envy.entity.Brand;
-import lk.jiat.envy.entity.Color;
-import lk.jiat.envy.entity.Model;
-import lk.jiat.envy.entity.Size;
+import lk.jiat.envy.dto.ProductDTO;
+import lk.jiat.envy.dto.StockDTO;
+import lk.jiat.envy.entity.*;
 import lk.jiat.envy.util.AppUtil;
 import lk.jiat.envy.util.HibernateUtil;
 import org.hibernate.Session;
@@ -13,6 +12,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContentService {
+
+    public String loadNewProductArrival() {
+        JsonObject responseObject = new JsonObject();
+
+        Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+        List<Product> productList = hibernateSession.createQuery("FROM Product p ORDER BY p.createdAt DESC", Product.class)
+                .setMaxResults(12)
+                .getResultList();
+
+        List<ProductDTO> productDTOList = new ArrayList<>();
+        for (Product product : productList) {
+            ProductDTO productDTO = new ProductDTO();
+            productDTO.setProductId(product.getId());
+            productDTO.setProductName(product.getTitle());
+            productDTO.setColorId(product.getColor().getId());
+            productDTO.setColorName(product.getColor().getName());
+            productDTO.setImages(product.getImages());
+
+            List<StockDTO> stockDTOList = new ArrayList<>();
+            for (Stock stock : product.getStocks()) {
+                StockDTO stockDTO = new StockDTO();
+                stockDTO.setProductId(product.getId());
+                stockDTO.setStockId(stock.getId());
+                stockDTO.setQuantity(stock.getQuantity());
+                stockDTO.setPrice(stock.getPrice());
+                stockDTOList.add(stockDTO);
+            }
+
+            productDTO.setStockDTOList(stockDTOList);
+            productDTOList.add(productDTO);
+
+        }
+
+        hibernateSession.close();
+
+        return AppUtil.GSON.toJson(responseObject);
+    }
 
     public String loadBrandDetails() {
         JsonObject responseObject = new JsonObject();
@@ -91,6 +127,9 @@ public class ContentService {
 
         List<Size> sizeList = hibernateSession.createQuery("FROM Size s", Size.class).getResultList();
         responseObject.add("size", AppUtil.GSON.toJsonTree(sizeList));
+
+        List<Category> categoryList = hibernateSession.createQuery("FROM Category c", Category.class).getResultList();
+        responseObject.add("category", AppUtil.GSON.toJsonTree(categoryList));
 
         hibernateSession.close();
 

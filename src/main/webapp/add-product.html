@@ -47,7 +47,7 @@
                         <span class="pc-mtext">Manage Products</span><span class="pc-arrow"><i
                                 data-feather="chevron-right"></i></span></a>
                     <ul class="pc-submenu">
-                        <li class="pc-item"><a class="pc-link" href="manage-products.html">Product Listing</a></li>
+                        <li class="pc-item"><a class="pc-link" href="product-listing.html">Product Listing</a></li>
                         <li class="pc-item"><a class="pc-link" href="add-product.html" id="product-anchor">Add Product</a></li>
                         <li class="pc-item"><a class="pc-link" href="edit-product.html">Edit Product</a></li>
                     </ul>
@@ -399,7 +399,7 @@
                                 <a href="#!">Products</a>
                             </li>
                             <li class="breadcrumb-item">
-                                <a href="manage-products.html">Manage Products</a>
+                                <a href="product-listing.html">Manage Products</a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page">
                                 Add Product
@@ -517,13 +517,20 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
+                                    <label class="form-label">Category</label>
+                                    <select class="form-select" id="categorySelect">
+                                        <option value="0">Select Category</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Price</label>
                                     <input type="text" class="form-control" placeholder="Enter price" id="price">
                                 </div>
 
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Quantity</label>
-                                    <input type="number" class="form-control" placeholder="Enter quantity" id="quantity">
+                                    <input type="number" class="form-control" placeholder="Enter quantity" id="quantity" min="1">
                                 </div>
 
                                 <div class="col-md-12 mb-3">
@@ -559,7 +566,7 @@
 <script src="assets/js/plugins/pcoded.js"></script>
 <script src="assets/js/plugins/feather.min.js"></script>
 <script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
-<script src="assets/js/product-management.js"></script>
+<script src="assets/js/add-product.js"></script>
 
 <script>
     function previewMultiImage(event, imageId) {

@@ -23,6 +23,10 @@ public class Product extends BaseEntity {
     private Color color;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "size_id")
     private Size size;
 
@@ -84,6 +88,14 @@ public class Product extends BaseEntity {
 
     public Model getModel() {
         return model;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public void setModel(Model model) {

@@ -1,3 +1,5 @@
+//ADD NEW PRODUCT PAGE
+
 window.addEventListener("load", async () => {
     Notiflix.Loading.standard("Loading...", {
         clickToClose: false,
@@ -92,9 +94,11 @@ async function loadProductSpecifications() {
             const data = await response.json();
             const colorSelect = document.getElementById("colorSelect");
             const sizeSelect = document.getElementById("sizeSelect");
+            const categorySelect = document.getElementById("categorySelect");
 
             renderDropdowns(colorSelect, data.color);
             renderDropdowns(sizeSelect, data.size);
+            renderDropdowns(categorySelect, data.category);
 
         } else {
             Notiflix.Notify.failure("product specification loading failed", {
@@ -119,16 +123,40 @@ function renderDropdowns(selector, list) {
 }
 
 async function saveProduct() {
+    let image1 = document.getElementById("img1");
+    let image2 = document.getElementById("img2");
+    let image3 = document.getElementById("img3");
+
+    if (!image1.files.length || !image2.files.length || !image3.files.length) {
+        Notiflix.Notify.failure("Please select 3 product images", {
+            position: 'center-top'
+        });
+        return;
+    }
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+
+    for (let img of [image1, image2, image3]) {
+        if (!allowedTypes.includes(img.files[0].type)) {
+            Notiflix.Notify.failure("Only JPG or PNG images are allowed", {
+                position: 'center-top'
+            });
+            return;
+        }
+    }
+
     Notiflix.Loading.standard("Loading...", {
         clickToClose: false,
         svgColor: '#0284c7'
     });
+
 
     let productName = document.getElementById("title");
     let brandSelect = document.getElementById("brandSelect");
     let modelSelect = document.getElementById("modelSelect");
     let colorSelect = document.getElementById("colorSelect");
     let sizeSelect = document.getElementById("sizeSelect");
+    let categorySelect = document.getElementById("categorySelect");
     let price = document.getElementById("price");
     let quantity = document.getElementById("quantity");
     let description = document.getElementById("description");
@@ -140,6 +168,7 @@ async function saveProduct() {
         modelId: modelSelect.value,
         colorId: colorSelect.value,
         sizeId: sizeSelect.value,
+        categoryId: categorySelect.value,
         price: parseFloat(price.value),
         quantity: parseInt(quantity.value),
         description: description.value
@@ -158,6 +187,14 @@ async function saveProduct() {
             const data = await response.json();
             if (data.status) {
                 await uploadProductImages(data.productId);
+                Notiflix.Report.success(
+                    'Envy Clothings',
+                    "New product has been successfully created in the system.",
+                    "okay",
+                    () => {
+                        window.location = "add-product.html"
+                    },
+                );
             } else {
                 Notiflix.Notify.failure(data.message, {
                     position: 'center-top'
@@ -179,6 +216,7 @@ async function saveProduct() {
 }
 
 async function uploadProductImages(productId) {
+
     let image1 = document.getElementById("img1");
     let image2 = document.getElementById("img2");
     let image3 = document.getElementById("img3");
@@ -196,9 +234,9 @@ async function uploadProductImages(productId) {
 
         if (response.ok) {
             const data = await response.json();
-            if(data.status){
+            if (data.status) {
 
-            }else{
+            } else {
                 Notiflix.Notify.failure(data.message, {
                     position: 'center-top'
                 });
@@ -216,3 +254,4 @@ async function uploadProductImages(productId) {
         });
     }
 }
+
