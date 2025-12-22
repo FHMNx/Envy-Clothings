@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.core.Context;
 import lk.jiat.envy.dto.UserDTO;
+import lk.jiat.envy.entity.Admin;
 import lk.jiat.envy.entity.Status;
 import lk.jiat.envy.entity.User;
 import lk.jiat.envy.mail.VerificationMailTemplate;
@@ -60,6 +61,15 @@ public class UserService {
                     } else {
                         HttpSession httpSession = request.getSession();
                         httpSession.setAttribute("user", singleUser);
+
+                        Admin admin = hibernateSession.createQuery("FROM Admin a WHERE a.user=:user", Admin.class)
+                                .setParameter("user", singleUser)
+                                .getSingleResultOrNull();
+
+                        if(admin != null && admin.getStatus().getName().equals(Status.Type.VERIFIED.name())) {
+                            httpSession.setAttribute("admin", admin);
+                        }
+
                         status = true;
                         message = "login successfully";
                     }

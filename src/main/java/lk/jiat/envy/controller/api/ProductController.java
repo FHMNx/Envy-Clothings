@@ -1,5 +1,6 @@
 package lk.jiat.envy.controller.api;
 
+import com.google.gson.JsonObject;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.*;
@@ -13,15 +14,20 @@ import lk.jiat.envy.service.ProductService;
 import lk.jiat.envy.util.AppUtil;
 import org.glassfish.jersey.media.multipart.ContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 @Path("/products")
 public class ProductController {
+
+    @Path("/all")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response loadAllUserProducts(@Context HttpServletRequest request) {
+        String responseJson = new ProductService().getAllProducts(request);
+        return Response.ok().entity(responseJson).build();
+    }
 
     @Path("/{productId}/upload-images")
     @PUT
@@ -31,18 +37,35 @@ public class ProductController {
                                         @FormDataParam("images[]") FormDataBodyPart formDataBodyPart,
                                         @Context ServletContext context) {
 
-        List<FileUploadService.FileItem> fileItems = new ArrayList<>();
+        JsonObject json = new JsonObject();
+        if (formDataBodyPart == null ||
+                formDataBodyPart.getParent().getBodyParts().size() != 3) {
+
+            json.addProperty("status", false);
+            json.addProperty("message", "please select 3 product images");
+
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(AppUtil.GSON.toJson(json))
+                    .build();
+        }
+
         FileUploadService fileUploadService = new FileUploadService(context);
         ProductService productService = new ProductService();
         Product product = productService.getProductById(productId);
 
+        if (product == null) {
+            json.addProperty("status", false);
+            json.addProperty("message", "Product not found");
+
+            return Response.status(Response.Status.NOT_FOUND).entity(AppUtil.GSON.toJson(json)).build();
+        }
+
         formDataBodyPart.getParent().getBodyParts().forEach(bodyPart -> {
             InputStream inputStream = bodyPart.getEntityAs(InputStream.class);
             ContentDisposition contentDisposition = bodyPart.getContentDisposition();
-            System.out.println(contentDisposition.getFileName());
 
             FileUploadService.FileItem fileItem = fileUploadService.uploadFile("product/" + productId, inputStream, contentDisposition);
-            fileItems.add(fileItem);
+
             product.getImages().add(fileItem.getFilePath());
         });
 

@@ -1,5 +1,5 @@
-class HeaderContent extends HTMLElement{
-    connectedCallback(){
+class HeaderContent extends HTMLElement {
+    connectedCallback() {
         this.innerHTML = `<nav>
         <div class="header-wrapper">
 
@@ -144,12 +144,15 @@ class HeaderContent extends HTMLElement{
                                             </div>
                                         </a></li>
 
-                                    <li><a href="admin-sign-in.html"><i class='bx bx-user-plus'></i>
-                                            <div>
-                                                <h5>Admin Account</h5>
-                                                <p>Manage everything at one place</p>
-                                            </div>
-                                        </a></li>
+                                    <li id="admin-link" style="display:none;">
+                                        <a href="admin-sign-in.html">
+                                            <i class='bx bx-user-plus'></i>
+                                                <div>
+                                                    <h5>Admin Account</h5>
+                                                    <p>Manage everything at one place</p>
+                                                </div>
+                                        </a>
+                                    </li>
 
                                     <li><a href="#"><i class='bx bx-package'></i>
                                             <div>
@@ -205,8 +208,35 @@ class HeaderContent extends HTMLElement{
 
             <i class='bx bx-menu toggle-navbar'></i>
         </div>
-    </nav>`
+    </nav>`;
+        this.checkAdminStatus();
+    }
+
+    async checkAdminStatus() {
+        try {
+            const response = await fetch("api/auth/admin-status");
+
+            if (!response.ok) {
+                return;
+            }
+            const data = await response.json();
+            console.log("Admin status:", data);
+
+            const adminLink = this.querySelector("#admin-link");
+
+            if (!adminLink) return;
+
+            if (data.isAdmin === true) {
+                adminLink.style.display = "block";
+            } else {
+                adminLink.style.display = "none";
+            }
+        } catch (e) {
+            Notiflix.Notify.failure(e.message, {
+                position: 'center-top'
+            });
+        }
     }
 }
 
-customElements.define("header-content" , HeaderContent);
+customElements.define("header-content", HeaderContent);
