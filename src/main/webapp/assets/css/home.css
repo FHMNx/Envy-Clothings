@@ -282,6 +282,59 @@
 
 /*-----------------------------------------------------------SLIDER-END-------------------------------------------------------*/
 
+/*-----------------------------------------------------------WOMEN-------------------------------------------------------*/
+
+
+
+.product1 .women-hero {
+    margin: 0px 50px;
+    text-align: left;
+}
+
+.hero-content {
+    max-width: 600px;
+}
+
+.hero-content p {
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 25px;
+    font-size: 0.8rem;
+}
+
+.btn-shop {
+    display: inline-block;
+    padding: 12px 28px;
+    background: #1a1a1a;
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.btn-shop:hover {
+    background: #088178;
+}
+
+.product1 .pro .like-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.like-btn i {
+    font-size: 19px;
+    color: #555;
+}
+
+.like-btn:hover i {
+    color: darkred;
+}
+
+/*-----------------------------------------------------------WOMEN-------------------------------------------------------*/
+
 /* ------------------------------------------------------ FEATURES SECTION-START -------------------------------------------- */
 .features-section {
     max-width: 1200px;
@@ -340,13 +393,13 @@
 
 
 /* --------------------------------------------------- NEW ARRIVAL SECTION-START --------------------------------------------- */
-#product1 {
+.product1 {
     text-align: center;
     background-color: #e8e8eb;
     padding: 50px 10px;
 }
 
-#product1 .pro-container {
+.product1 .pro-container {
     display: flex;
     justify-content: center;
     gap: 20px;
@@ -354,7 +407,7 @@
     flex-wrap: wrap;
 }
 
-#product1 .pro {
+.product1 .pro {
     width: 23%;
     min-width: 250px;
     padding: 10px 12px;
@@ -367,44 +420,44 @@
     background: white;
 }
 
-#product1 .pro:hover {
+.product1 .pro:hover {
     box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.06);
 }
 
-#product1 .pro img {
+.product1 .pro img {
     width: 100%;
     border-radius: 20px;
 }
 
-#product1 .pro .des {
+.product1 .pro .des {
     text-align: start;
     padding: 10px 0;
 }
 
-#product1 .pro .des span {
+.product1 .pro .des span {
     color: #606063;
     font-size: 12px;
 }
 
-#product1 .pro .des h5 {
+.product1 .pro .des h5 {
     padding-top: 7px;
     color: #1a1a1a;
     font-size: 14px;
 }
 
-#product1 .pro .des i {
+.product1 .pro .des i {
     font-size: 15px;
     color: #e0a100;
 }
 
-#product1 .pro .des h4 {
+.product1 .pro .des h4 {
     padding-top: 7px;
     font-size: 15px;
     font-weight: 700;
     color: #1a1a1a;
 }
 
-#product1 .pro .cart {
+.product1 .pro .cart {
     width: 40px;
     height: 40px;
     line-height: 40px;
@@ -419,24 +472,24 @@
 
 
 @media (max-width: 1024px) {
-    #product1 .pro {
+    .product1 .pro {
         width: 30%;
     }
 }
 
 @media (max-width: 768px) {
-    #product1 .pro {
+    .product1 .pro {
         width: 45%;
     }
 }
 
 @media (max-width: 480px) {
-    #product1 .pro {
+    .product1 .pro {
         width: 100%;
         min-width: auto;
     }
 
-    #product1 {
+    .product1 {
         padding: 10px;
     }
 }

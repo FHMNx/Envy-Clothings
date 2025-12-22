@@ -41,7 +41,8 @@ function renderNewArrivals(productList) {
 
             newArrival.innerHTML += `<div class="pro">
             <a href="single-product.html?productId=${product.productId}">
-             <img src="${product.images[0]}" alt="">
+             <img src="${product.images[2]}" alt="">
+              <a href="" class="like-btn"><i class='bx bxs-heart'></i></a>
             </a>
             <div class="des">
                 <span>Addidas</span>
@@ -60,15 +61,4 @@ function renderNewArrivals(productList) {
         </div>`
         });
     });
-
-    refreshAnimations();
-}
-
-function refreshAnimations() {
-    if (typeof sal === "function") {
-        sal();
-    }
-    if (typeof $ !== "undefined") {
-        $('.categrie-product-activation').slick('refresh');
-    }
 }
