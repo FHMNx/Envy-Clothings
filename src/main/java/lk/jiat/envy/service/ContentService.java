@@ -47,6 +47,9 @@ public class ContentService {
 
         hibernateSession.close();
 
+        responseObject.add("newArrivals" , AppUtil.GSON.toJsonTree(productDTOList));
+        responseObject.addProperty("status", true);
+
         return AppUtil.GSON.toJson(responseObject);
     }
 

@@ -66,7 +66,7 @@ public class ProductController {
 
             FileUploadService.FileItem fileItem = fileUploadService.uploadFile("product/" + productId, inputStream, contentDisposition);
 
-            product.getImages().add(fileItem.getFilePath());
+            product.getImages().add(fileItem.getFullUrl());
         });
 
         String responseJson = productService.updateProductTable(product);
