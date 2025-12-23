@@ -22,6 +22,40 @@ import java.util.Set;
 
 public class ProductService {
 
+    public String getSingleProduct(int productId) {
+        JsonObject responseObject = new JsonObject();
+
+        Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+
+        Product product = hibernateSession.find(Product.class, productId);
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setProductId(productId);
+        productDTO.setProductName(product.getTitle());
+        productDTO.setBrandName(product.getModel().getBrand().getName());
+        productDTO.setDescription(product.getDescription());
+        productDTO.setColorName(product.getColor().getName());
+        productDTO.setColorId(product.getColor().getId());
+        productDTO.setSizeId(product.getSize().getId());
+        productDTO.setSizeName(product.getSize().getName());
+
+        List<StockDTO> stockDTOList = new ArrayList<>();
+        for (Stock stock : product.getStocks()) {
+            StockDTO stockDTO = new StockDTO();
+            stockDTO.setProductId(stock.getProduct().getId());
+            stockDTO.setStockId(stock.getId());
+            stockDTO.setQuantity(stock.getQuantity());
+            stockDTO.setPrice(stock.getPrice());
+            stockDTOList.add(stockDTO);
+        }
+
+        productDTO.setStockDTOList(stockDTOList);
+        productDTO.setImages(product.getImages());
+
+        responseObject.add("singleProduct", AppUtil.GSON.toJsonTree(productDTO));
+        hibernateSession.close();
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
     public String getAllProducts(@Context HttpServletRequest request) {
         JsonObject responseObject = new JsonObject();
         boolean status = false;

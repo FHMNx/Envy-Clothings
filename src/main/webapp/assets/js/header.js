@@ -201,7 +201,7 @@ class HeaderContent extends HTMLElement {
 
                 <!-- Cart with badge -->
                 <div class="cart-icon">
-                    <i class='bx bx-cart'></i>
+                    <a href="cart.html"><i class='bx bx-cart'></i></a>
                     <span class="cart-badge">3</span>
                 </div>
             </div>
