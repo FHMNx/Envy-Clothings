@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 
 public class FileUploadService {
 
-    private static final String UPLOAD_DIRECTORY_NAME = "/uploads";
+    private static final String UPLOAD_DIRECTORY_NAME = "uploads";
     private final ServletContext context;
 
     public FileItem uploadFile(String directoryName, InputStream inputStream, ContentDisposition fileMetaData) {
@@ -55,27 +55,44 @@ public class FileUploadService {
             throw new WebApplicationException("Error while file uploading! Try again...");
         }
 
-        String appUrl = Env.get("app.url");
-        String url = context.getContextPath() + uploadPath + "/" + fileName;
-        String path = uploadPath + "/" + fileName;
-        String fullUrl = appUrl + uploadPath + "/" + fileName;   //https://localhost:8080/envyclothings/uploads/product/1/123456.png
+        String relativePath = pathName + "/" + fileName;
+        String fullUrl = context.getContextPath() + relativePath;
 
-        return new FileItem(fileName, contentDisposition.getFileName(), path, url, fullUrl);
+        return new FileItem( fileName, contentDisposition.getFileName(), relativePath, fullUrl,
+                uploadPath.toString() + "/" + fileName
+        );
     }
 
     public static class FileItem {
         private String fileName;
         private String originalFileName;
-        private String url;
+        private String relativePath;
         private String fullUrl;
-        private String filePath;
+        private String diskPath;
 
-        public FileItem(String fileName, String originalFileName, String url, String fullUrl, String filePath) {
+        public FileItem(String fileName, String originalFileName,
+                        String relativePath, String fullUrl, String diskPath) {
             this.fileName = fileName;
             this.originalFileName = originalFileName;
-            this.url = url;
+            this.relativePath = relativePath;
             this.fullUrl = fullUrl;
-            this.filePath = filePath;
+            this.diskPath = diskPath;
+        }
+
+        public String getRelativePath() {
+            return relativePath;
+        }
+
+        public void setRelativePath(String relativePath) {
+            this.relativePath = relativePath;
+        }
+
+        public String getDiskPath() {
+            return diskPath;
+        }
+
+        public void setDiskPath(String diskPath) {
+            this.diskPath = diskPath;
         }
 
         public String getFileName() {
@@ -94,13 +111,6 @@ public class FileUploadService {
             this.originalFileName = originalFileName;
         }
 
-        public String getUrl() {
-            return url;
-        }
-
-        public void setUrl(String url) {
-            this.url = url;
-        }
 
         public String getFullUrl() {
             return fullUrl;
@@ -110,13 +120,6 @@ public class FileUploadService {
             this.fullUrl = fullUrl;
         }
 
-        public String getFilePath() {
-            return filePath;
-        }
-
-        public void setFilePath(String filePath) {
-            this.filePath = filePath;
-        }
     }
 
 }

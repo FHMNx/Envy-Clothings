@@ -41,7 +41,7 @@ function renderNewArrivals(productList) {
 
             newArrival.innerHTML += `<div class="pro">
             <a href="single-product.html?productId=${product.productId}">
-             <img src="${product.images[2]}" alt="">
+             <img src="${product.images[0]}" alt="">
               <a href="" class="like-btn"><i class='bx bxs-heart'></i></a>
             </a>
             <div class="des">

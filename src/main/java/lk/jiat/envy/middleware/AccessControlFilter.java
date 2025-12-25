@@ -15,10 +15,10 @@ public class AccessControlFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
         HttpSession httpSession = request.getSession(false);
-        if (httpSession != null && httpSession.getAttribute("user") != null) {
-            filterChain.doFilter(servletRequest, servletResponse);
-        } else {
+        if (httpSession == null || httpSession.getAttribute("user") == null) {
             response.sendRedirect(request.getContextPath() + "/sign-in.html");
+            return;
         }
+        filterChain.doFilter(servletRequest, servletResponse);
     }
 }

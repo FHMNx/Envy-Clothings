@@ -36,7 +36,7 @@ async function loadSingleProduct() {
             });
 
             document.getElementById("title").innerHTML = product.productName;
-            document.getElementById("price").innerHTML = new Intl.NumberFormat("en-US", {
+            document.getElementById("price").innerHTML = "LKR " + new Intl.NumberFormat("en-US", {
                 minimumFractionDigits: 2
             }).format(product.stockDTOList[0].price);
 

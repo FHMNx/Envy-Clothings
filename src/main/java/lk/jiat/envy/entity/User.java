@@ -2,6 +2,7 @@ package lk.jiat.envy.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -41,12 +42,35 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private Set<Cart> carts = new HashSet<>();
 
+    @Column(name = "remember_token", length = 255)
+    private String rememberToken;
+
+    @Column(name = "remember_token_expiry")
+    private LocalDateTime rememberTokenExpiry;
+
+
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getRememberToken() {
+        return rememberToken;
+    }
+
+    public void setRememberToken(String rememberToken) {
+        this.rememberToken = rememberToken;
+    }
+
+    public LocalDateTime getRememberTokenExpiry() {
+        return rememberTokenExpiry;
+    }
+
+    public void setRememberTokenExpiry(LocalDateTime rememberTokenExpiry) {
+        this.rememberTokenExpiry = rememberTokenExpiry;
     }
 
     public String getFirstName() {

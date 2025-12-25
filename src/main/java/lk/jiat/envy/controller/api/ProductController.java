@@ -16,10 +16,46 @@ import org.glassfish.jersey.media.multipart.ContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import javax.print.attribute.standard.Media;
 import java.io.InputStream;
+import java.util.List;
 
 @Path("/products")
 public class ProductController {
+
+    @Path("/{productId}/update-images")
+    @PUT
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateProductImages(
+            @PathParam("productId") int productId,
+            @FormDataParam("images") List<FormDataBodyPart> images,
+            @FormDataParam("indexes") List<Integer> indexes,
+            @Context HttpServletRequest request,
+            @Context ServletContext context) {
+
+        String responseJson = new ProductService().updateProductImages(productId, images, indexes, request, context);
+        return Response.ok().entity(responseJson).build();
+    }
+
+
+    @Path("/update-product")
+    @PUT
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateProduct(@FormDataParam("product") String productJson, @Context HttpServletRequest request) {
+        ProductDTO productDTO = AppUtil.GSON.fromJson(productJson, ProductDTO.class);
+        String responseJson = new ProductService().updateProduct(productDTO, request);
+        return Response.ok().entity(responseJson).build();
+    }
+
+    @Path("/get-selected-product")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getProduct(@QueryParam("productId") int id) {
+        String responseJson = new ProductService().getSelectedProduct(id);
+        return Response.ok().entity(responseJson).build();
+    }
 
     @Path("/single-product")
     @GET
@@ -36,6 +72,7 @@ public class ProductController {
         String responseJson = new ProductService().getAllProducts(request);
         return Response.ok().entity(responseJson).build();
     }
+
 
     @Path("/{productId}/upload-images")
     @PUT
@@ -74,7 +111,7 @@ public class ProductController {
 
             FileUploadService.FileItem fileItem = fileUploadService.uploadFile("product/" + productId, inputStream, contentDisposition);
 
-            product.getImages().add(fileItem.getFullUrl());
+            product.getImages().add(fileItem.getRelativePath());
         });
 
         String responseJson = productService.updateProductTable(product);

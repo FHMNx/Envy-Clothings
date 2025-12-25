@@ -1,6 +1,7 @@
 package lk.jiat.envy.controller.api;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -42,9 +43,9 @@ public class UserController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response userLogin(String jsonData, @Context HttpServletRequest request) {
+    public Response userLogin(String jsonData, @Context HttpServletRequest request, @Context HttpServletResponse  response) {
         UserDTO userDTO = AppUtil.GSON.fromJson(jsonData, UserDTO.class);
-        String responseJson = new UserService().userLogin(userDTO, request);
+        String responseJson = new UserService().userLogin(userDTO, request , response);
         return Response.ok().entity(responseJson).build();
     }
 }

@@ -74,10 +74,12 @@ async function signIn() {
 
     let email = document.getElementById("email_input");
     let password = document.getElementById("password_input");
+    let rememberMe = document.getElementById("rememberMe").checked;
 
     const userLoginObj = {
         email: email.value,
-        password: password.value
+        password: password.value,
+        rememberMe: rememberMe
     }
 
     try {
@@ -92,6 +94,7 @@ async function signIn() {
         if (response.ok) {
             const data = await response.json();
             if (data.status) {
+                console.log(rememberMe);
                 Notiflix.Report.success(
                     'Envy Clothings',
                     data.message,

@@ -35,7 +35,7 @@ async function loadAllProducts() {
                                         <span class="badge bg-light-success border border-success">Active</span>
                                     </td>
                                     <td class="text-end">
-                                        <a href="edit-product.html" class="btn btn-sm btn-light-primary me-1">
+                                        <a href="edit-product.html?productId=${product.productId}" class="btn btn-sm btn-light-primary me-1">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
                                         <a class="btn btn-sm btn-light-danger">

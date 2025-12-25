@@ -1,7 +1,9 @@
 package lk.jiat.envy.service;
 
 import com.google.gson.JsonObject;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.core.Context;
 import lk.jiat.envy.dto.UserDTO;
@@ -12,6 +14,7 @@ import lk.jiat.envy.mail.VerificationMailTemplate;
 import lk.jiat.envy.provider.MailServiceProvider;
 import lk.jiat.envy.util.AppUtil;
 import lk.jiat.envy.util.HibernateUtil;
+import lk.jiat.envy.util.TokenUtil;
 import lk.jiat.envy.validation.Validator;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -21,7 +24,7 @@ import java.time.LocalDateTime;
 
 public class UserService {
 
-    public String userLogin(UserDTO userDTO, @Context HttpServletRequest request) {
+    public String userLogin(UserDTO userDTO, @Context HttpServletRequest request , @Context HttpServletResponse response ) {
         JsonObject responseObject = new JsonObject();
         boolean status = false;
         String message = "";
@@ -66,9 +69,32 @@ public class UserService {
                                 .setParameter("user", singleUser)
                                 .getSingleResultOrNull();
 
-                        if(admin != null && admin.getStatus().getName().equals(Status.Type.VERIFIED.name())) {
+                        if (admin != null && admin.getStatus().getName().equals(Status.Type.VERIFIED.name())) {
                             httpSession.setAttribute("admin", admin);
                         }
+
+                        if (userDTO.isRememberMe()) {
+                            String token = TokenUtil.generateToken();
+                            LocalDateTime expiry = LocalDateTime.now().plusDays(30);
+
+                            Transaction transaction = null;
+                            try {
+                                transaction = hibernateSession.beginTransaction();
+                                singleUser.setRememberToken(token);
+                                singleUser.setRememberTokenExpiry(expiry);
+                                hibernateSession.update(singleUser);
+                                transaction.commit();
+                            } catch (Exception e) {
+                                if (transaction != null) transaction.rollback();
+                                throw e;
+                            }
+
+                            Cookie rememberCookie = new Cookie("remember_me", token);
+                            rememberCookie.setMaxAge(30 * 24 * 60 * 60);
+                            rememberCookie.setHttpOnly(true);
+                            rememberCookie.setPath("/");
+
+                            response.addCookie(rememberCookie);                       }
 
                         status = true;
                         message = "login successfully";
