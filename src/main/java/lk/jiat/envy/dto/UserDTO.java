@@ -18,6 +18,7 @@ public class UserDTO implements Serializable {
     private String cityName;
     private String newPassword;
     private String confirmPassword;
+    private boolean rememberMe;
 
     public UserDTO() {
     }
@@ -141,5 +142,13 @@ public class UserDTO implements Serializable {
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
+    }
+
+    public boolean isRememberMe() {
+        return rememberMe;
+    }
+
+    public void setRememberMe(boolean rememberMe) {
+        this.rememberMe = rememberMe;
     }
 }
