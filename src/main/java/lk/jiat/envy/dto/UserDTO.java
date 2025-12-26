@@ -19,6 +19,7 @@ public class UserDTO implements Serializable {
     private String newPassword;
     private String confirmPassword;
     private boolean rememberMe;
+    private String token;
 
     public UserDTO() {
     }
@@ -49,6 +50,14 @@ public class UserDTO implements Serializable {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public void setEmail(String email) {

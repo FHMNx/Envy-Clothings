@@ -141,6 +141,10 @@ public class ProductService {
                     List<String> existingImages = product.getImages();
                     FileUploadService uploadService = new FileUploadService(context);
 
+//                    System.out.println("Received images: " + images.size());
+//                    System.out.println("Received indexes: " + indexes);
+
+
                     for (int x = 0; x < images.size(); x++) {
                         FormDataBodyPart part = images.get(x);
                         int index = indexes.get(x);
@@ -149,8 +153,12 @@ public class ProductService {
                         ContentDisposition cd = part.getContentDisposition();
 
                         FileUploadService.FileItem file = uploadService.uploadFile("product/" + productId, is, cd);
+                        while (existingImages.size() <= index) {
+                            existingImages.add("");
+                        }
                         existingImages.set(index, file.getRelativePath());
                     }
+//                    System.out.println("Updated images: " + existingImages);
 
                     product.setUpdatedAt(LocalDateTime.now());
                     hibernateSession.merge(product);
@@ -237,6 +245,7 @@ public class ProductService {
         productDTO.setStockDTOList(stockDTOList);
         productDTO.setImages(product.getImages());
 
+        responseObject.addProperty("status" , true);
         responseObject.add("singleProduct", AppUtil.GSON.toJsonTree(productDTO));
         hibernateSession.close();
         return AppUtil.GSON.toJson(responseObject);

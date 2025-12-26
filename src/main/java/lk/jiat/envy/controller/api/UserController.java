@@ -15,6 +15,26 @@ import lk.jiat.envy.util.AppUtil;
 @Path("/users")
 public class UserController {
 
+    @Path("/reset-password")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response resetPassword(String jsonData) {
+        UserDTO userDTO = AppUtil.GSON.fromJson(jsonData, UserDTO.class);
+        String responseJson = new UserService().resetPassword(userDTO);
+        return Response.ok().entity(responseJson).build();
+    }
+
+    @Path("/forgot-password")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response forgotPassword(String jsonData) {
+        UserDTO userDTO = AppUtil.GSON.fromJson(jsonData, UserDTO.class);
+        String responseJson = new UserService().forgotPassword(userDTO);
+        return Response.ok().entity(responseJson).build();
+    }
+
     @IsUser
     @Path("/logout")
     @GET
@@ -43,9 +63,9 @@ public class UserController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response userLogin(String jsonData, @Context HttpServletRequest request, @Context HttpServletResponse  response) {
+    public Response userLogin(String jsonData, @Context HttpServletRequest request, @Context HttpServletResponse response) {
         UserDTO userDTO = AppUtil.GSON.fromJson(jsonData, UserDTO.class);
-        String responseJson = new UserService().userLogin(userDTO, request , response);
+        String responseJson = new UserService().userLogin(userDTO, request, response);
         return Response.ok().entity(responseJson).build();
     }
 }
