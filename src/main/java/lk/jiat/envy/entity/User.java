@@ -48,6 +48,13 @@ public class User extends BaseEntity {
     @Column(name = "remember_token_expiry")
     private LocalDateTime rememberTokenExpiry;
 
+    @Column(name = "password_reset_token", length = 255)
+    private String passwordResetToken;
+
+    @Column(name = "password_reset_expiry")
+    private LocalDateTime passwordResetExpiry;
+
+
 
     public int getId() {
         return id;
@@ -63,6 +70,22 @@ public class User extends BaseEntity {
 
     public void setRememberToken(String rememberToken) {
         this.rememberToken = rememberToken;
+    }
+
+    public String getPasswordResetToken() {
+        return passwordResetToken;
+    }
+
+    public void setPasswordResetToken(String passwordResetToken) {
+        this.passwordResetToken = passwordResetToken;
+    }
+
+    public LocalDateTime getPasswordResetExpiry() {
+        return passwordResetExpiry;
+    }
+
+    public void setPasswordResetExpiry(LocalDateTime passwordResetExpiry) {
+        this.passwordResetExpiry = passwordResetExpiry;
     }
 
     public LocalDateTime getRememberTokenExpiry() {

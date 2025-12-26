@@ -10,6 +10,7 @@ import lk.jiat.envy.dto.UserDTO;
 import lk.jiat.envy.entity.Admin;
 import lk.jiat.envy.entity.Status;
 import lk.jiat.envy.entity.User;
+import lk.jiat.envy.mail.ForgotPasswordMailTemplate;
 import lk.jiat.envy.mail.VerificationMailTemplate;
 import lk.jiat.envy.provider.MailServiceProvider;
 import lk.jiat.envy.util.AppUtil;
@@ -24,7 +25,7 @@ import java.time.LocalDateTime;
 
 public class UserService {
 
-    public String userLogin(UserDTO userDTO, @Context HttpServletRequest request , @Context HttpServletResponse response ) {
+    public String userLogin(UserDTO userDTO, @Context HttpServletRequest request, @Context HttpServletResponse response) {
         JsonObject responseObject = new JsonObject();
         boolean status = false;
         String message = "";
@@ -94,7 +95,8 @@ public class UserService {
                             rememberCookie.setHttpOnly(true);
                             rememberCookie.setPath("/");
 
-                            response.addCookie(rememberCookie);                       }
+                            response.addCookie(rememberCookie);
+                        }
 
                         status = true;
                         message = "login successfully";
@@ -245,6 +247,75 @@ public class UserService {
 
         responseObject.addProperty("status", status);
         responseObject.addProperty("message", message);
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
+    public String forgotPassword(UserDTO userDto) {
+        JsonObject responseObject = new JsonObject();
+        boolean status = false;
+        String message = "";
+
+        if (userDto.getEmail() == null || userDto.getEmail().isBlank()) {
+            message = "Email address is required";
+        } else {
+
+            Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+            User user = hibernateSession.createNamedQuery("user.getByEmail", User.class)
+                    .setParameter("email", userDto.getEmail())
+                    .getSingleResultOrNull();
+
+            if(user == null){
+                message = "No account found with this email";
+            }else{
+                String token = TokenUtil.generateToken();
+                LocalDateTime expiry = LocalDateTime.now().plusMinutes(10);
+
+                Transaction transaction = hibernateSession.beginTransaction();
+                user.setPasswordResetToken(token);
+                user.setPasswordResetExpiry(expiry);
+                hibernateSession.update(user);
+                transaction.commit();
+
+                ForgotPasswordMailTemplate forgotPasswordMailTemplate = new ForgotPasswordMailTemplate(user.getEmail(), token);
+                MailServiceProvider.getInstance().sendMail(forgotPasswordMailTemplate);
+
+                status = true;
+                message = "Password reset email sent";
+
+            }
+            hibernateSession.close();
+        }
+
+        responseObject.addProperty("status", status);
+        responseObject.addProperty("message", message);
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
+    public String resetPassword(UserDTO userDTO) {
+        JsonObject responseObject = new JsonObject();
+        Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+
+        User user = hibernateSession.createQuery("FROM User u WHERE u.passwordResetToken = :token AND u.passwordResetExpiry > CURRENT_TIMESTAMP", User.class)
+                .setParameter("token", userDTO.getToken())
+                .getSingleResultOrNull();
+
+        if (user == null) {
+            responseObject.addProperty("status", false);
+            responseObject.addProperty("message", "Invalid or expired reset token");
+        } else {
+            Transaction transaction = hibernateSession.beginTransaction();
+            user.setPassword(userDTO.getNewPassword());
+
+            user.setPasswordResetToken(null);
+            user.setPasswordResetExpiry(null);
+            hibernateSession.update(user);
+            transaction.commit();
+
+            responseObject.addProperty("status", true);
+            responseObject.addProperty("message", "Password reset successfully");
+        }
+
+        hibernateSession.close();
         return AppUtil.GSON.toJson(responseObject);
     }
 
