@@ -12,6 +12,30 @@ import lk.jiat.envy.service.ContentService;
 @Path("/data")
 public class ContentController {
 
+    @Path("men-section")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getMenSection() {
+        String responseJson = new ContentService().loadMenSection();
+        return Response.ok().entity(responseJson).build();
+    }
+
+    @Path("kids-section")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getKidsSection() {
+        String responseJson = new ContentService().loadKidsSection();
+        return Response.ok().entity(responseJson).build();
+    }
+
+    @Path("women-section")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getWomenSection() {
+        String responseJson = new ContentService().loadWomenSection();
+        return Response.ok().entity(responseJson).build();
+    }
+
     @Path("/new-arrivals")
     @GET
     @Produces(MediaType.APPLICATION_JSON)

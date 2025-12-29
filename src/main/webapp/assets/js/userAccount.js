@@ -221,7 +221,7 @@ async function userLogOut() {
 
     try {
         const response = await fetch("api/users/logout", {
-            method: "GET",
+            method: "POST",
             credentials: "include"
         });
         if (response.status === 200) {
