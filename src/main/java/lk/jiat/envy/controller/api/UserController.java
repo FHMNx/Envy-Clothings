@@ -1,5 +1,6 @@
 package lk.jiat.envy.controller.api;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -9,6 +10,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lk.jiat.envy.annotation.IsUser;
 import lk.jiat.envy.dto.UserDTO;
+import lk.jiat.envy.entity.User;
 import lk.jiat.envy.service.UserService;
 import lk.jiat.envy.util.AppUtil;
 
@@ -37,15 +39,25 @@ public class UserController {
 
     @IsUser
     @Path("/logout")
-    @GET
-    public Response logout(@Context HttpServletRequest request) {
+    @POST
+    public Response logout(@Context HttpServletRequest request , @Context HttpServletResponse response) {
         HttpSession httpSession = request.getSession(false);
-        if (httpSession != null && httpSession.getAttribute("user") != null) {
-            httpSession.invalidate();
-            return Response.status(Response.Status.OK).build();
-        } else {
+
+        if (httpSession == null || httpSession.getAttribute("user") == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
+
+        User user = (User) httpSession.getAttribute("user");
+        httpSession.invalidate();
+
+        Cookie cookie = new Cookie("remember_me", "");
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
+
+        new UserService().invalidateRememberMeToken(user.getId());
+        return Response.ok().build();
     }
 
 

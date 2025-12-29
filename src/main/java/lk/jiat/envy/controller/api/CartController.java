@@ -18,7 +18,6 @@ public class CartController {
                               @Context HttpServletRequest request) {
         String responseJson = new CartService().addToCart(stockId, qty, request);
         return Response.ok().entity(responseJson).build();
-
     }
 
     @Path("/load-carts")

@@ -319,4 +319,26 @@ public class UserService {
         return AppUtil.GSON.toJson(responseObject);
     }
 
+    public void invalidateRememberMeToken(int userId){
+
+        Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = hibernateSession.beginTransaction();
+
+        try {
+                User user = hibernateSession.find(User.class, userId);
+
+                if(user != null){
+                    user.setRememberToken(null);
+                    user.setRememberTokenExpiry(null);
+                    hibernateSession.merge(user);
+                }
+
+                transaction.commit();
+        } catch (HibernateException e) {
+            throw new RuntimeException(e);
+        }finally {
+            hibernateSession.close();
+        }
+    }
+
 }
