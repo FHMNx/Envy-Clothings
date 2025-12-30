@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Envy Clothings - Advanced Search</title>
+
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/home.css">
+    <link rel="icon" href="assets/images/logo/envy.png" type="image/x-icon">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <link rel="icon" href="assets/images/logo/envy.png" type="image/x-icon">
+
+    <style>
+
+        .search-page {
+            padding: 110px 9% 40px;
+            display: flex;
+            gap: 40px;
+        }
+
+        /* FILTER PANEL */
+        .filter-panel {
+            width: 260px;
+        }
+
+        .filter-panel h3 {
+            margin-bottom: 20px;
+        }
+
+        .filter-group {
+            margin-bottom: 20px;
+        }
+
+        .filter-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .filter-group select,
+        .filter-group input[type="range"] {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+
+        .checkbox-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .price-range {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+
+        .filter-btn {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #000;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        /* SEARCH RESULTS */
+        .search-results {
+            flex: 1;
+        }
+
+        /* ================= ADVANCED SEARCH – UI ENHANCEMENTS ================= */
+
+        body {
+            background: #f7f7f7;
+            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* MAIN LAYOUT */
+        .search-page {
+            padding: 120px 8% 50px;
+            gap: 50px;
+        }
+
+        /* ================= FILTER PANEL ================= */
+        .filter-panel {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+            height: fit-content;
+            position: sticky;
+            top: 120px;
+        }
+
+        .filter-panel h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 12px;
+        }
+
+        /* FILTER GROUP */
+        .filter-group {
+            margin-bottom: 22px;
+        }
+
+        .filter-group label {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #222;
+        }
+
+        /* SELECT & RANGE */
+        .filter-group select,
+        .filter-group input[type="range"] {
+            width: 100%;
+            padding: 9px 10px;
+            font-size: 14px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background: #fafafa;
+            transition: all 0.3s ease;
+        }
+
+        .filter-group select:focus,
+        .filter-group input[type="range"]:focus {
+            border-color: #000;
+            background: #fff;
+        }
+
+        /* CHECKBOX GROUP */
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            color: #444;
+        }
+
+        .checkbox-group input {
+            accent-color: #000;
+        }
+
+        /* PRICE RANGE */
+        .price-range {
+            font-size: 12px;
+            color: #666;
+            margin-top: 6px;
+        }
+
+        /* APPLY BUTTON */
+        .filter-panel button {
+            width: 100%;
+            padding: 11px;
+            font-size: 14px;
+            border-radius: 30px;
+            border: 1px solid #000;
+            background: #000;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-panel button:hover {
+            background: transparent;
+            color: #000;
+        }
+
+        /* ================= SEARCH RESULTS ================= */
+        .search-results {
+            background: transparent;
+        }
+
+        /* TOP BAR */
+        .search-results > div:first-child {
+            background: #ffffff;
+            padding: 14px 18px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-results p {
+            color: #444;
+        }
+
+        /* SORT SELECT */
+        .search-results select {
+            padding: 7px 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 13px;
+            background: #fafafa;
+        }
+
+
+        /* ================= RESPONSIVE ================= */
+        @media (max-width: 992px) {
+            .filter-panel {
+                position: relative;
+                top: unset;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .search-results > div:first-child {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+
+        .search-results h2 {
+            margin-bottom: 20px;
+        }
+
+
+        @media (max-width: 992px) {
+
+            .search-page {
+                flex-direction: column;
+            }
+
+            .filter-panel {
+                width: 100%;
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+
+            .filter-btn {
+                grid-column: span 2;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+
+            .search-page {
+                padding: 100px 5% 30px;
+            }
+
+            .filter-panel {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-btn {
+                grid-column: span 1;
+            }
+
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* -------------------- ADVANCED SEARCH PAGE -------------------- */
+
+    </style>
+</head>
+<body>
+
+<header class="site-header">
+    <header-content></header-content>
+</header>
+
+
+<div class="search-page">
+
+    <!-- FILTER SECTION -->
+    <aside class="filter-panel">
+
+        <h3>Filter Products</h3>
+
+        <div class="filter-group">
+            <label>Category</label>
+            <select class="w-full px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black">
+                <option value="">All</option>
+                <option>Men</option>
+                <option>Women</option>
+                <option>Kids</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>Brand</label>
+            <select class="w-full px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black">
+                <option value="">All Brands</option>
+                <option>Nike</option>
+                <option>Adidas</option>
+                <option>Puma</option>
+                <option>Zara</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>Size</label>
+            <div class="checkbox-group">
+                <label><input type="checkbox"> S</label>
+                <label><input type="checkbox"> M</label>
+                <label><input type="checkbox"> L</label>
+                <label><input type="checkbox"> XL</label>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <label>Color</label>
+            <select class="w-full px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black">
+                <option value="">All Colors</option>
+                <option>Black</option>
+                <option>White</option>
+                <option>Pink</option>
+                <option>Blue</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>Price Range</label>
+            <input type="range" min="1000" max="20000">
+            <div class="price-range">
+                <span>Rs 1,000</span>
+                <span>Rs 20,000</span>
+            </div>
+        </div>
+
+        <button class="w-full py-2 border border-black text-sm hover:bg-black hover:text-white transition">
+            Apply Filters
+        </button>
+
+
+    </aside>
+
+    <!-- PRODUCTS SECTION -->
+    <section class="search-results">
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+            <p style="font-size:14px;">Showing <strong>1–10</strong> of <strong>86</strong> results</p>
+
+            <select style="padding:6px 10px; border:1px solid #ccc;">
+                <option value="latest">Sort by Latest</option>
+                <option value="oldest">Sort by Oldest</option>
+                <option value="price_low">Price: Low to High</option>
+                <option value="price_high">Price: High to Low</option>
+            </select>
+        </div>
+
+
+        <section class="product1" style="background: transparent; padding: 0;">
+
+            <div class="pro-container">
+
+                <!-- PRODUCT CARD -->
+                <div class="pro">
+                    <img src="assets/images/products/f2.jpg" alt="">
+                    <a href="#" class="like-btn">
+                        <i class="bx bxs-heart"></i>
+                    </a>
+
+                    <div class="des">
+                        <span>Addidas</span>
+                        <h5>Cartoon Astronaut T-Shirts</h5>
+                        <div class="star">
+                            <i class="bx bx-star"></i>
+                            <i class="bx bx-star"></i>
+                            <i class="bx bx-star"></i>
+                            <i class="bx bx-star"></i>
+                            <i class="bx bx-star"></i>
+                        </div>
+                        <h4>Rs 7,800</h4>
+                    </div>
+
+                    <a href="#"><i class="bx bx-cart cart"></i></a>
+                </div>
+
+                <!-- DUPLICATE PRODUCTS (BACKEND LOOP) -->
+                <div class="pro">
+                    <img src="assets/images/products/f3.jpg" alt="">
+                    <a href="#" class="like-btn">
+                        <i class="bx bxs-heart"></i>
+                    </a>
+
+                    <div class="des">
+                        <span>Nike</span>
+                        <h5>Men Sports Hoodie</h5>
+                        <div class="star">
+                            <i class="bx bx-star"></i>
+                            <i class="bx bx-star"></i>
+                            <i class="bx bx-star"></i>
+                            <i class="bx bx-star"></i>
+                            <i class="bx bx-star"></i>
+                        </div>
+                        <h4>Rs 9,500</h4>
+                    </div>
+
+                    <a href="#"><i class="bx bx-cart cart"></i></a>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PAGINATION -->
+        <div class="flex justify-center mt-10">
+            <nav class="flex items-center gap-1 text-sm">
+
+                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black">‹</a>
+
+                <a href="#" class="px-3 py-2 border border-black bg-black text-white">1</a>
+
+                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black">2</a>
+
+                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black">3</a>
+
+                <span class="px-3 py-2 border border-gray-300">...</span>
+
+                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black">10</a>
+
+                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black">›</a>
+
+            </nav>
+        </div>
+
+
+    </section>
+
+</div>
+
+<footer>
+    <footer-content></footer-content>
+</footer>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/js/header.js"></script>
+<script src="assets/js/footer.js"></script>
+<script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/advanced-search.js"></script>
+</body>
+</html>

@@ -225,7 +225,7 @@ public class ContentService {
         return AppUtil.GSON.toJson(responseObject);
     }
 
-    private static List<JsonObject> brands(List<Brand> brandList) {
+    public static List<JsonObject> brands(List<Brand> brandList) {
         List<JsonObject> brandJson = new ArrayList<>();
         for (Brand b : brandList) {
             JsonObject object = new JsonObject();
