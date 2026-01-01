@@ -198,6 +198,131 @@
             background: #fafafa;
         }
 
+        /* ACCORDION FILTER SIDEBAR */
+
+        .axil-shop-sidebar {
+            padding: 25px;
+        }
+
+        .toggle-list {
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+        }
+
+        .toggle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 10px 0;
+        }
+
+        .toggle-header i {
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-content {
+            list-style: none;
+            padding: 10px 0 15px;
+        }
+
+        /* SMOOTH ACCORDION TRANSITION */
+
+        .toggle-content {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(-6px);
+            transition:
+                    max-height 0.45s ease,
+                    opacity 0.3s ease,
+                    transform 0.3s ease;
+        }
+
+        /* OPEN STATE */
+        .toggle-list.active .toggle-content {
+            max-height: 500px; /* enough for content */
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ICON ROTATION SMOOTH */
+        .toggle-header i {
+            transition: transform 0.35s ease;
+        }
+
+        .toggle-list:not(.active) .toggle-header i {
+            transform: rotate(0deg);
+        }
+
+        .toggle-list.active .toggle-header i {
+            transform: rotate(180deg);
+        }
+
+        .toggle-list.active .toggle-header i {
+            transform: rotate(0deg);
+        }
+
+        .toggle-list:not(.active) .toggle-header i {
+            transform: rotate(90deg);
+        }
+
+        .toggle-content li {
+            margin-bottom: 10px;
+        }
+
+        .toggle-content li a {
+            font-size: 13px;
+            color: #444;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .toggle-content li a:hover {
+            color: #000;
+            font-weight: 500;
+        }
+
+        /* COLORS */
+        .toggle-content.colors {
+            display: flex;
+            gap: 10px;
+        }
+
+        .toggle-content.colors li {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* BUTTONS */
+        .apply-btn {
+            width: 100%;
+            background: #ff4f7a;
+            border: none;
+            padding: 12px;
+            border-radius: 30px;
+            color: #fff;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        .reset-btn {
+            width: 100%;
+            background: #3b82f6;
+            border: none;
+            padding: 12px;
+            border-radius: 30px;
+            color: #fff;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+
 
         /* ================= RESPONSIVE ================= */
         @media (max-width: 992px) {
@@ -264,6 +389,7 @@
         /* -------------------- ADVANCED SEARCH PAGE -------------------- */
 
     </style>
+
 </head>
 <body>
 
@@ -275,73 +401,77 @@
 <div class="search-page">
 
     <!-- FILTER SECTION -->
-    <aside class="filter-panel">
+    <aside class="filter-panel axil-shop-sidebar">
 
         <h3>Filter Products</h3>
 
-        <div class="filter-group">
-            <label>Category</label>
-            <select class="w-full px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black">
-                <option value="">All</option>
-                <option>Men</option>
-                <option>Women</option>
-                <option>Kids</option>
-            </select>
+        <!-- BRAND -->
+        <div class="toggle-list active">
+            <div class="toggle-header">
+                <span>BRAND</span>
+                <i class="bx bx-minus"></i>
+            </div>
+            <ul class="toggle-content" id="brand-options">
+            </ul>
         </div>
 
-        <div class="filter-group">
-            <label>Brand</label>
-            <select class="w-full px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black">
-                <option value="">All Brands</option>
-                <option>Nike</option>
-                <option>Adidas</option>
-                <option>Puma</option>
-                <option>Zara</option>
-            </select>
+        <!-- CONDITION -->
+        <div class="toggle-list active">
+            <div class="toggle-header">
+                <span>CATEGORY</span>
+                <i class="bx bx-minus"></i>
+            </div>
+            <ul class="toggle-content" id="category-options">
+            </ul>
         </div>
 
-        <div class="filter-group">
-            <label>Size</label>
-            <div class="checkbox-group">
-                <label><input type="checkbox"> S</label>
-                <label><input type="checkbox"> M</label>
-                <label><input type="checkbox"> L</label>
-                <label><input type="checkbox"> XL</label>
+        <!-- COLOR -->
+        <div class="toggle-list active">
+            <div class="toggle-header">
+                <span>COLOR</span>
+                <i class="bx bx-minus"></i>
+            </div>
+            <ul class="toggle-content" id="color-options">
+            </ul>
+        </div>
+
+        <!-- STORAGE -->
+        <div class="toggle-list active">
+            <div class="toggle-header">
+                <span>SIZE</span>
+                <i class="bx bx-minus"></i>
+            </div>
+            <ul class="toggle-content" id="size-options">
+            </ul>
+        </div>
+
+        <!-- PRICE -->
+        <div class="toggle-list active">
+            <div class="toggle-header">
+                <span>PRICE</span>
+                <i class="bx bx-minus"></i>
+            </div>
+            <div class="toggle-content">
+                <input type="range" min="0" max="1000000">
+                <div class="price-range">
+                    <span>Rs.0</span>
+                    <span>Rs.1,000,000</span>
+                </div>
             </div>
         </div>
 
-        <div class="filter-group">
-            <label>Color</label>
-            <select class="w-full px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black">
-                <option value="">All Colors</option>
-                <option>Black</option>
-                <option>White</option>
-                <option>Pink</option>
-                <option>Blue</option>
-            </select>
-        </div>
-
-        <div class="filter-group">
-            <label>Price Range</label>
-            <input type="range" min="1000" max="20000">
-            <div class="price-range">
-                <span>Rs 1,000</span>
-                <span>Rs 20,000</span>
-            </div>
-        </div>
-
-        <button class="w-full py-2 border border-black text-sm hover:bg-black hover:text-white transition">
-            Apply Filters
-        </button>
-
+        <button class="apply-btn" onclick="searchProduct(0);">Apply</button>
+        <button class="reset-btn">Reset All</button>
 
     </aside>
+
+    <!-- FILTER SECTION -->
 
     <!-- PRODUCTS SECTION -->
     <section class="search-results">
 
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
-            <p style="font-size:14px;">Showing <strong>1–10</strong> of <strong>86</strong> results</p>
+            <p style="font-size:14px;">Showing <strong>1–10</strong> of <strong id="all-item-count">86</strong> results</p>
 
             <select style="padding:6px 10px; border:1px solid #ccc;">
                 <option value="latest">Sort by Latest</option>
@@ -352,55 +482,32 @@
         </div>
 
 
-        <section class="product1" style="background: transparent; padding: 0;">
+        <section class="product1" style="background: transparent; padding: 0;" id="st-product">
 
-            <div class="pro-container">
+            <div class="pro-container" id="product-container">
 
-                <!-- PRODUCT CARD -->
-                <div class="pro">
-                    <img src="assets/images/products/f2.jpg" alt="">
-                    <a href="#" class="like-btn">
-                        <i class="bx bxs-heart"></i>
-                    </a>
+<!--                &lt;!&ndash; PRODUCT CARD &ndash;&gt;-->
+<!--                <div class="pro">-->
+<!--                    <img src="assets/images/products/f2.jpg" alt="">-->
+<!--                    <a href="#" class="like-btn">-->
+<!--                        <i class="bx bxs-heart"></i>-->
+<!--                    </a>-->
 
-                    <div class="des">
-                        <span>Addidas</span>
-                        <h5>Cartoon Astronaut T-Shirts</h5>
-                        <div class="star">
-                            <i class="bx bx-star"></i>
-                            <i class="bx bx-star"></i>
-                            <i class="bx bx-star"></i>
-                            <i class="bx bx-star"></i>
-                            <i class="bx bx-star"></i>
-                        </div>
-                        <h4>Rs 7,800</h4>
-                    </div>
+<!--                    <div class="des">-->
+<!--                        <span>Addidas</span>-->
+<!--                        <h5>Cartoon Astronaut T-Shirts</h5>-->
+<!--                        <div class="star">-->
+<!--                            <i class="bx bx-star"></i>-->
+<!--                            <i class="bx bx-star"></i>-->
+<!--                            <i class="bx bx-star"></i>-->
+<!--                            <i class="bx bx-star"></i>-->
+<!--                            <i class="bx bx-star"></i>-->
+<!--                        </div>-->
+<!--                        <h4>Rs 7,800</h4>-->
+<!--                    </div>-->
 
-                    <a href="#"><i class="bx bx-cart cart"></i></a>
-                </div>
-
-                <!-- DUPLICATE PRODUCTS (BACKEND LOOP) -->
-                <div class="pro">
-                    <img src="assets/images/products/f3.jpg" alt="">
-                    <a href="#" class="like-btn">
-                        <i class="bx bxs-heart"></i>
-                    </a>
-
-                    <div class="des">
-                        <span>Nike</span>
-                        <h5>Men Sports Hoodie</h5>
-                        <div class="star">
-                            <i class="bx bx-star"></i>
-                            <i class="bx bx-star"></i>
-                            <i class="bx bx-star"></i>
-                            <i class="bx bx-star"></i>
-                            <i class="bx bx-star"></i>
-                        </div>
-                        <h4>Rs 9,500</h4>
-                    </div>
-
-                    <a href="#"><i class="bx bx-cart cart"></i></a>
-                </div>
+<!--                    <a href="#"><i class="bx bx-cart cart"></i></a>-->
+<!--                </div>-->
 
             </div>
 
@@ -409,27 +516,28 @@
 
         <!-- PAGINATION -->
         <div class="flex justify-center mt-10">
-            <nav class="flex items-center gap-1 text-sm">
+            <nav class="flex items-center gap-1 text-sm" id="pagination-container">
 
-                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black">‹</a>
+<!--                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black">‹</a>-->
 
-                <a href="#" class="px-3 py-2 border border-black bg-black text-white">1</a>
+<!--                <a href="#" class="px-3 py-2 border border-black bg-black text-white">1</a>-->
 
-                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black">2</a>
+<!--                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black">2</a>-->
 
-                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black">3</a>
+<!--                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black">3</a>-->
 
-                <span class="px-3 py-2 border border-gray-300">...</span>
+<!--                <span class="px-3 py-2 border border-gray-300">...</span>-->
 
-                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black">10</a>
+<!--                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black">10</a>-->
 
-                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black">›</a>
+<!--                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black" id="next-button">›</a>-->
 
             </nav>
         </div>
 
 
     </section>
+    <!-- PRODUCTS SECTION -->
 
 </div>
 
@@ -443,5 +551,15 @@
 <script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
 <script src="assets/js/cart.js"></script>
 <script src="assets/js/advanced-search.js"></script>
+
+<script>
+    document.querySelectorAll(".toggle-header").forEach(header => {
+        header.addEventListener("click", () => {
+            const parent = header.parentElement;
+            parent.classList.toggle("active");
+        });
+    });
+</script>
+
 </body>
 </html>

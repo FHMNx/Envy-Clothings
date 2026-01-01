@@ -14,9 +14,6 @@ public class OrderItem implements Serializable {
     @Column(nullable = false)
     private int quantity;
 
-    @Column(nullable = false)
-    private int rating;
-
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "orders_id")
     private Order order;
@@ -39,14 +36,6 @@ public class OrderItem implements Serializable {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
     }
 
     public Order getOrder() {
