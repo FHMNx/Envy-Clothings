@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout | Envy Clothings</title>
+
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/home.css">
+    <link rel="icon" href="assets/images/logo/envy.png" type="image/x-icon">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <style>
+
+        body {
+            background: #f7f7f7;
+            font-family: "Inter", system-ui, sans-serif;
+        }
+
+        .checkout-page {
+            padding: 120px 8% 60px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+        }
+
+        /* ================= CARD ================= */
+        .checkout-card {
+            background: #fff;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+            margin-bottom: 25px;
+        }
+
+        .checkout-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 12px;
+        }
+
+        /* ================= FORM ================= */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background: #fafafa;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* ================= PAYMENT ================= */
+        .payment-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #ddd;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: 0.3s;
+        }
+
+        .payment-option:hover {
+            border-color: #000;
+        }
+
+        .payment-option input {
+            accent-color: #000;
+        }
+
+        /* ================= SUMMARY ================= */
+        .order-summary {
+            position: sticky;
+            top: 120px;
+        }
+
+        .summary-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .summary-item img {
+            width: 60px;
+            height: 70px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .summary-item h5 {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .summary-price {
+            font-size: 13px;
+            color: #444;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .price-row.total {
+            font-weight: 700;
+            font-size: 16px;
+            margin-top: 15px;
+        }
+
+        .place-order-btn {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 30px;
+            border: 1px solid #000;
+            background: #000;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .checkout-note {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 20px 0 10px;
+            color: #666;
+            font-size: 12.5px;
+        }
+
+        .checkout-note span {
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .checkout-note p {
+            white-space: nowrap;
+        }
+
+
+        .place-order-btn:hover {
+            background: transparent;
+            color: #000;
+        }
+
+        /* ================= RESPONSIVE ================= */
+        @media (max-width: 992px) {
+            .checkout-page {
+                grid-template-columns: 1fr;
+            }
+
+            .order-summary {
+                position: relative;
+                top: unset;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<header class="site-header">
+    <header-content></header-content>
+</header>
+
+<section class="checkout-page">
+
+    <!-- LEFT -->
+    <div>
+
+        <div class="checkout-card">
+            <h3>Billing Details</h3>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text">
+                </div>
+
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email">
+            </div>
+
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="text">
+            </div>
+        </div>
+
+        <div class="checkout-card">
+            <h3>Shipping Address</h3>
+
+            <div class="form-group">
+                <label>Address line 1</label>
+                <input type="text">
+            </div>
+
+            <div class="form-group">
+                <label>Address line 2</label>
+                <input type="text">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>City</label>
+                    <select id="citySelect">
+                        <option>select</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Postal Code</label>
+                    <input type="text">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <aside class="checkout-card order-summary">
+
+        <h3>Order Summary</h3>
+
+        <div class="summary-item">
+            <img src="assets/images/products/f2.jpg">
+            <div>
+                <h5>Men T-Shirt</h5>
+                <div class="summary-price">Rs 3,500</div>
+            </div>
+        </div>
+
+        <div class="summary-item">
+            <img src="assets/images/products/f3.jpg">
+            <div>
+                <h5>Women Hoodie</h5>
+                <div class="summary-price">Rs 6,800</div>
+            </div>
+        </div>
+
+        <hr style="color: #f1eded">
+
+        <div class="price-row">
+            <span>Subtotal</span>
+            <span>Rs 10,300</span>
+        </div>
+
+        <div class="price-row">
+            <span>Delivery</span>
+            <span>Rs 500</span>
+        </div>
+
+        <div class="price-row total">
+            <span>Total</span>
+            <span>Rs 10,800</span>
+        </div>
+
+        <div class="checkout-note">
+            <span></span>
+            <p>You can securely pay using your credit or debit card.</p>
+            <span></span>
+        </div>
+
+        <button class="place-order-btn">Place Order</button>
+
+    </aside>
+
+</section>
+
+<footer>
+    <footer-content></footer-content>
+</footer>
+
+<script src="assets/js/header.js"></script>
+<script src="assets/js/footer.js"></script>
+<script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
+<script src="assets/js/checkout.js"></script>
+
+</body>
+</html>

@@ -92,6 +92,8 @@ function renderingMainPanel(cartItems) {
 
         });
 
+        document.getElementById("sub-total").innerHTML = new Intl.NumberFormat("en-US",
+            {minimumFractionDigits: 2}).format(total);
         document.getElementById("order-total-quantity").innerHTML = totalQty;
         document.getElementById("order-total-amount").innerHTML = new Intl.NumberFormat("en-US",
             {minimumFractionDigits: 2}).format(total);

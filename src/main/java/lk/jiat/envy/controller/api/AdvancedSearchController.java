@@ -1,6 +1,7 @@
 package lk.jiat.envy.controller.api;
 
 
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -13,6 +14,7 @@ public class AdvancedSearchController {
     private final AdvancedSearchService advancedSearchService = new AdvancedSearchService();
 
     @Path("/all-data")
+    @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response loadAdvancedSearchData() {
         String responseJson = advancedSearchService.getAllProductData();

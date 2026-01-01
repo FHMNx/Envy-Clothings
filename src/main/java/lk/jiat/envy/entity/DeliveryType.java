@@ -40,4 +40,8 @@ public class DeliveryType implements Serializable {
     public void setPrice(Double price) {
         this.price = price;
     }
+
+    public enum Value {
+        WITHIN_KANDY, OUT_OF_KANDY
+    }
 }

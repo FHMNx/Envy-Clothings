@@ -7,6 +7,11 @@ import java.security.SecureRandom;
 public class AppUtil {
 
     public static final Gson GSON = new Gson();
+    public static final int DEFAULT_SELECTOR_VALUE = 0;
+    public static final String MAIN_APP_CURRENCY = "LKR";
+    public static final String APP_COUNTRY = "Sri Lanka";
+    public static final int FIRST_RESULT_VALUE = 0;
+    public static final int MAX_RESULT_VALUE = 10;
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     public static String generateCode() {
