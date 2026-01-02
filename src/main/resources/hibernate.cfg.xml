@@ -29,5 +29,6 @@
         <mapping class="lk.jiat.envy.entity.Discount"/>
         <mapping class="lk.jiat.envy.entity.Stock"/>
         <mapping class="lk.jiat.envy.entity.Cart"/>
+        <mapping class="lk.jiat.envy.entity.PaymentType"/>
     </session-factory>
 </hibernate-configuration>

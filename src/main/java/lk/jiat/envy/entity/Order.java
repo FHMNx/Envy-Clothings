@@ -21,6 +21,10 @@ public class Order extends BaseEntity {
     private Status status;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "paymentType_id")
+    private PaymentType paymentType;
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "users_id")
     private User user;
 
@@ -61,5 +65,13 @@ public class Order extends BaseEntity {
 
     public Set<OrderItem> getOrder_items() {
         return order_items;
+    }
+
+    public PaymentType getPaymentType() {
+        return paymentType;
+    }
+
+    public void setPaymentType(PaymentType paymentType) {
+        this.paymentType = paymentType;
     }
 }

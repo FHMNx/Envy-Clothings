@@ -13,7 +13,6 @@ window.addEventListener("load", async () => {
     }
 });
 
-
 async function loadCities() {
     try {
 
@@ -156,6 +155,71 @@ function makeOrderSummery(data) {
 
     tableBody.appendChild(shippingRow);
     tableBody.appendChild(totalRow);
+}
+
+async function placeOrder() {
+    let firstName = document.getElementById("first-name");
+    let lastName = document.getElementById("last-name");
+    let email = document.getElementById("email");
+    let lineOne = document.getElementById("line-one");
+    let lineTwo = document.getElementById("line-two");
+    let postalCode = document.getElementById("postal-code");
+    let mobile = document.getElementById("mobile");
+    let citySelect = document.getElementById("citySelect");
+
+    const orderData = {
+        firstName: firstName.value,
+        lastName: lastName.value,
+        email: email.value,
+        lineOne: lineOne.value,
+        lineTwo: lineTwo.value,
+        postalCode: postalCode.value,
+        mobile: mobile.value,
+        citySelect: citySelect.value
+    }
+
+    const orderJsonData = JSON.stringify(orderData);
+
+    try {
+        Notiflix.Loading.standard("Loading...", {
+            clickToClose: false,
+            svgColor: '#0284c7'
+        });
+
+        const response = await fetch("api/checkouts/user-checkout" , {
+            method: "POST",
+            headers : {
+                "Content-Type":"application/json"
+            },
+            body: orderJsonData
+        })
+
+        if(response.ok){
+
+            const data = await response.json();
+            if(data.status){
+                console.log(data)
+
+            }else{
+                Notiflix.Notify.failure(data.message, {
+                    position: 'center-top'
+                });
+            }
+
+        }else{
+            Notiflix.Notify.failure("order placing failed", {
+                position: 'center-top'
+            });
+        }
+
+    }catch (e) {
+        Notiflix.Notify.failure(e.message, {
+            position: 'center-top'
+        });
+
+    } finally {
+        Notiflix.Loading.remove();
+    }
 }
 
 

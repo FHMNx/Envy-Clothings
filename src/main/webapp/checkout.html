@@ -249,25 +249,21 @@
         <table class="order-table">
             <tbody id="st-tbody">
 
-            <!-- TEMPLATE ROW (hidden) -->
             <tr id="st-item-tr" style="display:none;">
                 <td class="st-product-title"></td>
                 <td class="st-product-subtotal"></td>
             </tr>
 
-            <!-- Subtotal -->
             <tr id="st-subtotal-tr">
                 <td><strong>Subtotal</strong></td>
                 <td id="st-product-total-amount">Rs. 0.00</td>
             </tr>
 
-            <!-- Shipping -->
             <tr id="st-order-shipping-tr">
                 <td>Shipping</td>
                 <td id="st-product-shipping-charges">Rs. 0.00</td>
             </tr>
 
-            <!-- Total -->
             <tr id="st-order-total-tr">
                 <td><strong>Total</strong></td>
                 <td id="st-order-total-amount" class="total">Rs. 0.00</td>
@@ -311,7 +307,7 @@
             <small>I agree to website <a href="#">Terms of Service</a></small>
         </div>
 
-        <button class="place-order-btn">Place Order</button>
+        <button class="place-order-btn" onclick="placeOrder();">Place Order</button>
     </div>
 
 
