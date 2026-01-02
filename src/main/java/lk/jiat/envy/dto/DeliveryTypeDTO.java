@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class DeliveryTypeDTO implements Serializable {
     private int id;
     private String name;
+    private double price;
 
     public int getId() {
         return id;
@@ -20,5 +21,13 @@ public class DeliveryTypeDTO implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 }
