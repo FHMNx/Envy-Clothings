@@ -12,6 +12,12 @@ public class AddressDTO implements Serializable {
     private String city;
     private String postalCode;
     private String mobile;
+    private int cityId;
+
+    private String firstName;
+    private String lastName;
+    private String email;
+
 
     public int getId() {
         return id;
@@ -35,6 +41,38 @@ public class AddressDTO implements Serializable {
 
     public void setAddressType(String addressType) {
         this.addressType = addressType;
+    }
+
+    public int getCityId() {
+        return cityId;
+    }
+
+    public void setCityId(int cityId) {
+        this.cityId = cityId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getLineOne() {

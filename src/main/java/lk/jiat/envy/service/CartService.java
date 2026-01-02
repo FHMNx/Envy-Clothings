@@ -294,7 +294,6 @@ public class CartService {
         return (T) httpSession.getAttribute("sessionCart");
     }
 
-
 }
 
 

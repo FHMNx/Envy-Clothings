@@ -12,6 +12,8 @@ public class AdminDTO implements Serializable {
     private String verificationCode;
     private String newPassword;
     private String confirmPassword;
+    private int cityId;
+    private String cityName;
 
     public AdminDTO() {
     }
@@ -38,6 +40,22 @@ public class AdminDTO implements Serializable {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public int getCityId() {
+        return cityId;
+    }
+
+    public void setCityId(int cityId) {
+        this.cityId = cityId;
+    }
+
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
     }
 
     public String getEmail() {

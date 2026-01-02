@@ -39,6 +39,10 @@ public class Admin implements Serializable {
     @OneToMany(mappedBy = "admin")
     private Set<Product> products = new HashSet<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "city_id", nullable = false)
+    private City city;
+
     public int getId() {
         return id;
     }
@@ -69,6 +73,14 @@ public class Admin implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public City getCity() {
+        return city;
+    }
+
+    public void setCity(City city) {
+        this.city = city;
     }
 
     public String getPassword() {

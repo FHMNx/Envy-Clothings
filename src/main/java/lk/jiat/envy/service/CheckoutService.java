@@ -14,74 +14,100 @@ import java.util.List;
 public class CheckoutService {
 
     public String getCheckoutData(HttpServletRequest request) {
+
         JsonObject responseObject = new JsonObject();
-        boolean status = false;
-        String message = "";
 
         User sessionUser = (User) request.getSession().getAttribute("user");
         if (sessionUser == null) {
-            message = "please login first";
-        } else {
-            Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
-            Address billingAddress = hibernateSession.createQuery("FROM Address a WHERE a.user.id =: userId AND a.addressType=:addressType", Address.class)
+            responseObject.addProperty("status", false);
+            responseObject.addProperty("message", "Please login first");
+            return AppUtil.GSON.toJson(responseObject);
+        }
+
+        Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+
+        try {
+
+            Address billingAddress = hibernateSession.createQuery("FROM Address a WHERE a.user.id = :userId AND a.addressType = :type", Address.class)
                     .setParameter("userId", sessionUser.getId())
-                    .setParameter("addressType", Address.class)
+                    .setParameter("type", "billing")
                     .getSingleResultOrNull();
 
             if (billingAddress == null) {
-                message = "you haven't updated your billing address";
-            } else {
-                AddressDTO addressDTO = new AddressDTO();
-                addressDTO.setId(billingAddress.getId());
-                addressDTO.setLineOne(billingAddress.getLineOne());
-                addressDTO.setLineTwo(billingAddress.getLineTwo());
-                addressDTO.setPostalCode(billingAddress.getPostalCode());
-                addressDTO.setMobile(billingAddress.getMobile());
-                addressDTO.setAddressType(billingAddress.getAddressType());
-
-                UserDTO userDTO = new UserDTO();
-                addressDTO.setUserId(userDTO.getId());
-                userDTO.setCityId(billingAddress.getId());
-
-                List<Cart> cartList = hibernateSession.createQuery("FROM Cart c WHERE c.user.id=:userId", Cart.class)
-                        .setParameter("userId", sessionUser.getId())
-                        .getResultList();
-
-                if (cartList.isEmpty()) {
-                    message = "you cart is empty. please add some items first";
-                } else {
-                    List<CartDTO> cartDTOList = new CartService().generateCartDTOs(cartList);
-                    List<AdminDTO> adminDTOList = new ArrayList();
-                    for (Cart c : cartList) {
-                        Admin admin = c.getStock().getProduct().getAdmin();
-                        AdminDTO adminDTO = new AdminDTO();
-                    }
-
-                    List<DeliveryTypeDTO> deliveryTypeDTOList = new ArrayList();
-                    List<DeliveryType> deliveryTypeList = hibernateSession.createQuery("FROM DeliveryType d", DeliveryType.class).getResultList();
-
-                    for (DeliveryType deliveryType: deliveryTypeList) {
-                        DeliveryTypeDTO deliveryTypeDTO = new DeliveryTypeDTO();
-                        deliveryTypeDTO.setId(deliveryType.getId());
-                        deliveryTypeDTO.setName(deliveryType.getName());
-                        deliveryTypeDTOList.add(deliveryTypeDTO);
-                    }
-
-                    responseObject.add("userBillingAddress", AppUtil.GSON.toJsonTree(addressDTO));
-                    responseObject.add("cartList", AppUtil.GSON.toJsonTree(cartDTOList));
-                    responseObject.add("adminList", AppUtil.GSON.toJsonTree(adminDTOList));
-                    responseObject.add("deliveryTypes", AppUtil.GSON.toJsonTree(deliveryTypeDTOList));
-
-                }
+                responseObject.addProperty("status", false);
+                responseObject.addProperty("message", "Please update your billing address");
+                return AppUtil.GSON.toJson(responseObject);
+            }
+            AddressDTO billingDTO = buildAddressDTO(billingAddress,sessionUser);
 
 
+            Address shippingAddress = hibernateSession.createQuery("FROM Address a WHERE a.user.id = :userId AND a.addressType = :type", Address.class)
+                    .setParameter("userId", sessionUser.getId())
+                    .setParameter("type", "shipping")
+                    .getSingleResultOrNull();
+
+            AddressDTO shippingDTO = shippingAddress != null ? buildAddressDTO(shippingAddress, sessionUser) : null;
+
+
+            List<Cart> cartList = hibernateSession.createQuery("FROM Cart c WHERE c.user.id = :userId", Cart.class)
+                    .setParameter("userId", sessionUser.getId())
+                    .getResultList();
+
+            if (cartList.isEmpty()) {
+                responseObject.addProperty("status", false);
+                responseObject.addProperty("message", "Your cart is empty");
+                return AppUtil.GSON.toJson(responseObject);
+            }
+            List<CartDTO> cartDTOList = new CartService().generateCartDTOs(cartList);
+
+
+            Admin shopAdmin = hibernateSession.createQuery("FROM Admin", Admin.class).setMaxResults(1).uniqueResult();
+            City shopCity = shopAdmin.getCity();
+
+
+            List<DeliveryType> deliveryTypeList = hibernateSession.createQuery("FROM DeliveryType", DeliveryType.class).getResultList();
+            List<DeliveryTypeDTO> deliveryTypeDTOList = new ArrayList<>();
+
+            for (DeliveryType deliveryType : deliveryTypeList) {
+                DeliveryTypeDTO dto = new DeliveryTypeDTO();
+                dto.setId(deliveryType.getId());
+                dto.setName(deliveryType.getName());
+                dto.setPrice(deliveryType.getPrice());
+                deliveryTypeDTOList.add(dto);
             }
 
+
+            responseObject.add("billingAddress", AppUtil.GSON.toJsonTree(billingDTO));
+            responseObject.add("shippingAddress", AppUtil.GSON.toJsonTree(shippingDTO));
+            responseObject.add("cartList", AppUtil.GSON.toJsonTree(cartDTOList));
+            responseObject.add("deliveryTypes", AppUtil.GSON.toJsonTree(deliveryTypeDTOList));
+
+            responseObject.addProperty("shopCityId", shopCity.getId());
+            responseObject.addProperty("shopCityName", shopCity.getName());
+
+            responseObject.addProperty("status", true);
+            responseObject.addProperty("message", "Checkout data loaded");
+
+            return AppUtil.GSON.toJson(responseObject);
+
+        } finally {
             hibernateSession.close();
         }
+    }
 
-        responseObject.addProperty("status", status);
-        responseObject.addProperty("message", message);
-        return AppUtil.GSON.toJson(responseObject);
+    private AddressDTO buildAddressDTO(Address address, User user) {
+        AddressDTO dto = new AddressDTO();
+        dto.setId(address.getId());
+        dto.setLineOne(address.getLineOne());
+        dto.setLineTwo(address.getLineTwo());
+        dto.setPostalCode(address.getPostalCode());
+        dto.setMobile(address.getMobile());
+        dto.setAddressType(address.getAddressType());
+        dto.setCityId(address.getCity().getId());
+
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        dto.setEmail(user.getEmail());
+        return dto;
     }
 }

@@ -13,110 +13,6 @@ window.addEventListener("load", async () => {
     }
 });
 
-async function loadCheckout() {
-    try {
-
-        const response = await fetch("api/checkouts/user-checkout-data");
-
-        if (response.redirected) {
-            Notiflix.Report.info(
-                'Envy Clothings',
-                "please login first before proceed to checkout",
-                "okay",
-                () => {
-                    window.location = "sign-in.html"
-                },
-            );
-            return;
-        }
-
-        if (response.ok) {
-
-            const data = await response.json();
-            if (data.status) {
-                console.log(data);
-                makeOrderSummery(data);
-            } else {
-                Notiflix.Notify.failure(data.message, {
-                    position: 'center-top'
-                });
-            }
-
-        } else {
-            Notiflix.Notify.failure("checkout data loading failed", {
-                position: 'center-top'
-            });
-        }
-
-    } catch (e) {
-        Notiflix.Notify.failure(e.message, {
-            position: 'center-top'
-        });
-    }
-}
-
-function makeOrderSummery(data) {
-    const cartList = data.cartList;
-    const deliveryTypes = data.deliveryTypes;
-    const adminList = data.adminList;
-
-    let tableBody = document.getElementById("st-tbody");
-    let itemRow = document.getElementById("st-item-tr");
-    let subTotalRow = document.getElementById("st-subtotal-tr");
-    let orderShippingRow = document.getElementById("st-order-shipping-tr");
-    let orderTotalRow = document.getElementById("st-order-total-tr");
-
-    tableBody.innerHTML = "";
-    let total = 0;
-    let itemCount = 0;
-
-    cartList.forEach((item) => {
-        let itemRowClone = itemRow.cloneNode(true);
-        itemRowClone.querySelector("#st-product-title").textContent = item.productName;
-        itemRowClone.querySelector("#st-product-qty").textContent = item.quantity;
-        let subTotal = parseFloat(item.price) * parseInt(item.quantity);
-
-        itemRowClone.querySelector("#st-product-price").textContent = new Intl.NumberFormat("en-US", {
-            minimumFractionDigits: 2
-        }).format(subTotal);
-        tableBody.appendChild(itemRowClone);
-        total += subTotal;
-        itemCount += item.quantity;
-    });
-
-    subTotalRow.querySelector("#st-product-total-amount").textContent = new Intl.NumberFormat("en-US", {
-        minimumFractionDigits: 2
-    }).format(total);
-
-    let citySelect = document.getElementById("citySelect");
-    citySelect.addEventListener("change", () => {
-        let shippingCharges = 0;
-        let cityName = citySelect.options[citySelect.selectedIndex]?.text || "";
-
-        adminList.forEach((admin) => {
-            if (cityName === admin.cityDTO.name) {
-                //withing city
-                shippingCharges += deliveryTypes[0].price;
-            } else {
-                //out of city
-                shippingCharges += deliveryTypes[1].price;
-            }
-        });
-
-        orderShippingRow.querySelector("#st-product-shipping-charges").textContent = new Intl.NumberFormat("en-US", {
-            minimumFractionDigits: 2
-        }).format(shippingCharges);
-
-        orderTotalRow.querySelector("#st-order-total-amount").textContent = new Intl.NumberFormat("en-US", {
-            minimumFractionDigits: 2
-        }).format(total + shippingCharges);
-
-    });
-
-    tableBody.appendChild(subTotalRow);
-    tableBody.appendChild(orderShippingRow);
-    tableBody.appendChild(orderTotalRow);
-}
 
 async function loadCities() {
     try {
@@ -147,4 +43,120 @@ async function loadCities() {
         });
     }
 }
+
+async function loadCheckout() {
+    try {
+
+        const response = await fetch("api/checkouts/user-checkout-data");
+
+        if (response.redirected) {
+            Notiflix.Report.info(
+                'Envy Clothings',
+                "please login first before proceed to checkout",
+                "okay",
+                () => {
+                    window.location = "sign-in.html"
+                },
+            );
+            return;
+        }
+
+        if (response.ok) {
+
+            const data = await response.json();
+            if (data.status) {
+                console.log(data);
+                makeOrderSummery(data);
+
+                const billing = data.billingAddress;
+
+                document.getElementById("first-name").value = billing.firstName;
+                document.getElementById("last-name").value = billing.lastName;
+                document.getElementById("email").value = billing.email;
+                document.getElementById("line-one").value = billing.lineOne;
+                document.getElementById("line-two").value = billing.lineTwo;
+                document.getElementById("postal-code").value = billing.postalCode;
+                document.getElementById("mobile").value = billing.mobile;
+                document.getElementById("citySelect").value = billing.cityId;
+
+            } else {
+                Notiflix.Notify.failure(data.message, {
+                    position: 'center-top'
+                });
+            }
+
+        } else {
+            Notiflix.Notify.failure("checkout data loading failed", {
+                position: 'center-top'
+            });
+        }
+
+    } catch (e) {
+        Notiflix.Notify.failure(e.message, {
+            position: 'center-top'
+        });
+    }
+}
+
+function makeOrderSummery(data) {
+    const cartList = data.cartList;
+    const deliveryTypes = data.deliveryTypes;
+    const shopCityId = data.shopCityId;
+
+    const tableBody = document.getElementById("st-tbody");
+    const templateRow = document.getElementById("st-item-tr");
+    const subTotalRow = document.getElementById("st-subtotal-tr");
+    const shippingRow = document.getElementById("st-order-shipping-tr");
+    const totalRow = document.getElementById("st-order-total-tr");
+    const citySelect = document.getElementById("citySelect");
+
+    if (!tableBody || !templateRow) {
+        console.error("Checkout table structure missing");
+        return;
+    }
+
+    tableBody.innerHTML = "";
+    let total = 0;
+
+    cartList.forEach(item => {
+        const row = templateRow.cloneNode(true);
+        row.style.display = "";
+
+        const productName = item.productTitle || "Unknown Product";
+        const price = parseFloat(item.price || 0);
+        const quantity = parseInt(item.qty || 1);
+
+        row.querySelector(".st-product-title").textContent = `${productName} × ${quantity}`;
+        const subtotal = price * quantity;
+        row.querySelector(".st-product-subtotal").textContent = `Rs. ${subtotal.toFixed(2)}`;
+
+        total += subtotal;
+        tableBody.appendChild(row);
+    });
+
+    subTotalRow.querySelector("#st-product-total-amount").textContent = `Rs. ${total.toFixed(2)}`;
+    tableBody.appendChild(subTotalRow);
+
+    function updateShipping() {
+        const selectedCityId = parseInt(citySelect.value) || 0;
+        let shippingPrice = 0;
+
+        if (deliveryTypes.length >= 2) {
+            shippingPrice = (selectedCityId === shopCityId)
+                ? parseFloat(deliveryTypes[0].price || 0)
+                : parseFloat(deliveryTypes[1].price || 0);
+        }
+
+        shippingRow.querySelector("#st-product-shipping-charges").textContent = `Rs. ${shippingPrice.toFixed(2)}`;
+        totalRow.querySelector("#st-order-total-amount").textContent = `Rs. ${(total + shippingPrice).toFixed(2)}`;
+    }
+
+    setTimeout(updateShipping, 50);
+    citySelect.addEventListener("change", updateShipping);
+
+    tableBody.appendChild(shippingRow);
+    tableBody.appendChild(totalRow);
+}
+
+
 
