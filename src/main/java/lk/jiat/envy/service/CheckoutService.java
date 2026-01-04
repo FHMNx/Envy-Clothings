@@ -2,16 +2,204 @@ package lk.jiat.envy.service;
 
 import com.google.gson.JsonObject;
 import jakarta.servlet.http.HttpServletRequest;
+
 import lk.jiat.envy.dto.*;
 import lk.jiat.envy.entity.*;
 import lk.jiat.envy.util.AppUtil;
+import lk.jiat.envy.util.Env;
 import lk.jiat.envy.util.HibernateUtil;
+import lk.jiat.envy.validation.Validator;
 import org.hibernate.Session;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CheckoutService {
+
+    public String processCheckout(CheckoutRequestDTO requestDTO, HttpServletRequest request) {
+
+        JsonObject responseObject = new JsonObject();
+        boolean status = false;
+        String message = "";
+
+        Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+        hibernateSession.beginTransaction();
+
+        try {
+            User sessionUser = (User) request.getSession().getAttribute("user");
+
+            if (sessionUser == null) {
+                message = "Session expired. Please login again.";
+                hibernateSession.getTransaction().rollback();
+
+            } else {
+
+                User dbUser = hibernateSession.find(User.class, sessionUser.getId());
+
+                Address billingAddress = null;
+                City city = null;
+
+                if (requestDTO.isCurrentAddress()) {
+
+                    billingAddress = hibernateSession.createQuery("FROM Address a WHERE a.user=:user AND a.addressType=:type", Address.class)
+                            .setParameter("user", dbUser)
+                            .setParameter("type", "billing")
+                            .getSingleResultOrNull();
+
+                    if (billingAddress == null) {
+                        message = "Billing address not found";
+                        hibernateSession.getTransaction().rollback();
+                    }
+
+                } else {
+
+                    if (requestDTO.getFirstName().isBlank()) {
+                        message = "first name is required";
+                    } else if (requestDTO.getLastName().isBlank()) {
+                        message = "last name is required";
+                    } else if (requestDTO.getLineOne().isBlank()) {
+                        message = "Address line one is required";
+                    } else if (requestDTO.getLineTwo().isBlank()) {
+                        message = "Address line two is required";
+                    } else if (requestDTO.getCityId() == AppUtil.DEFAULT_SELECTOR_VALUE) {
+                        message = "please select a city";
+                    } else if (requestDTO.getMobile().isBlank()) {
+                        message = "mobile is required";
+                    } else if (!requestDTO.getMobile().matches(Validator.MOBILE_VALIDATION)) {
+                        message = "mobile is not valid";
+                    } else if (requestDTO.getPostalCode().isBlank()) {
+                        message = "postal code is required";
+                    } else if (!requestDTO.getPostalCode().matches(Validator.POSTAL_CODE_VALIDATION)) {
+                        message = "postal code is not valid";
+                    }
+
+                    if (!message.isEmpty()) {
+                        hibernateSession.getTransaction().rollback();
+                    }
+
+                    city = hibernateSession.find(City.class, requestDTO.getCityId());
+                    if (city == null) {
+                        message = "city not found";
+                        hibernateSession.getTransaction().rollback();
+                    }
+                }
+
+                if (message.isEmpty()) {
+                    List<Cart> cartList = hibernateSession.createQuery("FROM Cart c WHERE c.user=:user", Cart.class)
+                            .setParameter("user", dbUser)
+                            .getResultList();
+
+                    if (cartList.isEmpty()) {
+                        message = "Cart is empty";
+                        hibernateSession.getTransaction().rollback();
+
+                    } else {
+
+                        Status pendingStatus = hibernateSession.createNamedQuery("Status.findByName", Status.class)
+                                .setParameter("name", Status.Type.PENDING.name())
+                                .getSingleResult();
+
+                        PaymentType paymentType = hibernateSession.find(PaymentType.class, requestDTO.getPaymentTypeId());
+
+                        City deliveryCity = requestDTO.isCurrentAddress() ? billingAddress.getCity() : city;
+
+                        Admin shopAdmin = hibernateSession.createQuery("FROM Admin", Admin.class)
+                                .setMaxResults(1)
+                                .uniqueResult();
+
+                        City shopCity = shopAdmin.getCity();
+
+                        int deliveryTypeId = (deliveryCity.getId() == shopCity.getId()) ? 1 : 2;
+                        DeliveryType deliveryType = hibernateSession.find(DeliveryType.class, deliveryTypeId);
+
+                        OrderService orderService = new OrderService();
+
+                        // CARD PAYMENT
+                        if (paymentType.getId() == 1) {
+
+                            // DO NOT CREATE ORDER YET
+                            // Only prepare payment
+
+                            hibernateSession.getTransaction().commit();
+
+                            status = true;
+                            message = "Proceed to payment";
+
+                            // Frontend will load PayHere
+                            // On PayHere success → call orderService.createOrder()
+
+                        }
+                        // COD PAYMENT
+                        else if (paymentType.getId() == 2) {
+
+                            orderService.createOrder(dbUser, requestDTO, paymentType, deliveryType, pendingStatus, billingAddress, hibernateSession);
+
+                            hibernateSession.getTransaction().commit();
+
+                            status = true;
+                            message = "Order placed successfully";
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            hibernateSession.getTransaction().rollback();
+            message = "Something went wrong";
+            e.printStackTrace();
+
+        } finally {
+            hibernateSession.close();
+        }
+
+        responseObject.addProperty("status", status);
+        responseObject.addProperty("message", message);
+
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
+    private PayHereDTO createPaymentDetails(Session hibernateSession, Order o) {
+
+        String order_id = "#000" + o.getId();
+        String returnURL = Env.get("app.public.url") + "/api/payments/return";
+        String cancelURL = Env.get("app.public.url") + "/api/payments/cancel";
+        String notifyURL = Env.get("app.public.url") + "/api/payments/notify";
+
+        Order order = hibernateSession.find(Order.class, o.getId());
+        User user = hibernateSession.find(User.class, o.getUser().getId());
+
+
+        StringBuilder orderDetail = new StringBuilder();
+        if (!order.getDeliveryLineTwo().isBlank()) {
+            orderDetail.append(order.getDeliveryLineTwo());
+        }
+
+        StringBuilder items = new StringBuilder();
+        double amount = 0;
+        List<OrderItem> orderItems = hibernateSession.createQuery("FROM OrderItem oi WHERE oi.order=:order", OrderItem.class)
+                .setParameter("order", order)
+                .getResultList();
+
+        for (OrderItem orderItem : orderItems) {
+            if (!items.isEmpty()) {
+                items.append(",");
+            }
+
+            items.append(orderItem.getStock().getProduct().getTitle())
+                    .append("x")
+                    .append(orderItem.getQuantity());
+
+            amount = orderItem.getStock().getPrice() * orderItem.getQuantity();
+
+
+        }
+
+
+        PayHereDTO payHereDTO = new PayHereDTO();
+
+        return payHereDTO;
+    }
 
     public String getCheckoutData(HttpServletRequest request) {
 
@@ -38,7 +226,7 @@ public class CheckoutService {
                 responseObject.addProperty("message", "Please update your billing address");
                 return AppUtil.GSON.toJson(responseObject);
             }
-            AddressDTO billingDTO = buildAddressDTO(billingAddress,sessionUser);
+            AddressDTO billingDTO = buildAddressDTO(billingAddress, sessionUser);
 
 
             Address shippingAddress = hibernateSession.createQuery("FROM Address a WHERE a.user.id = :userId AND a.addressType = :type", Address.class)

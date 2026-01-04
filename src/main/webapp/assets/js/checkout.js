@@ -160,22 +160,22 @@ function makeOrderSummery(data) {
 async function placeOrder() {
     let firstName = document.getElementById("first-name");
     let lastName = document.getElementById("last-name");
-    let email = document.getElementById("email");
     let lineOne = document.getElementById("line-one");
     let lineTwo = document.getElementById("line-two");
     let postalCode = document.getElementById("postal-code");
     let mobile = document.getElementById("mobile");
-    let citySelect = document.getElementById("citySelect");
+    let note = document.getElementById("note");
 
     const orderData = {
         firstName: firstName.value,
         lastName: lastName.value,
-        email: email.value,
         lineOne: lineOne.value,
         lineTwo: lineTwo.value,
         postalCode: postalCode.value,
         mobile: mobile.value,
-        citySelect: citySelect.value
+        note: note.value,
+        cityId: parseInt(citySelect.value),
+        paymentTypeId:getSelectedPaymentType(),
     }
 
     const orderJsonData = JSON.stringify(orderData);
@@ -199,6 +199,14 @@ async function placeOrder() {
             const data = await response.json();
             if(data.status){
                 console.log(data)
+                Notiflix.Report.success(
+                    "Order Placed",
+                    data.message,
+                    "OK",
+                    () => {
+                        window.location = "orders.html";
+                    }
+                );
 
             }else{
                 Notiflix.Notify.failure(data.message, {
@@ -221,6 +229,12 @@ async function placeOrder() {
         Notiflix.Loading.remove();
     }
 }
+
+function getSelectedPaymentType() {
+    const radios = document.getElementsByName("pay");
+    return radios[0].checked ? 1 : 2;
+}
+
 
 
 

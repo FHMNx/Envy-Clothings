@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "delivery_types")
+@NamedQuery(name = "DeliveryType.findByName", query = "FROM DeliveryType dt WHERE dt.name=:name")
 public class DeliveryType implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +43,6 @@ public class DeliveryType implements Serializable {
     }
 
     public enum Value {
-        WITHIN_KANDY, OUT_OF_KANDY
+        WITHIN_CITY, OUT_OF_CITY
     }
 }

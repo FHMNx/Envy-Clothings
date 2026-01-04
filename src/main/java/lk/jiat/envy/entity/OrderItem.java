@@ -18,7 +18,7 @@ public class OrderItem implements Serializable {
     @JoinColumn(name = "orders_id")
     private Order order;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stock_id")
     private Stock stock;
 

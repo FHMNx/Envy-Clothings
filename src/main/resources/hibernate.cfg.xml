@@ -30,5 +30,6 @@
         <mapping class="lk.jiat.envy.entity.Stock"/>
         <mapping class="lk.jiat.envy.entity.Cart"/>
         <mapping class="lk.jiat.envy.entity.PaymentType"/>
+        <mapping class="lk.jiat.envy.entity.Delivery"/>
     </session-factory>
 </hibernate-configuration>
