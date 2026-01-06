@@ -1,3 +1,7 @@
+document.getElementById("checkoutBtn").addEventListener("click", () => {
+    window.location.href = "checkout.html";
+});
+
 async function addToCart(stockId, qty) {
     try {
 

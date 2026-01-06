@@ -8,12 +8,13 @@ import lk.jiat.envy.entity.*;
 import lk.jiat.envy.util.AppUtil;
 import lk.jiat.envy.util.Env;
 import lk.jiat.envy.util.HibernateUtil;
+import lk.jiat.envy.util.PayHereUtil;
 import lk.jiat.envy.validation.Validator;
 import org.hibernate.Session;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class CheckoutService {
 
@@ -118,16 +119,16 @@ public class CheckoutService {
                         // CARD PAYMENT
                         if (paymentType.getId() == 1) {
 
-                            // DO NOT CREATE ORDER YET
-                            // Only prepare payment
+                            Order order = orderService.createPendingOrder(hibernateSession, dbUser, requestDTO, paymentType, deliveryType,
+                                    pendingStatus, billingAddress, city);
 
+                            PayHereDTO paymentDetails = createPaymentDetails(hibernateSession, order, dbUser, deliveryType);
+
+                            responseObject.add("paymentDetails", AppUtil.GSON.toJsonTree(paymentDetails));
                             hibernateSession.getTransaction().commit();
 
                             status = true;
                             message = "Proceed to payment";
-
-                            // Frontend will load PayHere
-                            // On PayHere success → call orderService.createOrder()
 
                         }
                         // COD PAYMENT
@@ -159,44 +160,67 @@ public class CheckoutService {
         return AppUtil.GSON.toJson(responseObject);
     }
 
-    private PayHereDTO createPaymentDetails(Session hibernateSession, Order o) {
+    private PayHereDTO createPaymentDetails(Session hibernateSession, Order order, User user, DeliveryType deliveryType) {
 
-        String order_id = "#000" + o.getId();
+        String order_id = "ORD" + order.getId() + "_" + System.currentTimeMillis();
+
+
         String returnURL = Env.get("app.public.url") + "/api/payments/return";
         String cancelURL = Env.get("app.public.url") + "/api/payments/cancel";
         String notifyURL = Env.get("app.public.url") + "/api/payments/notify";
 
-        Order order = hibernateSession.find(Order.class, o.getId());
-        User user = hibernateSession.find(User.class, o.getUser().getId());
-
-
-        StringBuilder orderDetail = new StringBuilder();
-        if (!order.getDeliveryLineTwo().isBlank()) {
-            orderDetail.append(order.getDeliveryLineTwo());
-        }
-
         StringBuilder items = new StringBuilder();
-        double amount = 0;
-        List<OrderItem> orderItems = hibernateSession.createQuery("FROM OrderItem oi WHERE oi.order=:order", OrderItem.class)
-                .setParameter("order", order)
+        double amount = 0.0;
+
+        List<Cart> cartList = hibernateSession.createQuery("FROM Cart c WHERE c.user = :user", Cart.class)
+                .setParameter("user", user)
                 .getResultList();
 
-        for (OrderItem orderItem : orderItems) {
+        for (Cart cart : cartList) {
             if (!items.isEmpty()) {
-                items.append(",");
+                items.append(", ");
             }
 
-            items.append(orderItem.getStock().getProduct().getTitle())
-                    .append("x")
-                    .append(orderItem.getQuantity());
+            items.append(cart.getStock().getProduct().getTitle())
+                    .append(" x ")
+                    .append(cart.getQuantity());
 
-            amount = orderItem.getStock().getPrice() * orderItem.getQuantity();
+            amount += cart.getStock().getPrice() * cart.getQuantity();
+        }
+        amount += deliveryType.getPrice();
+
+        String formattedAmount = String.format(Locale.US, "%.2f", amount);
+        String hashValue = PayHereUtil.generateHash(order_id, amount);
 
 
+        Address billingAddress = hibernateSession.createQuery("FROM Address a WHERE a.user = :user AND a.addressType = 'billing'", Address.class)
+                .setParameter("user", user)
+                .getSingleResultOrNull();
+
+        if (billingAddress == null) {
+            throw new RuntimeException("Billing address not found");
         }
 
 
         PayHereDTO payHereDTO = new PayHereDTO();
+        payHereDTO.setSandBox(true);
+        payHereDTO.setMerchant_id(PayHereUtil.getMerchantId());
+        payHereDTO.setReturn_url(returnURL);
+        payHereDTO.setCancel_url(cancelURL);
+        payHereDTO.setNotify_url(notifyURL);
+        payHereDTO.setOrder_id(order_id);
+        payHereDTO.setItems(items.toString());
+        payHereDTO.setAmount(formattedAmount);
+
+        payHereDTO.setCurrency(PayHereUtil.APP_CURRENCY);
+        payHereDTO.setHash(hashValue);
+        payHereDTO.setFirst_name(user.getFirstName());
+        payHereDTO.setLast_name(user.getLastName());
+        payHereDTO.setEmail(user.getEmail());
+        payHereDTO.setPhone(billingAddress.getMobile());
+        payHereDTO.setAddress(billingAddress.getLineOne() + ", " + billingAddress.getLineTwo());
+        payHereDTO.setCity(billingAddress.getCity().getName());
+        payHereDTO.setCountry(PayHereUtil.APP_COUNTRY);
 
         return payHereDTO;
     }

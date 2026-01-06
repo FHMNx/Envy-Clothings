@@ -9,12 +9,15 @@ import lk.jiat.envy.mail.VerificationMailTemplate;
 import lk.jiat.envy.provider.MailServiceProvider;
 import lk.jiat.envy.util.AppUtil;
 import lk.jiat.envy.util.HibernateUtil;
+import lk.jiat.envy.util.PayHereUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 public class Test {
     public static void main(String[] args) {
+
+        System.out.println(PayHereUtil.generateHash("#0001", 1500));
 
 //        MailServiceProvider.getInstance().start();
 //
@@ -29,7 +32,7 @@ public class Test {
 //
 //        MailServiceProvider.getInstance().sendMail(testMail);
 
-        SessionFactory session = HibernateUtil.getSessionFactory();
+//        SessionFactory session = HibernateUtil.getSessionFactory();
 
 //        VerificationMailTemplate verificationMailTemplate = new VerificationMailTemplate("fhmnx35888@gmail.com", "123456");
 //        MailServiceProvider.getInstance().sendMail(verificationMailTemplate);

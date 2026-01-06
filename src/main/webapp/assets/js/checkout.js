@@ -158,73 +158,84 @@ function makeOrderSummery(data) {
 }
 
 async function placeOrder() {
-    let firstName = document.getElementById("first-name");
-    let lastName = document.getElementById("last-name");
-    let lineOne = document.getElementById("line-one");
-    let lineTwo = document.getElementById("line-two");
-    let postalCode = document.getElementById("postal-code");
-    let mobile = document.getElementById("mobile");
-    let note = document.getElementById("note");
+    const firstName = document.getElementById("first-name").value;
+    const lastName = document.getElementById("last-name").value;
+    const lineOne = document.getElementById("line-one").value;
+    const lineTwo = document.getElementById("line-two").value;
+    const postalCode = document.getElementById("postal-code").value;
+    const mobile = document.getElementById("mobile").value;
+    const note = document.getElementById("note").value;
+    const cityId = parseInt(document.getElementById("citySelect").value);
+
+    const paymentTypeId = getSelectedPaymentType();
 
     const orderData = {
-        firstName: firstName.value,
-        lastName: lastName.value,
-        lineOne: lineOne.value,
-        lineTwo: lineTwo.value,
-        postalCode: postalCode.value,
-        mobile: mobile.value,
-        note: note.value,
-        cityId: parseInt(citySelect.value),
-        paymentTypeId:getSelectedPaymentType(),
-    }
-
-    const orderJsonData = JSON.stringify(orderData);
+        firstName,
+        lastName,
+        lineOne,
+        lineTwo,
+        postalCode,
+        mobile,
+        note,
+        cityId,
+        paymentTypeId
+    };
 
     try {
         Notiflix.Loading.standard("Loading...", {
-            clickToClose: false,
-            svgColor: '#0284c7'
-        });
+                clickToClose: false,
+                svgColor: '#0284c7'
+            }
+        );
 
-        const response = await fetch("api/checkouts/user-checkout" , {
-            method: "POST",
-            headers : {
-                "Content-Type":"application/json"
-            },
-            body: orderJsonData
-        })
-
-        if(response.ok){
+        if (paymentTypeId === 2) {
+            // Cash on Delivery
+            const response = await fetch("api/checkouts/user-checkout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(orderData)
+            });
 
             const data = await response.json();
-            if(data.status){
-                console.log(data)
+            if (data.status) {
                 Notiflix.Report.success(
-                    "Order Placed",
+                    "Envy Clothings",
                     data.message,
-                    "OK",
+                    "Okay",
                     () => {
-                        window.location = "orders.html";
-                    }
-                );
-
-            }else{
+                        window.location = "index.html";
+                    });
+            } else {
                 Notiflix.Notify.failure(data.message, {
                     position: 'center-top'
                 });
             }
 
-        }else{
-            Notiflix.Notify.failure("order placing failed", {
-                position: 'center-top'
+        } else {
+            // Card / PayHere
+            const response = await fetch("api/checkouts/user-checkout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(orderData)
             });
+
+            const data = await response.json();
+            if (data.status && data.paymentDetails) {
+                payhere.startPayment(data.paymentDetails);
+
+            } else {
+                Notiflix.Notify.failure(data.message, {
+                    position: 'center-top'
+                });
+            }
         }
 
-    }catch (e) {
-        Notiflix.Notify.failure(e.message, {
-            position: 'center-top'
-        });
-
+    } catch (e) {
+        Notiflix.Notify.failure(e.message, {position: 'center-top'});
     } finally {
         Notiflix.Loading.remove();
     }
@@ -236,5 +247,28 @@ function getSelectedPaymentType() {
 }
 
 
+// Payment completed. It can be a successful failure.
+payhere.onCompleted = function onCompleted(orderId) {
+    console.log("Payment completed. OrderID:" + orderId);
+    // Note: validate the payment and show success or failure page to the customer
+    Notiflix.Report.success(
+        'Envy Clothings',
+        "your order has been placed successfully",
+        "okay",
+        () => {
+            window.location = "index.html"
+        },
+    );
+};
 
+// Payment window closed
+payhere.onDismissed = function onDismissed() {
+    // Note: Prompt user to pay again or show an error page
+    console.log("Payment dismissed");
+};
 
+// Error occurred
+payhere.onError = function onError(error) {
+    // Note: show an error page
+    console.log("Error:" + error);
+};
