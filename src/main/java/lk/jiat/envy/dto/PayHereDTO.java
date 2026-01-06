@@ -20,6 +20,7 @@ public class PayHereDTO implements Serializable {
     private String currency;
     private String amount;
     private String hash;
+    private boolean sandBox;
 
     public String getMerchant_id() {
         return merchant_id;
@@ -149,6 +150,13 @@ public class PayHereDTO implements Serializable {
         this.hash = hash;
     }
 
+    public boolean isSandBox() {
+        return sandBox;
+    }
+
+    public void setSandBox(boolean sandBox) {
+        this.sandBox = sandBox;
+    }
 
     /*
      * Required Parameters

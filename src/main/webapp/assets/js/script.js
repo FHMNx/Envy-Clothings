@@ -2,7 +2,7 @@ const sliderTabs = document.querySelectorAll(".slider-tab");
 const sliderIndicator = document.querySelector(".slider-indicator");
 const sliderControls = document.querySelector(".slider-controls");
 
-//update the indicatoir height and width
+//update the indicator height and width
 const updateIndicator = (tab, index) => {
     sliderIndicator.style.transform = `translateX(${tab.offsetLeft - 20}px)`;
     sliderIndicator.style.width = `${tab.getBoundingClientRect().width}px`;

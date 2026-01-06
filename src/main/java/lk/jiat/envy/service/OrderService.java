@@ -35,7 +35,6 @@ public class OrderService {
             order.setCity(hibernateSession.find(City.class, dto.getCityId()));
         }
 
-        order.setNote(dto.getNote());
         hibernateSession.persist(order);
 
         List<Cart> cartList = hibernateSession.createQuery("FROM Cart c WHERE c.user = :user", Cart.class)
@@ -54,5 +53,53 @@ public class OrderService {
 
         return order;
     }
+
+
+    public Order createPendingOrder(Session hibernateSession, User user, CheckoutRequestDTO requestDTO, PaymentType paymentType,
+                                    DeliveryType deliveryType, Status status, Address billingAddress, City city) {
+
+        Order order = new Order();
+        order.setUser(user);
+        order.setPaymentType(paymentType);
+        order.setDelivery_type(deliveryType);
+        order.setStatus(status);
+        order.setNote(requestDTO.getNote());
+        order.setUpdatedAt(LocalDateTime.now());
+
+        if (requestDTO.isCurrentAddress()) {
+            order.setDeliveryLineOne(billingAddress.getLineOne());
+            order.setDeliveryLineTwo(billingAddress.getLineTwo());
+            order.setPostalCode(billingAddress.getPostalCode());
+            order.setMobile(billingAddress.getMobile());
+            order.setCity(billingAddress.getCity());
+        } else {
+            order.setDeliveryLineOne(requestDTO.getLineOne());
+            order.setDeliveryLineTwo(requestDTO.getLineTwo());
+            order.setPostalCode(requestDTO.getPostalCode());
+            order.setMobile(requestDTO.getMobile());
+            order.setCity(city);
+        }
+
+        hibernateSession.persist(order);
+
+        List<Cart> cartList = hibernateSession.createQuery("FROM Cart c WHERE c.user = :user", Cart.class)
+                .setParameter("user", user)
+                .getResultList();
+
+        for (Cart cart : cartList) {
+            OrderItem item = new OrderItem();
+            item.setOrder(order);
+            item.setStock(cart.getStock());
+            item.setQuantity(cart.getQuantity());
+
+            hibernateSession.persist(item);
+            hibernateSession.remove(cart);
+        }
+
+        hibernateSession.flush();
+
+        return order;
+    }
+
 
 }
