@@ -49,6 +49,10 @@ public class Order extends BaseEntity {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> order_items = new ArrayList<>();
 
+    @Column(name="temp_order_id", unique=true, nullable = true)
+    private String tempOrderId;
+
+
     public int getId() {
         return id;
     }
@@ -139,5 +143,13 @@ public class Order extends BaseEntity {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getTempOrderId() {
+        return tempOrderId;
+    }
+
+    public void setTempOrderId(String tempOrderId) {
+        this.tempOrderId = tempOrderId;
     }
 }

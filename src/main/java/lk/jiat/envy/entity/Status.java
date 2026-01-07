@@ -43,6 +43,8 @@ public class Status implements Serializable {
         CANCELED,
         VERIFIED,
         RECEIVED,
-        COMPLETED
+        COMPLETED,
+        PAID,
+        PAYMENT_FAILED
     }
 }
