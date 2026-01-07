@@ -15,11 +15,11 @@ public class PayHereUtil {
     public static final String APP_COUNTRY = "Sri Lanka";
     public static final int PAYMENT_SUCCESS = 2;
 
-    public static String getMerchantId(){
+    public static String getMerchantId() {
         return MERCHANT_ID;
     }
 
-    public static String generateHash(String orderId, double amount){
+    public static String generateHash(String orderId, double amount) {
         String formattedAmount = String.format(Locale.US, "%.2f", amount);
         String secretHash = md5(MERCHANT_SECRET).toUpperCase();
         String row = MERCHANT_ID + orderId + formattedAmount + APP_CURRENCY + secretHash;
@@ -27,19 +27,24 @@ public class PayHereUtil {
         return md5(row).toUpperCase();
     }
 
-    public static boolean validateNotify(MultivaluedMap<String, String> from){
+    public static boolean validateNotify(MultivaluedMap<String, String> from) {
         String merchantId = from.getFirst("merchant_id");
         String orderId = from.getFirst("order_id");
-        String paymentAmount = from.getFirst("payment_amount");
-        String paymentCurrency = from.getFirst("payment_currency");
+        String payHereAmount = from.getFirst("payhere_amount");
+        String payHereCurrency = from.getFirst("payhere_currency");
         String statusCode = from.getFirst("status_code");
-        String md5Sig =  from.getFirst("md5sig");
-        String localSignature = md5(merchantId + orderId + paymentAmount + paymentCurrency + statusCode + md5(PayHereUtil.MERCHANT_SECRET).toUpperCase());
+        String md5Sig = from.getFirst("md5sig");
+        String localSignature = md5(merchantId +
+                orderId +
+                payHereAmount +
+                payHereCurrency +
+                statusCode +
+                md5(PayHereUtil.MERCHANT_SECRET).toUpperCase()).toUpperCase();
 
-        return localSignature.equals(md5Sig);
+        return localSignature.equals(md5Sig) && Integer.parseInt(statusCode) == PayHereUtil.PAYMENT_SUCCESS;
     }
 
-    private static String md5(String input){
+    private static String md5(String input) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] digest = md.digest(input.getBytes(StandardCharsets.UTF_8));
@@ -48,7 +53,7 @@ public class PayHereUtil {
                 sb.append(String.format("%02x", b));
             }
             return sb.toString();
-        } catch (NoSuchAlgorithmException e){
+        } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("MD5 ERROR: " + e);
         }
     }

@@ -119,22 +119,31 @@ public class CheckoutService {
                         // CARD PAYMENT
                         if (paymentType.getId() == 1) {
 
-                            Order order = orderService.createPendingOrder(hibernateSession, dbUser, requestDTO, paymentType, deliveryType,
-                                    pendingStatus, billingAddress, city);
+                            String tempOrderId = "TMP_" + dbUser.getId() + "_" + System.currentTimeMillis();
 
-                            PayHereDTO paymentDetails = createPaymentDetails(hibernateSession, order, dbUser, deliveryType);
+                            // Create a pending order
+                            Order pendingOrder = new OrderService().createPendingOrder(
+                                    hibernateSession, dbUser, requestDTO, paymentType, deliveryType, pendingStatus, billingAddress, city
+                            );
+
+                            // Set tempOrderId as order reference
+                            pendingOrder.setTempOrderId(tempOrderId);
+                            hibernateSession.merge(pendingOrder);
+
+                            PayHereDTO paymentDetails = createPaymentDetails(hibernateSession, tempOrderId, dbUser, deliveryType);
 
                             responseObject.add("paymentDetails", AppUtil.GSON.toJsonTree(paymentDetails));
                             hibernateSession.getTransaction().commit();
 
                             status = true;
                             message = "Proceed to payment";
-
                         }
+
                         // COD PAYMENT
                         else if (paymentType.getId() == 2) {
 
-                            orderService.createOrder(dbUser, requestDTO, paymentType, deliveryType, pendingStatus, billingAddress, hibernateSession);
+                            orderService.createOrder(dbUser, requestDTO, paymentType, deliveryType,
+                                    pendingStatus, billingAddress, hibernateSession);
 
                             hibernateSession.getTransaction().commit();
 
@@ -160,10 +169,9 @@ public class CheckoutService {
         return AppUtil.GSON.toJson(responseObject);
     }
 
-    private PayHereDTO createPaymentDetails(Session hibernateSession, Order order, User user, DeliveryType deliveryType) {
+    private PayHereDTO createPaymentDetails(Session hibernateSession, String tempOrderId, User user, DeliveryType deliveryType) {
 
-        String order_id = "ORD" + order.getId() + "_" + System.currentTimeMillis();
-
+        String order_id = tempOrderId;
 
         String returnURL = Env.get("app.public.url") + "/api/payments/return";
         String cancelURL = Env.get("app.public.url") + "/api/payments/cancel";
@@ -187,10 +195,10 @@ public class CheckoutService {
 
             amount += cart.getStock().getPrice() * cart.getQuantity();
         }
-        amount += deliveryType.getPrice();
+        double totalAmount = amount + deliveryType.getPrice();
 
-        String formattedAmount = String.format(Locale.US, "%.2f", amount);
-        String hashValue = PayHereUtil.generateHash(order_id, amount);
+        String formattedAmount = String.format(Locale.US, "%.2f", totalAmount);
+        String hashValue = PayHereUtil.generateHash(order_id, totalAmount);
 
 
         Address billingAddress = hibernateSession.createQuery("FROM Address a WHERE a.user = :user AND a.addressType = 'billing'", Address.class)
@@ -211,7 +219,6 @@ public class CheckoutService {
         payHereDTO.setOrder_id(order_id);
         payHereDTO.setItems(items.toString());
         payHereDTO.setAmount(formattedAmount);
-
         payHereDTO.setCurrency(PayHereUtil.APP_CURRENCY);
         payHereDTO.setHash(hashValue);
         payHereDTO.setFirst_name(user.getFirstName());
@@ -221,6 +228,7 @@ public class CheckoutService {
         payHereDTO.setAddress(billingAddress.getLineOne() + ", " + billingAddress.getLineTwo());
         payHereDTO.setCity(billingAddress.getCity().getName());
         payHereDTO.setCountry(PayHereUtil.APP_COUNTRY);
+
 
         return payHereDTO;
     }

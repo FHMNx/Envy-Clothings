@@ -252,12 +252,12 @@ payhere.onCompleted = function onCompleted(orderId) {
     console.log("Payment completed. OrderID:" + orderId);
     // Note: validate the payment and show success or failure page to the customer
     Notiflix.Report.success(
-        'Envy Clothings',
-        "your order has been placed successfully",
-        "okay",
+        "Envy Clothings",
+        "Payment successful. Your order is confirmed.",
+        "Okay",
         () => {
-            window.location = "index.html"
-        },
+            window.location = "invoice.html?orderId=" + orderId;
+        }
     );
 };
 
@@ -265,6 +265,12 @@ payhere.onCompleted = function onCompleted(orderId) {
 payhere.onDismissed = function onDismissed() {
     // Note: Prompt user to pay again or show an error page
     console.log("Payment dismissed");
+    Notiflix.Report.warning(
+        'Envy Clothings',
+        'You dismissed the payment. Order not completed.',
+        'Okay'
+    );
+
 };
 
 // Error occurred
