@@ -75,7 +75,9 @@ public class CartService {
         boolean status = false;
         String message = "";
         HttpSession httpSession = request.getSession();
+
         User sessionUser = (User) httpSession.getAttribute("user");
+
         if (sessionUser == null) {
             // use session cart
             List<Cart> sessionCart = getSessionAttribute(httpSession);

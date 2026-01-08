@@ -1,6 +1,43 @@
-document.getElementById("checkoutBtn").addEventListener("click", () => {
-    window.location.href = "checkout.html";
-});
+document.getElementById("checkoutBtn").addEventListener("click", proceedToCheckout);
+
+async function proceedToCheckout() {
+    try {
+        const response = await fetch("api/checkouts/user-checkout-data");
+
+        if (response.redirected) {
+            Notiflix.Report.info(
+                'Envy Clothings',
+                'Please login first before proceeding to checkout',
+                'Okay',
+                () => window.location = "sign-in.html"
+            );
+            return;
+        }
+
+        if (!response.ok) {
+            Notiflix.Notify.failure("Checkout validation failed", {
+                position: 'center-top'
+            });
+            return;
+        }
+
+        const data = await response.json();
+
+        if (!data.status) {
+            Notiflix.Notify.failure(data.message, {
+                position: 'center-top'
+            });
+            return;
+        }
+
+        window.location.href = "checkout.html";
+
+    } catch (e) {
+        Notiflix.Notify.failure(e.message, {
+            position: 'center-top'
+        });
+    }
+}
 
 async function addToCart(stockId, qty) {
     try {

@@ -63,6 +63,7 @@ async function loadCheckout() {
         if (response.ok) {
 
             const data = await response.json();
+
             if (data.status) {
                 console.log(data);
                 makeOrderSummery(data);
@@ -253,7 +254,7 @@ payhere.onCompleted = function onCompleted(orderId) {
     // Note: validate the payment and show success or failure page to the customer
     Notiflix.Report.success(
         "Envy Clothings",
-        "Payment successful. Your order is confirmed.",
+        "Payment successful. Redirecting to invoice...",
         "Okay",
         () => {
             window.location = "invoice.html?orderId=" + orderId;
@@ -261,11 +262,12 @@ payhere.onCompleted = function onCompleted(orderId) {
     );
 };
 
+
 // Payment window closed
 payhere.onDismissed = function onDismissed() {
     // Note: Prompt user to pay again or show an error page
     console.log("Payment dismissed");
-    Notiflix.Report.warning(
+    Notiflix.Report.info(
         'Envy Clothings',
         'You dismissed the payment. Order not completed.',
         'Okay'
