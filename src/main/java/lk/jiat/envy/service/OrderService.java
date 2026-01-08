@@ -1,7 +1,9 @@
 package lk.jiat.envy.service;
 
+import com.google.gson.JsonObject;
 import lk.jiat.envy.dto.CheckoutRequestDTO;
 import lk.jiat.envy.entity.*;
+import lk.jiat.envy.util.AppUtil;
 import lk.jiat.envy.util.HibernateUtil;
 import lk.jiat.envy.validation.Validator;
 import org.hibernate.HibernateException;
@@ -195,7 +197,7 @@ public class OrderService {
             Order order = hibernateSession.createQuery("FROM Order o WHERE o.tempOrderId = :tempId", Order.class)
                     .setParameter("tempId", tempOrderId)
                     .uniqueResult();
-            if (order == null){
+            if (order == null) {
                 throw new RuntimeException("Pending order not found");
             }
             return order.getId();
