@@ -266,6 +266,7 @@
 
 
     </style>
+
 </head>
 <body>
 
@@ -283,9 +284,8 @@
 
 
         <div class="invoice-info">
-            <strong>Invoice #INV-10245</strong>
-            Date: 12 Aug 2026<br>
-            Order ID: ORD-88921
+            <strong>Invoice No: <label id="invoice-no"></label></strong>
+            <strong>Date:</strong><label id="invoice-date"></label><br>
         </div>
     </div>
 
@@ -293,10 +293,14 @@
     <div class="billing">
         <div>
             <h4>Billed To</h4>
-            Fahmaan M<br>
-            23/B, Kandy Road<br>
-            Sri Lanka<br>
-            +94 77 123 4567
+            <label id="buyer-name"></label><br>
+                <p id="buyer-address"></p>
+                <p>
+                    <span id="city-name"></span> , <span id="country-name"></span>
+                </p>
+            <p>
+                <strong>Email: </strong><label id="buyer-email"></label>
+            </p>
         </div>
 
         <div>
@@ -310,19 +314,15 @@
     <table>
         <thead>
         <tr>
+            <th>#</th>
             <th>Product</th>
             <th>Qty</th>
-            <th>Price</th>
-            <th>Subtotal</th>
+            <th>Unit Price</th>
+            <th>Total</th>
         </tr>
         </thead>
-        <tbody>
-        <tr>
-            <td>Sea Green Men's Crew Neck T-Shirt (L)</td>
-            <td>1</td>
-            <td>Rs. 1,195</td>
-            <td>Rs. 1,195</td>
-        </tr>
+        <tbody id="tbody">
+
         </tbody>
     </table>
 
@@ -330,15 +330,15 @@
     <div class="totals">
         <div>
             <span>Subtotal</span>
-            <span>Rs. 1,195</span>
+            <span id="subTotal"></span>
         </div>
         <div>
             <span>Shipping</span>
-            <span>Rs. 0</span>
+            <span id="shippingCost"></span>
         </div>
         <div class="grand">
             <span>Total</span>
-            <span>Rs. 1,195</span>
+            <span id="total"></span>
         </div>
     </div>
 

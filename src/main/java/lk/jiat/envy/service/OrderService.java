@@ -5,7 +5,6 @@ import lk.jiat.envy.dto.CheckoutRequestDTO;
 import lk.jiat.envy.entity.*;
 import lk.jiat.envy.util.AppUtil;
 import lk.jiat.envy.util.HibernateUtil;
-import lk.jiat.envy.validation.Validator;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -106,56 +105,46 @@ public class OrderService {
         return order;
     }
 
-    public void completeOrder(String orderId) {
-        int oId = Integer.parseInt(orderId.replaceAll(Validator.NON_DIGIT_PATTERN, ""));
+    public void completeOrder(String tempOrderId) {
 
         try (Session hibernateSession = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = hibernateSession.beginTransaction();
 
             try {
 
-                Order order = hibernateSession.find(Order.class, oId);
+                Order order = hibernateSession.createQuery("FROM Order o WHERE o.tempOrderId = :tempId", Order.class).
+                        setParameter("tempId", tempOrderId)
+                        .uniqueResult();
+
                 if (order == null) {
-                    throw new RuntimeException("Order Not Found for Order ID: " + oId);
+                    throw new RuntimeException("Order not found for tempOrderId: " + tempOrderId);
                 }
 
-                //update stock quantity
-                List<OrderItem> orderItems = order.getOrder_items();
-                if (orderItems != null && !orderItems.isEmpty()) {
-                    for (OrderItem orderItem : orderItems) {
-                        Stock stock = orderItem.getStock();
-                        int updatedQty = stock.getQuantity() - orderItem.getQuantity();
-                        if (updatedQty < 0) {
-                            throw new RuntimeException("Insufficient stock for product: " + stock.getProduct().getTitle());
-                        }
-                        stock.setQuantity(updatedQty);
-                        hibernateSession.merge(stock);
-                    }
+                for (OrderItem orderItem : order.getOrder_items()) {
+                    Stock stock = orderItem.getStock();
+                    stock.setQuantity(stock.getQuantity() - orderItem.getQuantity());
+                    hibernateSession.merge(stock);
                 }
 
-                //update order status
-                Status completedStatus = hibernateSession.createNamedQuery("Status.findByName", Status.class)
-                        .setParameter("name", String.valueOf(Status.Type.PAID))
+                Status paidStatus = hibernateSession.createNamedQuery("Status.findByName", Status.class)
+                        .setParameter("name", Status.Type.PAID.name())
                         .getSingleResult();
-                order.setStatus(completedStatus);
+
+                order.setStatus(paidStatus);
                 hibernateSession.merge(order);
 
-                //remove cart items
-                List<Cart> cartList = hibernateSession.createQuery("FROM Cart c WHERE c.user = :user", Cart.class)
-                        .setParameter("user", order.getUser())
-                        .getResultList();
+                hibernateSession.createQuery("DELETE FROM Cart c WHERE c.user = :user").
+                        setParameter("user", order.getUser())
+                        .executeUpdate();
 
-                for (Cart cart : cartList) {
-                    hibernateSession.remove(cart);
-                }
                 transaction.commit();
+                System.out.println("Order marked as PAID: " + tempOrderId);
 
             } catch (HibernateException e) {
                 transaction.rollback();
-                throw new RuntimeException("Failed to complete Order: " + orderId, e);
+                throw new RuntimeException();
             }
         }
-
     }
 
     public void failOrder(String tempOrderId) {
@@ -171,7 +160,7 @@ public class OrderService {
                         .uniqueResult();
 
                 if (order != null) {
-                    // Fetch PAYMENT_FAILED status
+
                     Status failedStatus = hibernateSession.createNamedQuery("Status.findByName", Status.class)
                             .setParameter("name", Status.Type.PAYMENT_FAILED.name())
                             .getSingleResult();
@@ -190,19 +179,34 @@ public class OrderService {
         }
     }
 
-    public int getPendingOrderIdByTempId(String tempOrderId) {
+    public String verifyOrderDetails(String tempOrderId) {
+
+        JsonObject responseJson = new JsonObject();
 
         try (Session hibernateSession = HibernateUtil.getSessionFactory().openSession()) {
 
-            Order order = hibernateSession.createQuery("FROM Order o WHERE o.tempOrderId = :tempId", Order.class)
-                    .setParameter("tempId", tempOrderId)
+            Order order = hibernateSession.createQuery(
+                            "FROM Order o WHERE o.tempOrderId = :tempId",
+                            Order.class
+                    ).setParameter("tempId", tempOrderId)
                     .uniqueResult();
+
             if (order == null) {
-                throw new RuntimeException("Pending order not found");
+                responseJson.addProperty("status", false);
+                responseJson.addProperty("message", "Order not found");
+                return AppUtil.GSON.toJson(responseJson);
             }
-            return order.getId();
+
+            if (order.getStatus().getName().equals(Status.Type.PAID.name())) {
+                responseJson.addProperty("status", true);
+                responseJson.addProperty("orderId", order.getId()); // REAL DB ID
+            } else {
+                responseJson.addProperty("status", false);
+                responseJson.addProperty("message", "Payment pending");
+            }
+
+            return AppUtil.GSON.toJson(responseJson);
         }
     }
-
 
 }
