@@ -23,6 +23,14 @@ import java.util.List;
 @Path("/products")
 public class ProductController {
 
+    @Path("/basic-search")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response loadBasicSearchData(@QueryParam("title") String title) {
+        String responseJson = new ProductService().getBasicSearchData(title);
+        return Response.ok().entity(responseJson).build();
+    }
+
     @Path("/{productId}/update-images")
     @PUT
     @Consumes(MediaType.MULTIPART_FORM_DATA)

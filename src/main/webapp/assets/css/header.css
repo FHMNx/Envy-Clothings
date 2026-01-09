@@ -287,6 +287,119 @@ li {
     color: var(--primary-color);
 }
 
+/* ================= SEARCH OVERLAY (CSS ONLY) ================= */
+
+.search-icon {
+    cursor: pointer;
+}
+
+/* Overlay hidden by default */
+.search-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(4px);
+    display: none;
+    z-index: 9999999;
+}
+
+/* Toggle ON */
+#search-toggle:checked ~ .search-overlay {
+    display: block;
+}
+
+/* Panel */
+.search-container {
+    background: var(--white);
+    max-width: 900px;
+    margin: 80px auto;
+    border-radius: 10px;
+    padding: 20px;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Header */
+.search-header {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.search-header input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    padding: 10px;
+}
+
+.close-search {
+    cursor: pointer;
+}
+
+.close-search i {
+    font-size: 26px;
+    color: var(--primary-color);
+}
+
+/* Results */
+.search-results {
+    padding-top: 15px;
+}
+
+.result-count {
+    font-size: 14px;
+    color: var(--light-text);
+    margin-bottom: 10px;
+}
+
+.result-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.result-item img {
+    width: 80px;
+    height: 80px;
+    border-radius: 6px;
+    background: #eee;
+    object-fit: cover;
+}
+
+.result-info h4 {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.result-info p {
+    font-weight: 600;
+}
+
+.result-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 12px;
+}
+
+.result-actions i {
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.result-actions i:hover {
+    color: var(--accent-color);
+}
+
+
 /* --- Mobile Styles --- */
 @media screen and (max-width: 576px) {
     .site-header nav {

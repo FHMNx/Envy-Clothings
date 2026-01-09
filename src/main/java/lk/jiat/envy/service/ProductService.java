@@ -26,6 +26,16 @@ import java.util.Set;
 
 public class ProductService {
 
+    public String getBasicSearchData(String title) {
+        JsonObject responseObject = new JsonObject();
+        boolean status = false;
+        String message = "";
+
+        responseObject.addProperty("status", status);
+        responseObject.addProperty("message", message);
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
     public String updateProduct(ProductDTO productDTO, @Context HttpServletRequest request) {
 
         JsonObject responseObject = new JsonObject();
