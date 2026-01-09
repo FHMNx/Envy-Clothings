@@ -119,7 +119,7 @@ public class CheckoutService {
                         // CARD PAYMENT
                         if (paymentType.getId() == 1) {
 
-                            String tempOrderId = "TMP_" + dbUser.getId() + "_" + System.currentTimeMillis();
+                            String tempOrderId = "ORD_" + dbUser.getId() + "_" + System.currentTimeMillis();
 
                             // Create a pending order
                             Order pendingOrder = new OrderService().createPendingOrder(

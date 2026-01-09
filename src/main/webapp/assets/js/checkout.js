@@ -236,7 +236,9 @@ async function placeOrder() {
         }
 
     } catch (e) {
-        Notiflix.Notify.failure(e.message, {position: 'center-top'});
+        Notiflix.Notify.failure(e.message, {
+            position: 'center-top'
+        });
     } finally {
         Notiflix.Loading.remove();
     }
@@ -249,17 +251,12 @@ function getSelectedPaymentType() {
 
 
 // Payment completed. It can be a successful failure.
-payhere.onCompleted = function onCompleted(orderId) {
+payhere.onCompleted = async function onCompleted(orderId) {
     console.log("Payment completed. OrderID:" + orderId);
     // Note: validate the payment and show success or failure page to the customer
-    Notiflix.Report.success(
-        "Envy Clothings",
-        "Payment successful. Redirecting to invoice...",
-        "Okay",
-        () => {
-            window.location = "invoice.html?orderId=" + orderId;
-        }
-    );
+    Notiflix.Loading.standard("Verifying payment...");
+    await verifyOrder(orderId);
+
 };
 
 
@@ -280,3 +277,32 @@ payhere.onError = function onError(error) {
     // Note: show an error page
     console.log("Error:" + error);
 };
+
+
+async function verifyOrder(orderId) {
+    try {
+
+        const response = await fetch(`api/orders/verify-order?orderId=${orderId}`);
+        if (response.ok) {
+            const data = await response.json();
+
+            if (data.status) {
+                window.location = `invoice.html?orderId=${data.orderId}`;
+            } else {
+                Notiflix.Notify.failure(data.message, {
+                    position: 'center-top'
+                });
+            }
+
+        } else {
+            Notiflix.Notify.failure("order verifying failed!", {
+                position: 'center-top'
+            });
+        }
+
+    } catch (e) {
+        Notiflix.Notify.failure(e.message, {
+            position: 'center-top'
+        });
+    }
+}

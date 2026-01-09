@@ -17,9 +17,9 @@ public class PaymentController {
     @Path("/return")
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    public Response paymentSuccess(@QueryParam("orderId") String orderId) {
+    public Response paymentReturn(@QueryParam("orderId") String orderId) {
         System.out.println("payHere return triggered");
-        return Response.seeOther(URI.create(Env.get("app.url") + "/invoice.html?orderId=" + orderId)).build();
+        return Response.seeOther(URI.create(Env.get("app.url") + "/payment-processing.html")).build();
     }
 
 
@@ -34,34 +34,24 @@ public class PaymentController {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response paymentNotify(MultivaluedMap<String, String> form) {
-        System.out.println("payHere notify triggered");
-
-        String orderId = form.getFirst("order_id");
-        String statusCode = form.getFirst("status_code");
-
-        System.out.println("orderId: " + orderId);
-        System.out.println("statusCode: " + statusCode);
 
         if (!PayHereUtil.validateNotify(form)) {
-            System.out.println("PayHereUtil.ValidateNotify block");
-            return Response.status(Response.Status.BAD_REQUEST).entity("INVALID SIGNATURE").build();
+            return Response.status(400).build();
         }
+
+        String tempOrderId = form.getFirst("order_id");
+        int statusCode = Integer.parseInt(form.getFirst("status_code"));
 
         OrderService orderService = new OrderService();
 
-        if (Integer.parseInt(statusCode) == PayHereUtil.PAYMENT_SUCCESS) {
-            //success
-            int oId = orderService.getPendingOrderIdByTempId(orderId);
-            orderService.completeOrder(String.valueOf(oId));
-
+        if (statusCode == PayHereUtil.PAYMENT_SUCCESS) {
+            orderService.completeOrder(tempOrderId);
         } else {
-            //fail
-            System.out.println("Payment failed for: " + orderId);
-            orderService.failOrder(orderId);
+            orderService.failOrder(tempOrderId);
         }
+
         return Response.ok().build();
     }
-
 
 
 }
