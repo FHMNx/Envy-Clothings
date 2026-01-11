@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.core.Context;
 import lk.jiat.envy.dto.ProductDTO;
+import lk.jiat.envy.dto.SearchResponseDTO;
 import lk.jiat.envy.dto.StockDTO;
 import lk.jiat.envy.entity.*;
 import lk.jiat.envy.util.AppUtil;
@@ -30,6 +31,40 @@ public class ProductService {
         JsonObject responseObject = new JsonObject();
         boolean status = false;
         String message = "";
+
+        if (!title.isBlank()) {
+
+            Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+
+            Status inStockStatus = hibernateSession.createNamedQuery("Status.findByName", Status.class)
+                    .setParameter("name", String.valueOf(Status.Type.PENDING))
+                    .getSingleResult();
+
+            List<Stock> stockList = hibernateSession.createQuery("FROM Stock s WHERE s.product.title LIKE :title AND s.status=:status", Stock.class)
+                    .setParameter("title", "%" + title + "%")
+                    .setParameter("status", inStockStatus)
+                    .getResultList();
+
+            if(stockList.isEmpty()){
+                message = "Product not found";
+            }else{
+
+                List<SearchResponseDTO> searchResponseDTOList = new ArrayList<>();
+                for(Stock stock : stockList) {
+                    SearchResponseDTO dto = new SearchResponseDTO();
+                    dto.setStockId(stock.getId());
+                    dto.setTitle(stock.getProduct().getTitle());
+                    dto.setPrice(stock.getPrice());
+                    dto.setImage(stock.getProduct().getImages().get(0));
+
+                    searchResponseDTOList.add(dto);
+                }
+                responseObject.add("basicSearchData", AppUtil.GSON.toJsonTree(searchResponseDTOList));
+                status = true;
+            }
+
+            hibernateSession.close();
+        }
 
         responseObject.addProperty("status", status);
         responseObject.addProperty("message", message);
@@ -255,7 +290,7 @@ public class ProductService {
         productDTO.setStockDTOList(stockDTOList);
         productDTO.setImages(product.getImages());
 
-        responseObject.addProperty("status" , true);
+        responseObject.addProperty("status", true);
         responseObject.add("singleProduct", AppUtil.GSON.toJsonTree(productDTO));
         hibernateSession.close();
         return AppUtil.GSON.toJson(responseObject);

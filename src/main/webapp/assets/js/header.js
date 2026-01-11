@@ -287,6 +287,7 @@ async function basicSearch(event) {
                 const data = await response.json();
 
                 if (data.status) {
+                    console.log(data);
 
                 } else {
                     Notiflix.Notify.failure(data.message, {
