@@ -1,0 +1,43 @@
+package lk.jiat.envy.dto;
+
+import java.io.Serializable;
+import java.util.List;
+
+public class SearchResponseDTO implements Serializable {
+    private int stockId;
+    private String title;
+    private double price;
+    private String image;
+
+    public int getStockId() {
+        return stockId;
+    }
+
+    public void setStockId(int stockId) {
+        this.stockId = stockId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+}

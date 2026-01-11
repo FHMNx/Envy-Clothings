@@ -16,7 +16,6 @@ import org.glassfish.jersey.media.multipart.ContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
-import javax.print.attribute.standard.Media;
 import java.io.InputStream;
 import java.util.List;
 

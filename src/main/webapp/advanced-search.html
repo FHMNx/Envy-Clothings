@@ -236,11 +236,23 @@
             overflow: hidden;
             opacity: 0;
             transform: translateY(-6px);
-            transition:
-                    max-height 0.45s ease,
-                    opacity 0.3s ease,
-                    transform 0.3s ease;
+            transition: max-height 0.45s ease,
+            opacity 0.3s ease,
+            transform 0.3s ease;
         }
+
+        .toggle-content li.chosen a {
+            font-weight: 600;
+            color: #000;
+        }
+
+        .toggle-content li.chosen::before {
+            content: "✔";
+            margin-right: 6px;
+            font-size: 12px;
+            color: #000;
+        }
+
 
         /* OPEN STATE */
         .toggle-list.active .toggle-content {
@@ -321,7 +333,6 @@
             font-size: 14px;
             margin-top: 10px;
         }
-
 
 
         /* ================= RESPONSIVE ================= */
@@ -451,8 +462,8 @@
                 <span>PRICE</span>
                 <i class="bx bx-minus"></i>
             </div>
-            <div class="toggle-content">
-                <input type="range" min="0" max="1000000">
+            <div class="toggle-content" id="slider-range">
+                <input id="amount" type="range" min="0" max="1000000">
                 <div class="price-range">
                     <span>Rs.0</span>
                     <span>Rs.1,000,000</span>
@@ -461,7 +472,7 @@
         </div>
 
         <button class="apply-btn" onclick="searchProduct(0);">Apply</button>
-        <button class="reset-btn">Reset All</button>
+        <button class="reset-btn" onclick="resetFilters();">Reset All</button>
 
     </aside>
 
@@ -471,13 +482,14 @@
     <section class="search-results">
 
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
-            <p style="font-size:14px;">Showing <strong>1–10</strong> of <strong id="all-item-count">86</strong> results</p>
+            <p style="font-size:14px;">Showing <strong>1–10</strong> of <strong id="all-item-count">86</strong> results
+            </p>
 
-            <select style="padding:6px 10px; border:1px solid #ccc;">
+            <select style="padding:6px 10px; border:1px solid #ccc;" id="sort">
                 <option value="latest">Sort by Latest</option>
                 <option value="oldest">Sort by Oldest</option>
-                <option value="price_low">Price: Low to High</option>
-                <option value="price_high">Price: High to Low</option>
+                <option value="name">Sort by Name</option>
+                <option value="price">Sort by Price</option>
             </select>
         </div>
 
@@ -486,28 +498,28 @@
 
             <div class="pro-container" id="product-container">
 
-<!--                &lt;!&ndash; PRODUCT CARD &ndash;&gt;-->
-<!--                <div class="pro">-->
-<!--                    <img src="assets/images/products/f2.jpg" alt="">-->
-<!--                    <a href="#" class="like-btn">-->
-<!--                        <i class="bx bxs-heart"></i>-->
-<!--                    </a>-->
+                <!--                &lt;!&ndash; PRODUCT CARD &ndash;&gt;-->
+                <!--                <div class="pro">-->
+                <!--                    <img src="assets/images/products/f2.jpg" alt="">-->
+                <!--                    <a href="#" class="like-btn">-->
+                <!--                        <i class="bx bxs-heart"></i>-->
+                <!--                    </a>-->
 
-<!--                    <div class="des">-->
-<!--                        <span>Addidas</span>-->
-<!--                        <h5>Cartoon Astronaut T-Shirts</h5>-->
-<!--                        <div class="star">-->
-<!--                            <i class="bx bx-star"></i>-->
-<!--                            <i class="bx bx-star"></i>-->
-<!--                            <i class="bx bx-star"></i>-->
-<!--                            <i class="bx bx-star"></i>-->
-<!--                            <i class="bx bx-star"></i>-->
-<!--                        </div>-->
-<!--                        <h4>Rs 7,800</h4>-->
-<!--                    </div>-->
+                <!--                    <div class="des">-->
+                <!--                        <span>Addidas</span>-->
+                <!--                        <h5>Cartoon Astronaut T-Shirts</h5>-->
+                <!--                        <div class="star">-->
+                <!--                            <i class="bx bx-star"></i>-->
+                <!--                            <i class="bx bx-star"></i>-->
+                <!--                            <i class="bx bx-star"></i>-->
+                <!--                            <i class="bx bx-star"></i>-->
+                <!--                            <i class="bx bx-star"></i>-->
+                <!--                        </div>-->
+                <!--                        <h4>Rs 7,800</h4>-->
+                <!--                    </div>-->
 
-<!--                    <a href="#"><i class="bx bx-cart cart"></i></a>-->
-<!--                </div>-->
+                <!--                    <a href="#"><i class="bx bx-cart cart"></i></a>-->
+                <!--                </div>-->
 
             </div>
 
@@ -518,19 +530,19 @@
         <div class="flex justify-center mt-10">
             <nav class="flex items-center gap-1 text-sm" id="pagination-container">
 
-<!--                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black">‹</a>-->
+                <!--                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black">‹</a>-->
 
-<!--                <a href="#" class="px-3 py-2 border border-black bg-black text-white">1</a>-->
+                <!--                <a href="#" class="px-3 py-2 border border-black bg-black text-white">1</a>-->
 
-<!--                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black">2</a>-->
+                <!--                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black">2</a>-->
 
-<!--                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black">3</a>-->
+                <!--                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black">3</a>-->
 
-<!--                <span class="px-3 py-2 border border-gray-300">...</span>-->
+                <!--                <span class="px-3 py-2 border border-gray-300">...</span>-->
 
-<!--                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black">10</a>-->
+                <!--                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black">10</a>-->
 
-<!--                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black" id="next-button">›</a>-->
+                <!--                <a href="#" class="px-3 py-2 border border-gray-300 hover:border-black" id="next-button">›</a>-->
 
             </nav>
         </div>

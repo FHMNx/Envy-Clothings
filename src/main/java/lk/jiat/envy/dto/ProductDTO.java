@@ -21,6 +21,7 @@ public class ProductDTO implements Serializable {
     private String description;
     private List<StockDTO> stockDTOList;
     private List<String> images;
+    private int stockId;
 
 
     public int getProductId() {
@@ -109,6 +110,14 @@ public class ProductDTO implements Serializable {
 
     public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public int getStockId() {
+        return stockId;
+    }
+
+    public void setStockId(int stockId) {
+        this.stockId = stockId;
     }
 
     public String getCategoryName() {
