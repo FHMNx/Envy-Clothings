@@ -348,10 +348,40 @@ li {
     color: var(--primary-color);
 }
 
+#basic-search-result {
+    display: flex;
+    flex-direction: column;
+}
+
+.search-results {
+    padding-top: 15px;
+}
+
+
 /* Results */
 .search-results {
     padding-top: 15px;
 }
+
+.search-overlay .search-results {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+
+.search-results::-webkit-scrollbar {
+    width: 6px;
+}
+
+.search-results::-webkit-scrollbar-thumb {
+    background: #c39953;
+    border-radius: 10px;
+}
+
+.search-results::-webkit-scrollbar-track {
+    background: #f0f0f0;
+}
+
 
 .result-count {
     font-size: 14px;

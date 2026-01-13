@@ -168,7 +168,7 @@ class HeaderContent extends HTMLElement {
                                         </li>
 
                                         <li>
-                                            <a href="#"><i class='bx bx-heart'></i>
+                                            <a href="wishList.html"><i class='bx bx-heart'></i>
                                                 <div>
                                                     <h5>Wishlist</h5>
                                                     <p>Your saved products.</p>
@@ -208,7 +208,7 @@ class HeaderContent extends HTMLElement {
                         <i class='bx bx-search'></i>
                     </label>
 
-                    <i class='bx bx-heart'></i>
+                   <a href="wishList.html"> <i class='bx bx-heart'></i></a>
 
                     <div class="cart-icon">
                         <a href="cart.html"><i class='bx bx-cart'></i></a>
@@ -229,20 +229,13 @@ class HeaderContent extends HTMLElement {
                     </div>
 
                     <div class="search-results">
-                        <p class="result-count">1 Result Found</p>
+                        <p class="result-count"><strong id="result-count">0</strong> Result Found</p>
 
-                        <div class="result-item">
-                            <img src="assets/images/placeholder.png">
-                            <div class="result-info">
-                                <h4>Product Title-1</h4>
-                                <p>Rs. 0.00</p>
-                            </div>
-                            <div class="result-actions">
-                                <i class='bx bx-cart'></i>
-                                <i class='bx bx-heart'></i>
-                            </div>
+                        <div id="basic-search-result">
+                            
                         </div>
                     </div>
+                    
                 </div>
             </div>
 
@@ -287,7 +280,37 @@ async function basicSearch(event) {
                 const data = await response.json();
 
                 if (data.status) {
-                    console.log(data);
+                    console.log(data.basicSearchData.length);
+                    const searchData = data.basicSearchData;
+
+                    document.getElementById("result-count").innerHTML = searchData.length;
+                    const resultBox = document.getElementById("basic-search-result");
+                    resultBox.innerHTML = "";
+
+                    searchData.forEach((item) => {
+                        resultBox.innerHTML += `
+                            <div class="result-item">
+                                <a href="single-product.html?productId=${item.stockId}">
+                                    <img src="${item.image}">
+                                </a>
+                    
+                                <div class="result-info">
+                                    <h4>${item.title}</h4>
+                                    <p>Rs. ${new Intl.NumberFormat("en-US", {
+                                                minimumFractionDigits: 2
+                                            }).format(item.price)}</p>
+                                </div>
+                    
+                                <div class="result-actions">
+                                    <a onclick="addToCart(${item.stockId}, 1);">
+                                        <i class='bx bx-cart'></i>
+                                    </a>
+                                    <a><i class='bx bx-heart'></i></a>
+                                </div>
+                            </div>
+                        `;
+                    });
+
 
                 } else {
                     Notiflix.Notify.failure(data.message, {

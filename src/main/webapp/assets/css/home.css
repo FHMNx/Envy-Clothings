@@ -450,6 +450,15 @@
     color: #e0a100;
 }
 
+.like-btn i {
+    color: #aaa;
+    transition: 0.3s;
+}
+
+.like-btn.active i {
+    color: red;
+}
+
 .product1 .pro .des h4 {
     padding-top: 7px;
     font-size: 15px;

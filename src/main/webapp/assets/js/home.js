@@ -33,7 +33,7 @@ async function loadNewArrivals() {
     }
 }
 
-function renderNewArrivals(productList) {
+async function renderNewArrivals(productList) {
     console.log(productList);
 
     const newArrival = document.getElementById("new-arrival");
@@ -45,7 +45,7 @@ function renderNewArrivals(productList) {
             newArrival.innerHTML += `<div class="pro">
             <a href="single-product.html?productId=${product.productId}">
              <img src="${product.images[0]}" alt="">
-              <a href="" class="like-btn"><i class='bx bxs-heart'></i></a>
+              <a onclick="toggleWishList(this, '${stock.stockId}')" class="like-btn" data-stock-id="${stock.stockId}"><i class='bx bxs-heart'></i></a>
             </a>
             <div class="des">
                 <span>Addidas</span>
@@ -61,10 +61,13 @@ function renderNewArrivals(productList) {
                 minimumFractionDigits: 2,
             }).format(stock.price)}</h4>
             </div>
-            <a href="cart.html"><i class="bx bx-cart cart"></i></a>
+            <a onclick="addToCart('${stock.stockId}', 1);"><i class="bx bx-cart cart"></i></a>
         </div>`
         });
     });
+
+    await syncWishListIcons();
+
 }
 
 async function loadWomenSection() {
@@ -87,7 +90,7 @@ async function loadWomenSection() {
     }
 }
 
-function renderWomenSection(productList) {
+async function renderWomenSection(productList) {
     console.log(productList);
 
     const womenSection = document.getElementById("women-section");
@@ -99,7 +102,7 @@ function renderWomenSection(productList) {
             womenSection.innerHTML += `<div class="pro">
             <a href="single-product.html?productId=${product.productId}">
              <img src="${product.images[0]}" alt="">
-              <a href="" class="like-btn"><i class='bx bxs-heart'></i></a>
+              <a onclick="toggleWishList(this, '${stock.stockId}');" class="like-btn" data-stock-id="${stock.stockId}"><i class='bx bxs-heart'></i></a>
             </a>
             <div class="des">
                 <span>Addidas</span>
@@ -115,10 +118,12 @@ function renderWomenSection(productList) {
                 minimumFractionDigits: 2,
             }).format(stock.price)}</h4>
             </div>
-            <a href="cart.html"><i class="bx bx-cart cart"></i></a>
+            <a onclick="addToCart(${stock.stockId}, 1)"><i class="bx bx-cart cart"></i></a>
         </div>`
         });
     });
+
+    await syncWishListIcons();
 }
 
 async function loadKidsSection() {
@@ -141,7 +146,7 @@ async function loadKidsSection() {
     }
 }
 
-function renderKidsSection(productList) {
+async function renderKidsSection(productList) {
     console.log(productList);
 
     const kidsSection = document.getElementById("kids-section");
@@ -153,7 +158,9 @@ function renderKidsSection(productList) {
             kidsSection.innerHTML += `<div class="pro">
             <a href="single-product.html?productId=${product.productId}">
              <img src="${product.images[0]}" alt="">
-              <a href="" class="like-btn"><i class='bx bxs-heart'></i></a>
+              <a onclick="toggleWishList(this, '${stock.stockId}');" class="like-btn" data-stock-id="${stock.stockId}">
+                <i class='bx bxs-heart'></i>
+              </a>
             </a>
             <div class="des">
                 <span>Addidas</span>
@@ -169,10 +176,13 @@ function renderKidsSection(productList) {
                 minimumFractionDigits: 2,
             }).format(stock.price)}</h4>
             </div>
-            <a href="cart.html"><i class="bx bx-cart cart"></i></a>
+            <a onclick="addToCart('${stock.stockId}', 1);"><i class="bx bx-cart cart"></i></a>
         </div>`
         });
     });
+
+    await syncWishListIcons();
+
 }
 
 async function loadMenSection() {
@@ -195,7 +205,7 @@ async function loadMenSection() {
     }
 }
 
-function renderMenSection(productList) {
+async function renderMenSection(productList) {
     console.log(productList);
 
     const menSection = document.getElementById("men-section");
@@ -207,7 +217,9 @@ function renderMenSection(productList) {
             menSection.innerHTML += `<div class="pro">
             <a href="single-product.html?productId=${product.productId}">
              <img src="${product.images[0]}" alt="">
-              <a href="" class="like-btn"><i class='bx bxs-heart'></i></a>
+              <a onclick="toggleWishList(this, '${stock.stockId}');" class="like-btn" data-stock-id="${stock.stockId}">
+                <i class='bx bxs-heart'></i>
+              </a>
             </a>
             <div class="des">
                 <span>Addidas</span>
@@ -223,10 +235,13 @@ function renderMenSection(productList) {
                 minimumFractionDigits: 2,
             }).format(stock.price)}</h4>
             </div>
-            <a href="cart.html"><i class="bx bx-cart cart"></i></a>
+            <a onclick="addToCart('${stock.stockId}', 1)"><i class="bx bx-cart cart"></i></a>
         </div>`
         });
     });
+
+    await syncWishListIcons();
+
 }
 
 
