@@ -235,9 +235,6 @@ async function searchProduct(firstResult) {
                 console.log(data);
                 updateProductView(data.productList);
                 document.getElementById("all-item-count").innerText = data.allProductCount;
-                Notiflix.Notify.success("Search operation success", {
-                    position: 'center-top'
-                });
             } else {
                 Notiflix.Notify.failure(data.message, {
                     position: 'center-top'
@@ -259,18 +256,24 @@ async function searchProduct(firstResult) {
     }
 }
 
+const priceSlider = document.getElementById("amount");
+const priceMaxLabel = document.getElementById("price-max");
+
+priceSlider.addEventListener("input", () => {
+    priceMaxLabel.innerText = "Rs." + Number(priceSlider.value).toLocaleString();
+    searchProduct(0);
+});
+
+
 function resetFilters() {
     const prefixArray = ["brand", "category", "color", "size"];
-    prefixArray.forEach((prefix) => {
-        const all_li = document.querySelectorAll("#" + prefix + "-options li");
-        all_li.forEach((line) => {
-            if (line.classList.contains("chosen")) {
-                line.classList.remove("chosen");
-            }
-        });
+    prefixArray.forEach(prefix => {
+        document.querySelectorAll(`#${prefix}-options li`)
+            .forEach(li => li.classList.remove("chosen"));
     });
+    const priceSlider = document.getElementById("amount");
+    priceSlider.value = priceSlider.max;
+    document.getElementById("price-max").innerText = "Rs." + Number(priceSlider.max).toLocaleString();
 
-    // reset price range
-    document.getElementById("amount").value = 1000000;
-
+    searchProduct(0);
 }
