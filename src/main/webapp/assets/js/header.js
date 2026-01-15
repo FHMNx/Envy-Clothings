@@ -263,7 +263,6 @@ class HeaderContent extends HTMLElement {
 
 customElements.define("header-content", HeaderContent);
 
-
 async function basicSearch(event) {
     let searchInput = document.getElementById("prod-search");
     if (event.code === "Enter") {
@@ -301,21 +300,15 @@ async function basicSearch(event) {
                                             }).format(item.price)}</p>
                                 </div>
                     
-                                <div class="result-actions">
-                                    <a onclick="addToCart(${item.stockId}, 1);">
-                                        <i class='bx bx-cart'></i>
-                                    </a>
-                                    <a><i class='bx bx-heart'></i></a>
-                                </div>
                             </div>
                         `;
                     });
 
 
                 } else {
-                    Notiflix.Notify.failure(data.message, {
-                        position: 'center-top'
-                    });
+                   //
+                    document.getElementById("basic-search-result").innerHTML = "";
+                    document.getElementById("result-count").innerHTML = "0";
                 }
 
             } else {

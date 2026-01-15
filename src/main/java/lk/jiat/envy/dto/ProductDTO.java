@@ -167,4 +167,8 @@ public class ProductDTO implements Serializable {
     public void setImages(List<String> images) {
         this.images = images;
     }
+
+    public void setSt() {
+
+    }
 }

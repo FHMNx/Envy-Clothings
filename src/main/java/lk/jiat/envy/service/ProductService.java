@@ -45,12 +45,12 @@ public class ProductService {
                     .setParameter("status", inStockStatus)
                     .getResultList();
 
-            if(stockList.isEmpty()){
+            if (stockList.isEmpty()) {
                 message = "Product not found";
-            }else{
+            } else {
 
                 List<SearchResponseDTO> searchResponseDTOList = new ArrayList<>();
-                for(Stock stock : stockList) {
+                for (Stock stock : stockList) {
                     SearchResponseDTO dto = new SearchResponseDTO();
                     dto.setStockId(stock.getId());
                     dto.setTitle(stock.getProduct().getTitle());
@@ -267,6 +267,14 @@ public class ProductService {
         Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
 
         Product product = hibernateSession.find(Product.class, productId);
+
+        if (product == null) {
+            hibernateSession.close();
+            responseObject.addProperty("status", false);
+            responseObject.addProperty("message", "product not found");
+            return AppUtil.GSON.toJson(responseObject);
+        }
+
         ProductDTO productDTO = new ProductDTO();
         productDTO.setProductId(productId);
         productDTO.setProductName(product.getTitle());
@@ -302,8 +310,10 @@ public class ProductService {
         String message = "";
 
         HttpSession httpSession = request.getSession(false);
+        List<ProductDTO> productDTOList = new ArrayList<>();
+
         if (httpSession == null || httpSession.getAttribute("admin") == null) {
-            message = "session expired. please login as an admin!";
+            message = "Session expired. Please login as an admin!";
         } else {
             Admin sessionAdmin = (Admin) httpSession.getAttribute("admin");
 
@@ -311,57 +321,49 @@ public class ProductService {
             Admin admin = hibernateSession.find(Admin.class, sessionAdmin.getId());
 
             if (admin == null) {
-                message = "Admin Not Found!. please register as a admin";
+                message = "Admin not found! Please register as an admin.";
+            } else if (!admin.getStatus().getName().equals(Status.Type.VERIFIED.name())) {
+                message = "Admin status not verified!";
             } else {
-                if (!admin.getStatus().getName().equals(String.valueOf(Status.Type.VERIFIED))) {
-                    message = "Admin Status Not Found!. please register as a admin";
-                } else {
-                    Set<Product> productSet = admin.getProducts();
-                    if (productSet.isEmpty()) {
-                        message = "Product Not Found!";
-                    } else {
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy MMMM dd");
-                        List<ProductDTO> productDTOList = new ArrayList<>();
-                        for (Product p : productSet) {
-                            ProductDTO productDTO = new ProductDTO();
-                            productDTO.setProductId(p.getId());
-                            productDTO.setProductName(p.getTitle());
+                Set<Product> productSet = admin.getProducts();
 
-                            List<Stock> stocks = hibernateSession.createQuery("FROM Stock s WHERE s.product=:product ORDER BY s.id DESC", Stock.class)
-                                    .setParameter("product", p)
-                                    .getResultList();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy MMMM dd");
 
-                            List<StockDTO> stockDTOList = new ArrayList<>();
-                            for (Stock s : stocks) {
-                                StockDTO stockDTO = new StockDTO();
-                                stockDTO.setStockId(s.getId());
-                                stockDTO.setProductId(s.getProduct().getId());
-                                stockDTO.setQuantity(s.getQuantity());
-                                stockDTO.setPrice(s.getPrice());
-                                stockDTO.setCreatedAt(formatter.format(s.getCreatedAt()));
-                                stockDTOList.add(stockDTO);
-                            }
-                            productDTO.setStockDTOList(stockDTOList);
-                            productDTOList.add(productDTO);
-                            stockDTOList.sort(Comparator.comparing(StockDTO::getStockId).reversed());
-                            productDTOList.sort(Comparator.comparing(ProductDTO::getProductId).reversed());
-                        }
+                for (Product p : productSet) {
+                    ProductDTO productDTO = new ProductDTO();
+                    productDTO.setProductId(p.getId());
+                    productDTO.setProductName(p.getTitle());
 
-                        responseObject.add("products", AppUtil.GSON.toJsonTree(productDTOList));
-                        status = true;
-                        message = "product loading successful!";
+                    List<Stock> stocks = hibernateSession.createQuery("FROM Stock s WHERE s.product=:product ORDER BY s.id DESC", Stock.class)
+                            .setParameter("product", p)
+                            .getResultList();
+
+                    List<StockDTO> stockDTOList = new ArrayList<>();
+                    for (Stock s : stocks) {
+                        StockDTO stockDTO = new StockDTO();
+                        stockDTO.setStockId(s.getId());
+                        stockDTO.setProductId(s.getProduct().getId());
+                        stockDTO.setQuantity(s.getQuantity());
+                        stockDTO.setPrice(s.getPrice());
+                        stockDTO.setCreatedAt(formatter.format(s.getCreatedAt()));
+                        stockDTOList.add(stockDTO);
                     }
+                    productDTO.setStockDTOList(stockDTOList);
+                    productDTOList.add(productDTO);
                 }
+
+                status = true;
+                message = productDTOList.isEmpty() ? "No products found!" : "Product loading successful!";
             }
 
             hibernateSession.close();
         }
 
+        responseObject.add("products", AppUtil.GSON.toJsonTree(productDTOList));
         responseObject.addProperty("status", status);
         responseObject.addProperty("message", message);
 
         return AppUtil.GSON.toJson(responseObject);
-
     }
 
     public String updateProductTable(Product product) {
