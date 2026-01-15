@@ -4,11 +4,9 @@ import com.google.gson.Gson;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import lk.jiat.envy.annotation.IsUser;
 import lk.jiat.envy.dto.UserDTO;
 import lk.jiat.envy.service.UserService;
 
-@IsUser
 @Path("/verify-account")
 public class VerificationController {
     @POST

@@ -49,7 +49,8 @@ public class AdvancedSearchService {
         List<ProductDTO> productDTOList = new ArrayList<>();
         for (Stock stock : stockList) {
             ProductDTO productDTO = new ProductDTO();
-            productDTO.setProductId(stock.getId());
+            productDTO.setProductId(stock.getProduct().getId());
+            productDTO.setStockId(stock.getId());
             productDTO.setProductName(stock.getProduct().getTitle());
             productDTO.setPrice(stock.getPrice());
             productDTO.setImages(stock.getProduct().getImages());
@@ -177,6 +178,7 @@ public class AdvancedSearchService {
         List<ProductDTO> productDTOList = new ArrayList<>();
         for (Stock stock : stockList) {
             ProductDTO productDTO = new ProductDTO();
+            productDTO.setProductId(stock.getProduct().getId());
             productDTO.setStockId(stock.getId());
             productDTO.setProductName(stock.getProduct().getTitle());
             productDTO.setPrice(stock.getPrice());

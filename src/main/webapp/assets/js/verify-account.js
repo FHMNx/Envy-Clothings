@@ -55,7 +55,7 @@ async function verifyAccount() {
         }
 
     } catch (e) {
-        Notiflix.Notify.failure(e, {
+        Notiflix.Notify.failure(e.message, {
             position: 'center-top'
         });
     } finally {

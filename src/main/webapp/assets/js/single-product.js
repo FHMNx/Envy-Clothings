@@ -1,8 +1,6 @@
 let params = new URLSearchParams(window.location.search);
 const productId = params.get("productId");
 
-const addToCartBtn = document.getElementById("add-cart-btn");
-
 window.addEventListener("load", async () => {
     try {
         Notiflix.Loading.standard("Loading...", {
@@ -69,12 +67,22 @@ async function loadSingleProduct() {
                     }
                 });
 
-                addToCartBtn.addEventListener("click", async (evt) => {
-                    evt.preventDefault();
-                    const qtyInput = document.getElementById("qty-input");
-                    await addToCart(product.stockDTOList[0].stockId, qtyInput.value);
-                });
+                const addToCartBtn = document.getElementById("add-cart-btn");
+                const addToWishListBtn = document.getElementById("like-btn");
 
+                if (addToCartBtn) {
+                    addToCartBtn.addEventListener("click", async (evt) => {
+                        evt.preventDefault();
+                        const qtyInput = document.getElementById("qty-input");
+                        await addToCart(product.stockDTOList[0].stockId, qtyInput.value);
+                    });
+                }
+
+                if (addToWishListBtn) {
+                    addToWishListBtn.addEventListener("click", async function () {
+                        await toggleWishList(this, product.stockDTOList[0].stockId);
+                    });
+                }
 
 
             } else {

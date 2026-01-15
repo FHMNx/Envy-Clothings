@@ -66,12 +66,16 @@ public class UserService {
                         HttpSession httpSession = request.getSession();
                         httpSession.setAttribute("user", singleUser);
 
+                        //check if the user is admin or not
+
                         Admin admin = hibernateSession.createQuery("FROM Admin a WHERE a.user=:user", Admin.class)
                                 .setParameter("user", singleUser)
                                 .getSingleResultOrNull();
 
                         if (admin != null && admin.getStatus().getName().equals(Status.Type.VERIFIED.name())) {
-                            httpSession.setAttribute("admin", admin);
+                            httpSession.setAttribute("admin", true);
+                        } else {
+                            httpSession.removeAttribute("admin");
                         }
 
                         if (userDTO.isRememberMe()) {
