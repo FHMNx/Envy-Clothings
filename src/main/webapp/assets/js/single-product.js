@@ -55,7 +55,30 @@ async function loadSingleProduct() {
                 sizeBox.appendChild(sizeBtn);
 
                 const stockQty = product.stockDTOList[0].quantity;
-                document.getElementById("stock-info").innerText = `Only ${stockQty} items available`;
+
+                const stockStatusEl = document.getElementById("stock");
+                const stockInfoEl = document.getElementById("stock-info");
+                const addToCartBtn = document.getElementById("add-cart-btn");
+
+                if (stockStatusEl && stockInfoEl && addToCartBtn) {
+
+                    if (stockQty > 0) {
+                        stockStatusEl.innerText = product.stockDTOList[0].status;
+                        stockStatusEl.style.color = "#2e7d32";
+                        stockStatusEl.style.fontWeight = "bold";
+                        stockInfoEl.innerText = `Only ${stockQty} items available`;
+                        addToCartBtn.disabled = false;
+                    } else {
+                        stockStatusEl.innerText = product.stockDTOList[0].status;
+                        stockStatusEl.style.color = "#d32f2f";
+                        stockStatusEl.style.fontWeight = "bold";
+                        stockInfoEl.innerText = "Currently unavailable";
+                        addToCartBtn.disabled = true;
+                    }
+
+                }
+
+
 
                 qtyPlus.addEventListener("click", () => {
                     if (parseInt(qtyInput.value) >= stockQty) {
@@ -67,7 +90,6 @@ async function loadSingleProduct() {
                     }
                 });
 
-                const addToCartBtn = document.getElementById("add-cart-btn");
                 const addToWishListBtn = document.getElementById("like-btn");
 
                 if (addToCartBtn) {

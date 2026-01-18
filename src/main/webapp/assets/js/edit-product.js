@@ -1,4 +1,3 @@
-// EDIT SELECTED PRODUCT
 
 let params = new URLSearchParams(window.location.search);
 const productId = params.get("productId");

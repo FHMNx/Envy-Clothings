@@ -35,7 +35,7 @@ public class AdvancedSearchService {
         Double maxPrice = hibernateSession.createQuery("SELECT MAX(s.price) FROM Stock s", Double.class).uniqueResult();
 
         Status inStockStatus = hibernateSession.createNamedQuery("Status.findByName", Status.class)
-                .setParameter("name", String.valueOf(Status.Type.PENDING))
+                .setParameter("name", String.valueOf(Status.Type.IN_STOCK))
                 .getSingleResult();
 
         Query<Stock> stockQuery = hibernateSession.createQuery("FROM Stock s WHERE s.status = :status ORDER BY s.id ASC", Stock.class)
@@ -85,6 +85,10 @@ public class AdvancedSearchService {
 
         Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
 
+        Status inStockStatus = hibernateSession.createNamedQuery("Status.findByName", Status.class)
+                .setParameter("name", String.valueOf(Status.Type.IN_STOCK))
+                .getSingleResult();
+
         StringBuilder hql = new StringBuilder("SELECT st FROM Stock st" +
                 " JOIN st.product p" +
                 " LEFT JOIN p.model m" +
@@ -121,8 +125,8 @@ public class AdvancedSearchService {
             params.put("priceEnd", requestObject.get("priceEnd").getAsDouble());
         }
 
-        hql.append(" AND st.status.name =:inStockStatus ");
-        params.put("inStockStatus", String.valueOf(Status.Type.PENDING));
+        hql.append(" AND st.status = :inStockStatus ");
+        params.put("inStockStatus", inStockStatus);
 
 
         //SORTING

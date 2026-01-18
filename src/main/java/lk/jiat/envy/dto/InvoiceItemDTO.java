@@ -31,4 +31,5 @@ public class InvoiceItemDTO implements Serializable {
     public void setItemPrice(double itemPrice) {
         this.itemPrice = itemPrice;
     }
+
 }

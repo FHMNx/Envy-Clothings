@@ -1,4 +1,3 @@
-//ADD NEW PRODUCT PAGE
 
 window.addEventListener("load", async () => {
     Notiflix.Loading.standard("Loading...", {

@@ -206,7 +206,7 @@ async function placeOrder() {
                     data.message,
                     "Okay",
                     () => {
-                        window.location = "index.html";
+                        window.location = `invoice.html?orderId=${data.orderId}`;
                     });
             } else {
                 Notiflix.Notify.failure(data.message, {

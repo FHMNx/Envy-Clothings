@@ -13,6 +13,8 @@ import lk.jiat.envy.util.AppUtil;
 @Path("/profiles")
 public class ProfileController {
 
+    private final ProfileService profileService = new ProfileService();
+
     @IsUser
     @Path("/updateProfile")
     @PUT
@@ -20,7 +22,7 @@ public class ProfileController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateProfile(String jsonData, @Context HttpServletRequest request) {
         UserDTO userDTO = AppUtil.GSON.fromJson(jsonData, UserDTO.class);
-        String responseJson = new ProfileService().updateProfile(userDTO, request);
+        String responseJson = profileService.updateProfile(userDTO, request);
         return Response.ok().entity(responseJson).build();
     }
 
@@ -29,7 +31,17 @@ public class ProfileController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response loadUserProfile(@Context HttpServletRequest request) {
-        String responseJson = new ProfileService().userProfile(request);
+        String responseJson = profileService.userProfile(request);
+        return Response.ok().entity(responseJson).build();
+    }
+
+    @IsUser
+    @Path("/userOrders")
+    @GET
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response loadUserOrdes(@Context HttpServletRequest request) {
+        String responseJson = profileService.loadUserOrders(request);
         return Response.ok().entity(responseJson).build();
     }
 

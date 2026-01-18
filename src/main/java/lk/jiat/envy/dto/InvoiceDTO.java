@@ -15,6 +15,7 @@ public class InvoiceDTO implements Serializable {
     private String email;
     private List<InvoiceItemDTO> invoiceItemDTOList;
     private double shippingCost;
+    private int paymentType;
 
     public String getInvoiceNo() {
         return invoiceNo;
@@ -94,5 +95,13 @@ public class InvoiceDTO implements Serializable {
 
     public void setShippingCost(double shippingCost) {
         this.shippingCost = shippingCost;
+    }
+
+    public int getPaymentType() {
+        return paymentType;
+    }
+
+    public void setPaymentType(int paymentType) {
+        this.paymentType = paymentType;
     }
 }

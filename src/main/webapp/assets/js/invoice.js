@@ -19,7 +19,7 @@ async function loadInvoiceData(orderId) {
         if (response.ok) {
             const data = await response.json();
             if (data.status) {
-                // console.log(data);
+                console.log(data);
                 const invoice = data.invoiceData;
 
                 document.getElementById("invoice-no").innerHTML = `#${invoice.invoiceNo}`;
@@ -29,6 +29,9 @@ async function loadInvoiceData(orderId) {
                 document.getElementById("city-name").innerHTML = invoice.cityName;
                 document.getElementById("country-name").innerHTML = invoice.countryName;
                 document.getElementById("buyer-email").innerHTML = invoice.email;
+
+                const paymentStatus = document.getElementById("payment-status");
+                const paymentType = document.getElementById("payment-type");
 
                 const currencyFormatter = new Intl.NumberFormat("en-US", {
                     minimumFractionDigits: 2
@@ -49,7 +52,22 @@ async function loadInvoiceData(orderId) {
                                 <td>Rs. ${currencyFormatter.format(totalItemPrice)}</td>
                             </tr>
                         `;
-                    });
+                });
+
+                if (invoice.invoiceStatus === "PAID") {
+                    paymentStatus.innerHTML = `<i class='bx bx-check-circle'></i>Payment Completed`;
+                    paymentStatus.style.color = "#2e7d32";
+                } else {
+                    paymentStatus.innerHTML = `<i class='bx bx-time'></i>Payment Pending (Cash on Delivery)`;
+                    paymentStatus.style.color = "#ed6c02";
+                }
+
+                if(invoice.paymentType === 2){
+                    paymentType.innerHTML = `  <span id="payment-type">Cash On Delivery</span>`;
+                }else{
+                    paymentType.innerHTML = `  <span id="payment-type">Credit / Debit Card<br>
+                            PayHere Gateway</span>`;
+                }
 
                 document.getElementById("subTotal").innerHTML = `Rs. ${currencyFormatter.format(subTotal)}`;
 

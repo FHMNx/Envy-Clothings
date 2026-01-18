@@ -10,6 +10,7 @@ window.addEventListener("load", async () => {
     try {
         await getCities();
         await loadUserData();
+        await getUserOrders();
     } finally {
         Notiflix.Loading.remove(1000);
     }
@@ -211,6 +212,100 @@ function openAccountDetailsTab(type) {
     document.querySelector('button[data-tab="general"]').click();
     document.querySelector(`input[name="addressType"][value="${type}"]`).checked = true;
     toggleAddressType();
+}
+
+async function getUserOrders() {
+    try {
+        const response = await fetch("api/profiles/userOrders");
+
+        if (response.redirected) {
+            window.location.href = response.url;
+            return;
+        }
+
+        if (response.ok) {
+
+            const data = await response.json();
+            if (data.status) {
+                console.log(data);
+                renderUserOrders(data.orders);
+
+            } else {
+                Notiflix.Notify.failure(data.message, {
+                    position: 'center-top'
+                });
+            }
+
+        } else {
+            Notiflix.Notify.failure("user order loading failed", {
+                position: 'center-top'
+            });
+        }
+
+    } catch (e) {
+        Notiflix.Notify.failure(e.message, {
+            position: 'center-top'
+        });
+    }
+}
+
+function renderUserOrders(orderList) {
+    const tableBody = document.getElementById("order-table-body");
+    tableBody.innerHTML = "";
+
+    if (!orderList || orderList.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="3" class="px-6 py-4 text-center text-gray-500">
+                    No orders found
+                </td>
+            </tr>
+        `;
+        return;
+
+    }
+
+    orderList.forEach((order) => {
+        const tr = document.createElement("tr");
+        tr.className = "border-b hover:bg-gray-50 transition";
+
+        tr.innerHTML += `
+         <td class="px-6 py-4 font-medium">#000${order.orderId}</td>
+
+            <td class="px-6 py-4">
+                <span class="px-3 py-1 text-sm rounded-full bg-green-100 text-green-700 font-semibold">
+                    ${order.status}
+                </span>
+            </td>
+
+            <td class="px-6 py-4">
+                <button class="icon-btn view-btn">
+                    <i class="bx bx-show"></i> View
+                </button>
+            
+                <button class="icon-btn invoice-btn">
+                    <i class="bx bx-file"></i> Invoice
+                </button>
+            </td>
+
+        `;
+
+        const viewBtn = tr.querySelector(".view-btn");
+        const invoiceBtn = tr.querySelector(".invoice-btn");
+
+        viewBtn.addEventListener("click", () => {
+            window.location.href = `invoice.html?orderId=${order.orderId}`;
+        });
+
+        invoiceBtn.addEventListener("click", () => {
+            window.location.href = `invoice.html?orderId=${order.orderId}`;
+        });
+
+
+        tableBody.appendChild(tr);
+
+    });
+
 }
 
 async function userLogOut() {
