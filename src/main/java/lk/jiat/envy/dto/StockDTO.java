@@ -6,6 +6,8 @@ public class StockDTO {
     private int quantity;
     private double price;
     private String createdAt;
+    private int statusId;
+    private String status;
 
     public int getStockId() {
         return stockId;
@@ -45,5 +47,21 @@ public class StockDTO {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public int getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(int statusId) {
+        this.statusId = statusId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

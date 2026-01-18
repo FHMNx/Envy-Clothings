@@ -45,6 +45,8 @@ public class Status implements Serializable {
         RECEIVED,
         COMPLETED,
         PAID,
-        PAYMENT_FAILED
+        PAYMENT_FAILED,
+        IN_STOCK,
+        OUT_OF_STOCK
     }
 }

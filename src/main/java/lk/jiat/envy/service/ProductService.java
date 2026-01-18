@@ -129,6 +129,8 @@ public class ProductService {
                                 message = "invalid product references";
                             } else {
 
+                                Status inStockStatus = hibernateSession.find(Status.class, 15);
+
                                 product.setTitle(productDTO.getProductName());
                                 product.setDescription(productDTO.getDescription());
                                 product.setUpdatedAt(LocalDateTime.now());
@@ -140,6 +142,7 @@ public class ProductService {
                                 Stock stock = product.getStocks().iterator().next();
                                 stock.setPrice(productDTO.getPrice());
                                 stock.setQuantity(productDTO.getQuantity());
+                                stock.setStatus(inStockStatus);
                                 stock.setUpdatedAt(LocalDateTime.now());
 
                                 transaction.commit();
@@ -149,7 +152,7 @@ public class ProductService {
                         }
                     }
 
-                } catch (Exception e) {
+                } catch (HibernateException e) {
                     transaction.rollback();
                     message = "product update failed";
                 } finally {
@@ -292,6 +295,7 @@ public class ProductService {
             stockDTO.setStockId(stock.getId());
             stockDTO.setQuantity(stock.getQuantity());
             stockDTO.setPrice(stock.getPrice());
+            stockDTO.setStatus(stock.getStatus().getName());
             stockDTOList.add(stockDTO);
         }
 
@@ -304,7 +308,7 @@ public class ProductService {
         return AppUtil.GSON.toJson(responseObject);
     }
 
-    public String getAllProducts(@Context HttpServletRequest request) {
+    public String getAllProducts(HttpServletRequest request, int page, int size) {
         JsonObject responseObject = new JsonObject();
         boolean status = false;
         String message = "";
@@ -325,11 +329,22 @@ public class ProductService {
             } else if (!admin.getStatus().getName().equals(Status.Type.VERIFIED.name())) {
                 message = "Admin status not verified!";
             } else {
-                Set<Product> productSet = admin.getProducts();
+
+                //PAGINATION
+                int offset = (page - 1) * size;
+                Long totalProducts = hibernateSession.createQuery("SELECT COUNT(p.id) FROM Product p WHERE p.admin = :admin", Long.class)
+                        .setParameter("admin", admin)
+                        .uniqueResult();
+
+                List<Product> productList = hibernateSession.createQuery("FROM Product p WHERE p.admin = :admin ORDER BY p.id DESC", Product.class)
+                        .setParameter("admin", admin)
+                        .setFirstResult(offset)
+                        .setMaxResults(size)
+                        .getResultList();
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy MMMM dd");
 
-                for (Product p : productSet) {
+                for (Product p : productList) {
                     ProductDTO productDTO = new ProductDTO();
                     productDTO.setProductId(p.getId());
                     productDTO.setProductName(p.getTitle());
@@ -345,6 +360,7 @@ public class ProductService {
                         stockDTO.setProductId(s.getProduct().getId());
                         stockDTO.setQuantity(s.getQuantity());
                         stockDTO.setPrice(s.getPrice());
+                        stockDTO.setStatusId(s.getStatus().getId());
                         stockDTO.setCreatedAt(formatter.format(s.getCreatedAt()));
                         stockDTOList.add(stockDTO);
                     }
@@ -354,6 +370,11 @@ public class ProductService {
 
                 status = true;
                 message = productDTOList.isEmpty() ? "No products found!" : "Product loading successful!";
+
+                responseObject.addProperty("currentPage", page);
+                responseObject.addProperty("pageSize", size);
+                responseObject.addProperty("totalProducts", totalProducts);
+                responseObject.addProperty("totalPages", (int) Math.ceil((double) totalProducts / size));
             }
 
             hibernateSession.close();
@@ -485,14 +506,14 @@ public class ProductService {
                                         stock.setCreatedAt(LocalDateTime.now());
                                         stock.setUpdatedAt(LocalDateTime.now());
 
-                                        Status pendingStatus = hibernateSession.createNamedQuery("Status.findByName", Status.class)
-                                                .setParameter("name", String.valueOf(Status.Type.PENDING))
+                                        Status inStockStatus = hibernateSession.createNamedQuery("Status.findByName", Status.class)
+                                                .setParameter("name", String.valueOf(Status.Type.IN_STOCK))
                                                 .getSingleResult();
 
                                         Discount defaultDiscount = hibernateSession.createNamedQuery("Discount.findDefault", Discount.class)
                                                 .getSingleResult();
 
-                                        stock.setStatus(pendingStatus);
+                                        stock.setStatus(inStockStatus);
                                         stock.setDiscount(defaultDiscount);
 
                                         Transaction transaction = hibernateSession.beginTransaction();
@@ -519,6 +540,59 @@ public class ProductService {
 
         responseObject.addProperty("status", status);
         responseObject.addProperty("message", message);
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
+    public String deleteProduct(HttpServletRequest request, int productId) {
+
+        JsonObject responseObject = new JsonObject();
+        boolean status = false;
+        String message = "";
+
+        HttpSession httpSession = request.getSession(false);
+
+        if (httpSession == null || httpSession.getAttribute("admin") == null) {
+            message = "Session expired. Please login again!";
+        } else {
+
+            Admin sessionAdmin = (Admin) httpSession.getAttribute("admin");
+            Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+
+            Admin admin = hibernateSession.find(Admin.class, sessionAdmin.getId());
+
+            if (admin == null) {
+                message = "Admin not found!";
+            } else {
+
+                Product product = hibernateSession.find(Product.class, productId);
+
+                if (product == null) {
+                    message = "Product not found!";
+                } else if (product.getAdmin().getId() != (admin.getId())) {
+                    message = "Unauthorized action!";
+                } else {
+
+                    Transaction transaction = hibernateSession.beginTransaction();
+
+                    for (Stock stock : product.getStocks()) {
+                        hibernateSession.remove(stock);
+                    }
+
+                    hibernateSession.remove(product);
+
+                    transaction.commit();
+
+                    status = true;
+                    message = "Product deleted successfully!";
+                }
+            }
+
+            hibernateSession.close();
+        }
+
+        responseObject.addProperty("status", status);
+        responseObject.addProperty("message", message);
+
         return AppUtil.GSON.toJson(responseObject);
     }
 

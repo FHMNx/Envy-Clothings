@@ -1,5 +1,6 @@
 package lk.jiat.envy.service;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -7,6 +8,7 @@ import jakarta.ws.rs.core.Context;
 import lk.jiat.envy.dto.UserDTO;
 import lk.jiat.envy.entity.Address;
 import lk.jiat.envy.entity.City;
+import lk.jiat.envy.entity.Order;
 import lk.jiat.envy.entity.User;
 import lk.jiat.envy.util.AppUtil;
 import lk.jiat.envy.util.HibernateUtil;
@@ -15,6 +17,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class ProfileService {
@@ -180,6 +183,53 @@ public class ProfileService {
         responseObject.addProperty("message", message);
         return AppUtil.GSON.toJson(responseObject);
 
+    }
+
+    public String loadUserOrders(@Context HttpServletRequest request) {
+
+        JsonObject responseObject = new JsonObject();
+        boolean status = false;
+        String message = "";
+
+        HttpSession httpSession = request.getSession(false);
+
+        if (httpSession == null || httpSession.getAttribute("user") == null) {
+            message = "please login first";
+        } else {
+
+            User user = (User) httpSession.getAttribute("user");
+            Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+
+            try {
+                List<Order> orderList = hibernateSession.createQuery("FROM Order o WHERE o.user = :user ORDER BY o.id DESC", Order.class)
+                        .setParameter("user", user)
+                        .getResultList();
+
+                JsonArray orderArray = new JsonArray();
+
+                for (Order order : orderList) {
+                    JsonObject orderObj = new JsonObject();
+                    orderObj.addProperty("orderId", order.getId());
+                    orderObj.addProperty("status", order.getStatus().getName());
+                    orderArray.add(orderObj);
+                }
+
+                responseObject.add("orders", orderArray);
+                status = true;
+                message = "order loading successfully";
+
+            } catch (HibernateException e) {
+                message = "order loading failed";
+                throw new RuntimeException(e.getMessage());
+            } finally {
+                hibernateSession.close();
+            }
+        }
+
+        responseObject.addProperty("status", status);
+        responseObject.addProperty("message", message);
+
+        return AppUtil.GSON.toJson(responseObject);
     }
 
 }

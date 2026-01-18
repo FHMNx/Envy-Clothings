@@ -23,6 +23,7 @@ public class OrderService {
         order.setPaymentType(paymentType);
         order.setDelivery_type(deliveryType);
         order.setNote(dto.getNote());
+        order.setCreatedAt(LocalDateTime.now());
         order.setUpdatedAt(LocalDateTime.now());
 
 
@@ -120,9 +121,26 @@ public class OrderService {
                     throw new RuntimeException("Order not found for tempOrderId: " + tempOrderId);
                 }
 
+                Status inStockStatus = hibernateSession.createNamedQuery("Status.findByName", Status.class)
+                        .setParameter("name", Status.Type.IN_STOCK.name())
+                        .getSingleResult();
+
+                Status outOfStockStatus = hibernateSession.createNamedQuery("Status.findByName", Status.class)
+                        .setParameter("name", Status.Type.OUT_OF_STOCK.name())
+                        .getSingleResult();
+
                 for (OrderItem orderItem : order.getOrder_items()) {
                     Stock stock = orderItem.getStock();
-                    stock.setQuantity(stock.getQuantity() - orderItem.getQuantity());
+
+                    int updateQty = stock.getQuantity() - orderItem.getQuantity();
+                    stock.setQuantity(updateQty);
+
+                    if (updateQty <= 0) {
+                        stock.setStatus(outOfStockStatus);
+                    } else {
+                        stock.setStatus(inStockStatus);
+                    }
+
                     hibernateSession.merge(stock);
                 }
 
@@ -185,10 +203,8 @@ public class OrderService {
 
         try (Session hibernateSession = HibernateUtil.getSessionFactory().openSession()) {
 
-            Order order = hibernateSession.createQuery(
-                            "FROM Order o WHERE o.tempOrderId = :tempId",
-                            Order.class
-                    ).setParameter("tempId", tempOrderId)
+            Order order = hibernateSession.createQuery("FROM Order o WHERE o.tempOrderId = :tempId", Order.class)
+                    .setParameter("tempId", tempOrderId)
                     .uniqueResult();
 
             if (order == null) {
@@ -199,7 +215,7 @@ public class OrderService {
 
             if (order.getStatus().getName().equals(Status.Type.PAID.name())) {
                 responseJson.addProperty("status", true);
-                responseJson.addProperty("orderId", order.getId()); // REAL DB ID
+                responseJson.addProperty("orderId", order.getId());
             } else {
                 responseJson.addProperty("status", false);
                 responseJson.addProperty("message", "Payment pending");

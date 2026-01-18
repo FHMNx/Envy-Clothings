@@ -23,7 +23,6 @@ public class ProductDTO implements Serializable {
     private List<String> images;
     private int stockId;
 
-
     public int getProductId() {
         return productId;
     }
@@ -171,4 +170,6 @@ public class ProductDTO implements Serializable {
     public void setSt() {
 
     }
+
+
 }

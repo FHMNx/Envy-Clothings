@@ -75,8 +75,10 @@ public class ProductController {
     @Path("/all")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response loadAllUserProducts(@Context HttpServletRequest request) {
-        String responseJson = new ProductService().getAllProducts(request);
+    public Response loadAllUserProducts(@QueryParam("page") @DefaultValue("1") int page,
+                                        @QueryParam("size") @DefaultValue("10") int size,
+                                        @Context HttpServletRequest request) {
+        String responseJson = new ProductService().getAllProducts(request, page, size);
         return Response.ok().entity(responseJson).build();
     }
 
@@ -133,6 +135,14 @@ public class ProductController {
     public Response saveProduct(@FormDataParam("product") String productJson, @Context HttpServletRequest request) {
         ProductDTO productDTO = AppUtil.GSON.fromJson(productJson, ProductDTO.class);
         String responseJson = new ProductService().addNewProduct(productDTO, request);
+        return Response.ok().entity(responseJson).build();
+    }
+
+    @Path("/{productId}/delete")
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteProduct(@PathParam("productId") int productId, @Context HttpServletRequest request) {
+        String responseJson = new ProductService().deleteProduct(request, productId);
         return Response.ok().entity(responseJson).build();
     }
 

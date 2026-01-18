@@ -1,6 +1,8 @@
 package lk.jiat.envy.service;
 
 import com.google.gson.JsonObject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lk.jiat.envy.dto.InvoiceDTO;
 import lk.jiat.envy.dto.InvoiceItemDTO;
 import lk.jiat.envy.entity.*;
@@ -15,20 +17,36 @@ import java.util.List;
 
 public class InvoiceService {
 
-    public String getInvoiceData(String orderId) {
+    public String getInvoiceData(String orderId, HttpServletRequest request) {
+
         JsonObject responseObject = new JsonObject();
         boolean status = false;
         String message = "";
 
+        HttpSession httpSession = request.getSession(false);
+
+        if (httpSession == null || httpSession.getAttribute("user") == null) {
+            responseObject.addProperty("status", false);
+            responseObject.addProperty("message", "Please login first");
+            return AppUtil.GSON.toJson(responseObject);
+        }
+
+        User sessionUser = (User) httpSession.getAttribute("user");
+
         int oId = Integer.parseInt(orderId.replaceAll(Validator.NON_DIGIT_PATTERN, ""));
 
         Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
-        Order order = hibernateSession.find(Order.class, oId);
+        Order order = hibernateSession.createQuery("FROM Order o WHERE o.id = :id AND o.user = :user", Order.class)
+                .setParameter("id", oId)
+                .setParameter("user", sessionUser)
+                .uniqueResult();
 
         if (order == null) {
             message = "incorrect order details. please check credentials";
         } else {
-            if (order.getStatus().getName().equals(String.valueOf(Status.Type.PAID))) {
+            String orderStatus = order.getStatus().getName();
+
+            if (orderStatus.equals(String.valueOf(Status.Type.PAID)) || orderStatus.equals(String.valueOf(Status.Type.PENDING))) {
                 InvoiceDTO invoiceDTO = new InvoiceDTO();
                 invoiceDTO.setInvoiceNo("000" + order.getId());
 
@@ -41,12 +59,13 @@ public class InvoiceService {
                 invoiceDTO.setCityName(order.getCity().getName());
                 invoiceDTO.setCountryName("Sri Lanka");
                 invoiceDTO.setEmail(user.getEmail());
+                invoiceDTO.setPaymentType(order.getPaymentType().getId());
 
-                DeliveryType withinCity =  hibernateSession.createNamedQuery("DeliveryType.findByName", DeliveryType.class)
+                DeliveryType withinCity = hibernateSession.createNamedQuery("DeliveryType.findByName", DeliveryType.class)
                         .setParameter("name", String.valueOf(DeliveryType.Value.WITHIN_CITY))
                         .getSingleResult();
 
-                DeliveryType outOfCity =  hibernateSession.createNamedQuery("DeliveryType.findByName", DeliveryType.class)
+                DeliveryType outOfCity = hibernateSession.createNamedQuery("DeliveryType.findByName", DeliveryType.class)
                         .setParameter("name", String.valueOf(DeliveryType.Value.OUT_OF_CITY))
                         .getSingleResult();
 
@@ -65,10 +84,10 @@ public class InvoiceService {
                             .setParameter("user", admin)
                             .getSingleResult();
 
-                    if(order.getCity().getName().equals(adminAddress.getCity().getName())){
-                        shippingCost +=withinCity.getPrice();
-                    }else{
-                        shippingCost +=outOfCity.getPrice();
+                    if (order.getCity().getName().equals(adminAddress.getCity().getName())) {
+                        shippingCost += withinCity.getPrice();
+                    } else {
+                        shippingCost += outOfCity.getPrice();
                     }
 
                 }
@@ -88,4 +107,5 @@ public class InvoiceService {
         responseObject.addProperty("message", message);
         return AppUtil.GSON.toJson(responseObject);
     }
+
 }

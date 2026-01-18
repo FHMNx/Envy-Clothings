@@ -142,10 +142,12 @@ public class CheckoutService {
                         // COD PAYMENT
                         else if (paymentType.getId() == 2) {
 
-                            orderService.createOrder(dbUser, requestDTO, paymentType, deliveryType,
+                            Order order = orderService.createOrder(dbUser, requestDTO, paymentType, deliveryType,
                                     pendingStatus, billingAddress, hibernateSession);
 
                             hibernateSession.getTransaction().commit();
+
+                            responseObject.addProperty("orderId", order.getId());
 
                             status = true;
                             message = "Order placed successfully";
