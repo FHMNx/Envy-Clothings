@@ -1,7 +1,10 @@
 package lk.jiat.envy.service;
 
 import com.google.gson.JsonObject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lk.jiat.envy.dto.CheckoutRequestDTO;
+import lk.jiat.envy.dto.OrderDTO;
 import lk.jiat.envy.entity.*;
 import lk.jiat.envy.util.AppUtil;
 import lk.jiat.envy.util.HibernateUtil;
@@ -10,6 +13,8 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderService {
@@ -223,6 +228,82 @@ public class OrderService {
 
             return AppUtil.GSON.toJson(responseJson);
         }
+    }
+
+    public String getAllOrders(HttpServletRequest request, int page, int size) {
+        JsonObject responseObject = new JsonObject();
+        boolean status = false;
+        String message = "";
+
+        HttpSession httpSession = request.getSession(false);
+        List<OrderDTO> orderDTOList = new ArrayList<>();
+
+        if (httpSession == null || httpSession.getAttribute("admin") == null) {
+            message = "Session expired. Please login as an admin!";
+        } else {
+
+            Admin sessionAdmin = (Admin) httpSession.getAttribute("admin");
+            Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+
+            Admin admin = hibernateSession.find(Admin.class, sessionAdmin.getId());
+
+            if (admin == null) {
+                message = "Admin not found! Please register as an admin.";
+            } else if (!admin.getStatus().getName().equals(Status.Type.VERIFIED.name())) {
+                message = "Admin status not verified!";
+            } else {
+
+                //PAGINATION
+                int offset = (page - 1) * size;
+                Long totalOrders = hibernateSession.createQuery("SELECT COUNT(DISTINCT o.id) " +
+                                "FROM Order o JOIN o.order_items oi JOIN oi.stock s " +
+                                "JOIN s.product p WHERE p.admin = :admin", Long.class)
+                        .setParameter("admin", admin)
+                        .uniqueResult();
+
+                List<Order> orderList = hibernateSession.createQuery("SELECT DISTINCT o FROM Order o " +
+                                "JOIN o.order_items oi JOIN oi.stock s JOIN s.product p " +
+                                "WHERE p.admin = :admin ORDER BY o.id DESC", Order.class)
+                        .setParameter("admin", admin)
+                        .setFirstResult(offset)
+                        .setMaxResults(size)
+                        .getResultList();
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy MMMM dd");
+
+                for (Order o : orderList) {
+                    OrderDTO orderDTO = new OrderDTO();
+                    orderDTO.setOrderId(o.getId());
+                    orderDTO.setCustomerName(o.getUser().getFirstName() + " " + o.getUser().getLastName());
+                    orderDTO.setPaymentTypeId(o.getPaymentType().getId());
+                    orderDTO.setCreatedAt(formatter.format(o.getCreatedAt()));
+                    orderDTO.setStatusId(o.getStatus().getId());
+
+                    double total =0;
+                    for (OrderItem item : o.getOrder_items()){
+                        total += item.getStock().getPrice() * item.getQuantity();
+                    }
+                    orderDTO.setTotal(total);
+
+                    orderDTOList.add(orderDTO);
+                }
+
+                status = true;
+                message = orderDTOList.isEmpty() ? "No orders found" : "Orders loaded successfully";
+
+                responseObject.addProperty("currentPage", page);
+                responseObject.addProperty("pageSize", size);
+                responseObject.addProperty("totalOrders", totalOrders);
+                responseObject.addProperty("totalPages", (int) Math.ceil((double) totalOrders / size));
+            }
+
+            hibernateSession.close();
+        }
+
+        responseObject.add("orders", AppUtil.GSON.toJsonTree(orderDTOList));
+        responseObject.addProperty("message", message);
+        responseObject.addProperty("status", status);
+        return AppUtil.GSON.toJson(responseObject);
     }
 
 }
