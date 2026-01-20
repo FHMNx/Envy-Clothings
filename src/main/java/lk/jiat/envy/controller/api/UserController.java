@@ -40,7 +40,7 @@ public class UserController {
     @IsUser
     @Path("/logout")
     @POST
-    public Response logout(@Context HttpServletRequest request , @Context HttpServletResponse response) {
+    public Response logout(@Context HttpServletRequest request, @Context HttpServletResponse response) {
         HttpSession httpSession = request.getSession(false);
 
         if (httpSession == null || httpSession.getAttribute("user") == null) {
@@ -78,6 +78,17 @@ public class UserController {
     public Response userLogin(String jsonData, @Context HttpServletRequest request, @Context HttpServletResponse response) {
         UserDTO userDTO = AppUtil.GSON.fromJson(jsonData, UserDTO.class);
         String responseJson = new UserService().userLogin(userDTO, request, response);
+        return Response.ok().entity(responseJson).build();
+    }
+
+
+    @Path("/all")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response loadAllCustomers(@QueryParam("page") @DefaultValue("1") int page,
+                                     @QueryParam("size") @DefaultValue("10") int size,
+                                     @Context HttpServletRequest request) {
+        String responseJson = new UserService().getAllCustomers(request, page, size);
         return Response.ok().entity(responseJson).build();
     }
 }

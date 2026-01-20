@@ -9,6 +9,7 @@ import lk.jiat.envy.util.HibernateUtil;
 import org.hibernate.Session;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ContentService {
@@ -260,6 +261,22 @@ public class ContentService {
         List<Category> categoryList = hibernateSession.createQuery("FROM Category c", Category.class).getResultList();
         responseObject.add("category", AppUtil.GSON.toJsonTree(categoryList));
 
+        hibernateSession.close();
+
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
+    public String loadAllStatus() {
+        JsonObject responseObject = new JsonObject();
+
+        Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+
+        List<Integer> allowedStatusIds = Arrays.asList(2, 5, 6, 9, 13);
+        List<Status> statusList = hibernateSession.createQuery("FROM Status s WHERE s.id IN :ids", Status.class)
+                .setParameter("ids", allowedStatusIds)
+                .getResultList();
+
+        responseObject.add("status", AppUtil.GSON.toJsonTree(statusList));
         hibernateSession.close();
 
         return AppUtil.GSON.toJson(responseObject);

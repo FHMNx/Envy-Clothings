@@ -6,10 +6,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.core.Context;
+import lk.jiat.envy.dto.AddressDTO;
+import lk.jiat.envy.dto.ProductDTO;
+import lk.jiat.envy.dto.StockDTO;
 import lk.jiat.envy.dto.UserDTO;
-import lk.jiat.envy.entity.Admin;
-import lk.jiat.envy.entity.Status;
-import lk.jiat.envy.entity.User;
+import lk.jiat.envy.entity.*;
 import lk.jiat.envy.mail.ForgotPasswordMailTemplate;
 import lk.jiat.envy.mail.VerificationMailTemplate;
 import lk.jiat.envy.provider.MailServiceProvider;
@@ -22,6 +23,9 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserService {
 
@@ -268,9 +272,9 @@ public class UserService {
                     .setParameter("email", userDto.getEmail())
                     .getSingleResultOrNull();
 
-            if(user == null){
+            if (user == null) {
                 message = "No account found with this email";
-            }else{
+            } else {
                 String token = TokenUtil.generateToken();
                 LocalDateTime expiry = LocalDateTime.now().plusMinutes(10);
 
@@ -323,26 +327,108 @@ public class UserService {
         return AppUtil.GSON.toJson(responseObject);
     }
 
-    public void invalidateRememberMeToken(int userId){
+    public void invalidateRememberMeToken(int userId) {
 
         Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = hibernateSession.beginTransaction();
 
         try {
-                User user = hibernateSession.find(User.class, userId);
+            User user = hibernateSession.find(User.class, userId);
 
-                if(user != null){
-                    user.setRememberToken(null);
-                    user.setRememberTokenExpiry(null);
-                    hibernateSession.merge(user);
-                }
+            if (user != null) {
+                user.setRememberToken(null);
+                user.setRememberTokenExpiry(null);
+                hibernateSession.merge(user);
+            }
 
-                transaction.commit();
+            transaction.commit();
         } catch (HibernateException e) {
             throw new RuntimeException(e);
-        }finally {
+        } finally {
             hibernateSession.close();
         }
     }
+
+    public String getAllCustomers(HttpServletRequest request, int page, int size) {
+
+        JsonObject responseObject = new JsonObject();
+        boolean status = false;
+        String message = "";
+
+        HttpSession httpSession = request.getSession(false);
+        List<UserDTO> userDTOList = new ArrayList<>();
+
+        if (httpSession == null || httpSession.getAttribute("admin") == null) {
+            message = "Session expired. Please login as an admin!";
+        } else {
+
+            Admin sessionAdmin = (Admin) httpSession.getAttribute("admin");
+            Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+
+            Admin admin = hibernateSession.find(Admin.class, sessionAdmin.getId());
+
+            if (admin == null) {
+                message = "Admin not found!";
+            } else if (!admin.getStatus().getName().equals(Status.Type.VERIFIED.name())) {
+                message = "Admin not verified!";
+            } else {
+
+                int offset = (page - 1) * size;
+
+                Long totalUsers = hibernateSession.createQuery("SELECT COUNT(u.id) FROM User u", Long.class)
+                        .uniqueResult();
+
+                List<User> userList = hibernateSession.createQuery("FROM User u ORDER BY u.id DESC", User.class)
+                        .setFirstResult(offset)
+                        .setMaxResults(size)
+                        .getResultList();
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy MMMM dd");
+
+                for (User u : userList) {
+                    UserDTO userDTO = new UserDTO();
+                    userDTO.setId(u.getId());
+                    userDTO.setFirstName(u.getFirstName());
+                    userDTO.setLastName(u.getLastName());
+                    userDTO.setEmail(u.getEmail());
+                    userDTO.setStatusId(u.getStatus().getId());
+                    userDTO.setCreatedAt(formatter.format(u.getCreatedAt()));
+
+                    List<Address> addressList = hibernateSession.createQuery("FROM Address a WHERE a.user = :user ORDER BY a.id DESC", Address.class)
+                            .setParameter("user", u)
+                            .getResultList();
+
+                    List<AddressDTO> addressDTOList = new ArrayList<>();
+
+                    for (Address a : addressList) {
+                        AddressDTO addressDTO = new AddressDTO();
+                        addressDTO.setId(a.getId());
+                        addressDTO.setMobile(a.getMobile());
+                        addressDTOList.add(addressDTO);
+                    }
+
+                    userDTO.setSetAddressDTOList(addressDTOList);
+                    userDTOList.add(userDTO);
+                }
+
+                status = true;
+                message = userDTOList.isEmpty() ? "No users found!" : "Users loaded successfully!";
+
+                responseObject.addProperty("currentPage", page);
+                responseObject.addProperty("pageSize", size);
+                responseObject.addProperty("totalUsers", totalUsers);
+                responseObject.addProperty("totalPages", (int) Math.ceil((double) totalUsers / size));
+            }
+
+            hibernateSession.close();
+        }
+
+        responseObject.add("users", AppUtil.GSON.toJsonTree(userDTOList));
+        responseObject.addProperty("status", status);
+        responseObject.addProperty("message", message);
+
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
 
 }
