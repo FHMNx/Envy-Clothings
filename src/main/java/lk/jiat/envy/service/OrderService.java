@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lk.jiat.envy.dto.CheckoutRequestDTO;
 import lk.jiat.envy.dto.OrderDTO;
+import lk.jiat.envy.dto.OrderDetailsDTO;
+import lk.jiat.envy.dto.OrderItemDTO;
 import lk.jiat.envy.entity.*;
 import lk.jiat.envy.util.AppUtil;
 import lk.jiat.envy.util.HibernateUtil;
@@ -279,8 +281,8 @@ public class OrderService {
                     orderDTO.setCreatedAt(formatter.format(o.getCreatedAt()));
                     orderDTO.setStatusId(o.getStatus().getId());
 
-                    double total =0;
-                    for (OrderItem item : o.getOrder_items()){
+                    double total = 0;
+                    for (OrderItem item : o.getOrder_items()) {
                         total += item.getStock().getPrice() * item.getQuantity();
                     }
                     orderDTO.setTotal(total);
@@ -305,5 +307,173 @@ public class OrderService {
         responseObject.addProperty("status", status);
         return AppUtil.GSON.toJson(responseObject);
     }
+
+    public String deleteOrder(HttpServletRequest request, int orderId) {
+
+        JsonObject responseObject = new JsonObject();
+        boolean status = false;
+        String message = "";
+
+        HttpSession httpSession = request.getSession(false);
+
+        if (httpSession == null || httpSession.getAttribute("admin") == null) {
+            message = "Session expired. Please login again!";
+        } else {
+
+            Admin sessionAdmin = (Admin) httpSession.getAttribute("admin");
+            Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+
+            Admin admin = hibernateSession.find(Admin.class, sessionAdmin.getId());
+
+            if (admin == null) {
+                message = "Admin not found!";
+            } else {
+
+                Order order = hibernateSession.find(Order.class, orderId);
+
+                if (order == null) {
+                    message = "order not found!";
+                } else if (!admin.getStatus().getName().equals(Status.Type.VERIFIED.name())) {
+                    message = "Admin not verified!";
+                } else {
+
+                    Transaction transaction = hibernateSession.beginTransaction();
+
+                    for (OrderItem orderItem : order.getOrder_items()) {
+                        hibernateSession.remove(orderItem);
+                    }
+
+                    hibernateSession.remove(order);
+
+                    transaction.commit();
+
+                    status = true;
+                    message = "order deleted successfully!";
+                }
+            }
+
+            hibernateSession.close();
+        }
+
+        responseObject.addProperty("status", status);
+        responseObject.addProperty("message", message);
+
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
+    public String loadOrderInfo(int orderId, HttpServletRequest request) {
+        JsonObject responseObject = new JsonObject();
+        boolean status = false;
+        String message = "";
+
+        HttpSession httpSession = request.getSession(false);
+
+        if (httpSession == null || httpSession.getAttribute("admin") == null) {
+            message = "Session expired. Please login as an admin!";
+        } else {
+
+            Admin sessionAdmin = (Admin) httpSession.getAttribute("admin");
+
+            Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+            Admin admin = hibernateSession.find(Admin.class, sessionAdmin.getId());
+
+            if (admin == null) {
+                message = "Admin not found! Please register as an admin.";
+            } else if (!admin.getStatus().getName().equals(Status.Type.VERIFIED.name())) {
+                message = "Admin status not verified!";
+            } else {
+
+                Order order = hibernateSession.createQuery("SELECT o FROM Order o " + "JOIN FETCH o.order_items oi " +
+                                "JOIN FETCH oi.stock s " + "JOIN FETCH s.product p " + "WHERE o.id = :orderId", Order.class)
+                        .setParameter("orderId", orderId)
+                        .uniqueResult();
+
+                if (order == null) {
+                    message = "Order not found!";
+                } else {
+
+                    OrderDetailsDTO dto = new OrderDetailsDTO();
+
+                    dto.setOrderId(order.getId());
+                    dto.setCustomerName(order.getUser().getFirstName() + " " + order.getUser().getLastName());
+                    dto.setMobile(order.getMobile());
+                    dto.setPostalCode(order.getPostalCode());
+                    dto.setAddressLine1(order.getDeliveryLineOne());
+                    dto.setAddressLine2(order.getDeliveryLineTwo());
+                    dto.setNote(order.getNote());
+                    dto.setStatusId(order.getStatus().getId());
+
+                    List<OrderItemDTO> itemDTOs = new ArrayList<>();
+
+                    for (OrderItem oi : order.getOrder_items()) {
+                        OrderItemDTO itemDTO = new OrderItemDTO();
+                        itemDTO.setProductName(oi.getStock().getProduct().getTitle());
+                        itemDTO.setQuantity(oi.getQuantity());
+                        itemDTO.setPrice(oi.getStock().getPrice());
+                        itemDTOs.add(itemDTO);
+                    }
+
+                    dto.setItems(itemDTOs);
+
+                    status = true;
+                    message = "Order loaded successfully";
+                    responseObject.add("order", AppUtil.GSON.toJsonTree(dto));
+
+                }
+
+            }
+
+            hibernateSession.close();
+        }
+
+        responseObject.addProperty("message", message);
+        responseObject.addProperty("status", status);
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
+    public String updateOrderStatus(OrderDTO orderDTO, HttpServletRequest request) {
+        JsonObject responseObject = new JsonObject();
+        boolean status = false;
+        String message = "";
+
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("admin") == null) {
+            message = "Session expired. Please login as admin!";
+        } else {
+            Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+            Transaction transaction = hibernateSession.beginTransaction();
+
+            try {
+                Order order = hibernateSession.find(Order.class, orderDTO.getOrderId());
+
+                if (order == null) {
+                    message = "Order not found!";
+                } else {
+
+                    Status newStatus = hibernateSession.find(Status.class, orderDTO.getStatusId());
+                    if (newStatus == null) {
+                        message = "Invalid status";
+                    } else {
+                        order.setStatus(newStatus);
+                        hibernateSession.update(order);
+                        transaction.commit();
+                        status = true;
+                        message = "Order status updated successfully!";
+                    }
+                }
+
+            } catch (HibernateException e) {
+                if (transaction != null) transaction.rollback();
+                message = "Failed to update order status: " + e.getMessage();
+            } finally {
+                hibernateSession.close();
+            }
+        }
+
+        responseObject.addProperty("status", status);
+        responseObject.addProperty("message", message);
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
 
 }

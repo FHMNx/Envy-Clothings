@@ -17,6 +17,7 @@ public class AddressDTO implements Serializable {
     private String firstName;
     private String lastName;
     private String email;
+    private String createdAt;
 
 
     public int getId() {
@@ -113,5 +114,13 @@ public class AddressDTO implements Serializable {
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 }

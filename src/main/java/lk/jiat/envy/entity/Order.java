@@ -30,7 +30,7 @@ public class Order extends BaseEntity {
     @Column(nullable = true, columnDefinition = "TEXT")
     private String note;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "delivery_types_id")
     private DeliveryType delivery_type;
 

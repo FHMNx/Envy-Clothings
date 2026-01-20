@@ -52,6 +52,14 @@ public class ContentController {
         return Response.ok().entity(loadAllCities).build();
     }
 
+    @Path("/status")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response loadStatus() {
+        String loadAllStatus = new ContentService().loadAllStatus();
+        return Response.ok().entity(loadAllStatus).build();
+    }
+
     @Path("/brands")
     @GET
     @Produces(MediaType.APPLICATION_JSON)

@@ -1,6 +1,7 @@
 package lk.jiat.envy.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class UserDTO implements Serializable {
     private int id;
@@ -20,6 +21,9 @@ public class UserDTO implements Serializable {
     private String confirmPassword;
     private boolean rememberMe;
     private String token;
+    private int statusId;
+    private List<AddressDTO> setAddressDTOList;
+    private String createdAt;
 
     public UserDTO() {
     }
@@ -159,5 +163,29 @@ public class UserDTO implements Serializable {
 
     public void setRememberMe(boolean rememberMe) {
         this.rememberMe = rememberMe;
+    }
+
+    public int getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(int statusId) {
+        this.statusId = statusId;
+    }
+
+    public List<AddressDTO> getSetAddressDTOList() {
+        return setAddressDTOList;
+    }
+
+    public void setSetAddressDTOList(List<AddressDTO> setAddressDTOList) {
+        this.setAddressDTOList = setAddressDTOList;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 }
