@@ -28,7 +28,7 @@ public class ForgotPasswordMailTemplate extends Mailable {
 
                 .header()
                 .logo("https://cdn.venngage.com/template/thumbnail/small/16e72e35-d54b-4d3d-b574-972050954cba.webp")
-                .logoWidth(550)
+                .logoWidth(570)
                 .logoHeight(200)
                 .and()
 

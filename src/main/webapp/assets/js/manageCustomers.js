@@ -70,6 +70,8 @@ async function loadAllCustomers(page = 1) {
                 no++;
             });
 
+            renderUserPagination(data.currentPage, data.totalPages);
+
         } else {
             Notiflix.Notify.failure("customer data loading failed", {
                 position: 'center-top'
@@ -81,4 +83,34 @@ async function loadAllCustomers(page = 1) {
             position: 'center-top'
         });
     }
+}
+
+function renderUserPagination(current, total) {
+    const pagination = document.querySelector(".pagination");
+    pagination.innerHTML = "";
+
+    pagination.innerHTML += `
+        <li class="page-item ${current === 1 ? "disabled" : ""}">
+            <a class="page-link" onclick="changePage(${current - 1})">Previous</a>
+        </li>
+    `;
+
+    for (let i = 1; i <= total; i++) {
+        pagination.innerHTML += `
+            <li class="page-item ${i === current ? "active" : ""}">
+                <a class="page-link" onclick="changePage(${i})">${i}</a>
+            </li>
+        `;
+    }
+
+    pagination.innerHTML += `
+        <li class="page-item ${current === total ? "disabled" : ""}">
+            <a class="page-link" onclick="changePage(${current + 1})">Next</a>
+        </li>
+    `;
+}
+
+function changePage(page) {
+    currentPage = page;
+    loadAllProducts(currentPage);
 }

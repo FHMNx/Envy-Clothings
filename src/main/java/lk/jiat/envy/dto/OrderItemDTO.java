@@ -1,9 +1,11 @@
 package lk.jiat.envy.dto;
 
+
 public class OrderItemDTO {
     private String productName;
     private int quantity;
     private double price;
+    private String imageUrl;
 
     public String getProductName() {
         return productName;
@@ -27,5 +29,13 @@ public class OrderItemDTO {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

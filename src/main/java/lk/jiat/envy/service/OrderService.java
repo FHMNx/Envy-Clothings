@@ -8,12 +8,16 @@ import lk.jiat.envy.dto.OrderDTO;
 import lk.jiat.envy.dto.OrderDetailsDTO;
 import lk.jiat.envy.dto.OrderItemDTO;
 import lk.jiat.envy.entity.*;
+import lk.jiat.envy.mail.InvoiceMailTemplate;
+import lk.jiat.envy.provider.MailServiceProvider;
 import lk.jiat.envy.util.AppUtil;
+import lk.jiat.envy.util.Env;
 import lk.jiat.envy.util.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -158,11 +162,54 @@ public class OrderService {
                 order.setStatus(paidStatus);
                 hibernateSession.merge(order);
 
-                hibernateSession.createQuery("DELETE FROM Cart c WHERE c.user = :user").
-                        setParameter("user", order.getUser())
+                hibernateSession.createQuery("DELETE FROM Cart c WHERE c.user = :user")
+                        .setParameter("user", order.getUser())
                         .executeUpdate();
 
                 transaction.commit();
+
+                // INVOICE MAIL SENDING
+                List<OrderItemDTO> itemDTOList = order.getOrder_items().stream()
+                        .map(orderItem -> {
+
+                            OrderItemDTO dto = new OrderItemDTO();
+
+                            Stock stock = orderItem.getStock();
+                            Product product = stock.getProduct();
+
+                            dto.setProductName(product.getTitle());
+                            dto.setQuantity(orderItem.getQuantity());
+                            dto.setPrice(stock.getPrice());
+
+                            List<String> images = product.getImages();
+                            dto.setImageUrl((images != null && !images.isEmpty()) ? images.get(0) : null);
+
+                            return dto;
+                        })
+                        .toList();
+
+
+                double subTotal = itemDTOList.stream()
+                        .mapToDouble(i -> i.getPrice() * i.getQuantity())
+                        .sum();
+
+                double total = subTotal;
+
+                String invoiceId = "ORD-" + order.getId();
+
+                InvoiceMailTemplate invoiceMail = new InvoiceMailTemplate(
+                        order.getUser().getEmail(),
+                        order.getUser().getFirstName(),
+                        invoiceId,
+                        itemDTOList,
+                        subTotal,
+                        total
+                );
+
+                MailServiceProvider.getInstance().sendMail(invoiceMail);
+
+                // INVOICE MAIL SENDING
+
                 System.out.println("Order marked as PAID: " + tempOrderId);
 
             } catch (HibernateException e) {

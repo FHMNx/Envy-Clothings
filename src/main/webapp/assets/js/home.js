@@ -45,7 +45,9 @@ async function renderNewArrivals(productList) {
             newArrival.innerHTML += `<div class="pro">
             <a href="single-product.html?productId=${product.productId}">
              <img src="${product.images[0]}" alt="">
-              <a onclick="toggleWishList(this, '${stock.stockId}')" class="like-btn" data-stock-id="${stock.stockId}"><i class='bx bxs-heart'></i></a>
+              <a onclick="toggleWishList(this, '${stock.stockId}')" class="like-btn" data-stock-id="${stock.stockId}">
+                <i class='bx bxs-heart'></i>
+              </a>
             </a>
             <div class="des">
                 <span>Addidas</span>
