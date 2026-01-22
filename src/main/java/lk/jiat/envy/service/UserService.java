@@ -235,10 +235,10 @@ public class UserService {
                     hibernateSession.persist(user);
                     transaction.commit();
 
-                    /// VERIFICATION MAIL SENDING ALGORITHM
+                    /// VERIFICATION MAIL SENDING
                     VerificationMailTemplate verificationMailTemplate = new VerificationMailTemplate(user.getEmail(), verificationCode);
                     MailServiceProvider.getInstance().sendMail(verificationMailTemplate);
-                    /// VERIFICATION MAIL SENDING ALGORITHM
+                    /// VERIFICATION MAIL SENDING
 
                     status = true;
                     message = "User has been registered successfully. verification code has been sent to your mail. " +

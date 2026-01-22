@@ -160,7 +160,7 @@ function updateProductView(dataList) {
                     <a href="single-product.html?productId=${item.productId}">
                         <img src="${item.images[0]}" alt="">
                     </a>
-                    <a href="#" class="like-btn">
+                    <a onclick="toggleWishList(this, '${item.stockId}')" class="like-btn" data-stock-id="${item.stockId}">
                         <i class="bx bxs-heart"></i>
                     </a>
 
@@ -175,8 +175,8 @@ function updateProductView(dataList) {
                             <i class="bx bx-star"></i>
                         </div>
                         <h4>Rs ${new Intl.NumberFormat("en-US", {
-            minimumFractionDigits: 2
-        }).format(item.price)}</h4>
+                        minimumFractionDigits: 2
+                    }).format(item.price)}</h4>
                     </div>
 
                     <a href="#" onclick="addToCart(${item.stockId}, 1);"><i class="bx bx-cart cart"></i></a>
