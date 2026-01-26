@@ -71,12 +71,11 @@ public class UserService {
                         httpSession.setAttribute("user", singleUser);
 
                         //check if the user is admin or not
-
                         Admin admin = hibernateSession.createQuery("FROM Admin a WHERE a.user=:user", Admin.class)
                                 .setParameter("user", singleUser)
                                 .getSingleResultOrNull();
 
-                        if (admin != null && admin.getStatus().getName().equals(Status.Type.VERIFIED.name())) {
+                        if (admin != null && admin.getStatus().getName().equals(Status.Type.ACTIVE.name())) {
                             httpSession.setAttribute("admin", true);
                         } else {
                             httpSession.removeAttribute("admin");
@@ -369,8 +368,8 @@ public class UserService {
 
             if (admin == null) {
                 message = "Admin not found!";
-            } else if (!admin.getStatus().getName().equals(Status.Type.VERIFIED.name())) {
-                message = "Admin not verified!";
+            } else if (!admin.getStatus().getName().equals(Status.Type.ACTIVE.name())) {
+                message = "Admin account is inactive!";
             } else {
 
                 int offset = (page - 1) * size;

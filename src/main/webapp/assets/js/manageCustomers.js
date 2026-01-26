@@ -56,14 +56,8 @@ async function loadAllCustomers(page = 1) {
                     </td>
                     <td>${user.createdAt}</td>
                     <td class="text-end">
-                        <button class="btn btn-sm btn-light-primary me-1">
-                            <i class="bi bi-eye"></i>
-                        </button>
                         <button class="btn btn-sm btn-light-warning me-1">
                             <i class="bi bi-pencil-square"></i>
-                        </button>
-                        <button class="btn btn-sm btn-light-danger">
-                            <i class="bi bi-trash"></i>
                         </button>
                     </td>
                 </tr>`;

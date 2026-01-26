@@ -9,6 +9,7 @@ import lk.jiat.envy.mail.VerificationMailTemplate;
 import lk.jiat.envy.provider.MailServiceProvider;
 import lk.jiat.envy.util.AppUtil;
 import lk.jiat.envy.util.HibernateUtil;
+import lk.jiat.envy.util.PasswordUtil;
 import lk.jiat.envy.util.PayHereUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -17,7 +18,11 @@ import org.hibernate.Transaction;
 public class Test {
     public static void main(String[] args) {
 
-        System.out.println(PayHereUtil.generateHash("#0001", 1500));
+//        System.out.println(PayHereUtil.generateHash("#0001", 1500));
+
+        String plainPassword = "Admin123#";
+        String hashed = PasswordUtil.hash(plainPassword);
+        System.out.println(hashed);
 
 //        MailServiceProvider.getInstance().start();
 //

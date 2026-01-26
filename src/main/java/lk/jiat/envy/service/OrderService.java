@@ -298,8 +298,8 @@ public class OrderService {
 
             if (admin == null) {
                 message = "Admin not found! Please register as an admin.";
-            } else if (!admin.getStatus().getName().equals(Status.Type.VERIFIED.name())) {
-                message = "Admin status not verified!";
+            } else if (!admin.getStatus().getName().equals(Status.Type.ACTIVE.name())) {
+                message = "Admin account is inactive";
             } else {
 
                 //PAGINATION
@@ -380,8 +380,8 @@ public class OrderService {
 
                 if (order == null) {
                     message = "order not found!";
-                } else if (!admin.getStatus().getName().equals(Status.Type.VERIFIED.name())) {
-                    message = "Admin not verified!";
+                } else if (!admin.getStatus().getName().equals(Status.Type.ACTIVE.name())) {
+                    message = "Admin account is inactive!";
                 } else {
 
                     Transaction transaction = hibernateSession.beginTransaction();
@@ -426,8 +426,8 @@ public class OrderService {
 
             if (admin == null) {
                 message = "Admin not found! Please register as an admin.";
-            } else if (!admin.getStatus().getName().equals(Status.Type.VERIFIED.name())) {
-                message = "Admin status not verified!";
+            } else if (!admin.getStatus().getName().equals(Status.Type.ACTIVE.name())) {
+                message = "Admin account is inactive!";
             } else {
 
                 Order order = hibernateSession.createQuery("SELECT o FROM Order o " + "JOIN FETCH o.order_items oi " +

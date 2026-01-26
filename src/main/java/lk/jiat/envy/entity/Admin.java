@@ -3,6 +3,7 @@ package lk.jiat.envy.entity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,19 +23,22 @@ public class Admin implements Serializable {
     @Column(length = 100, nullable = false, unique = true)
     private String email;
 
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
     private String password;
 
     @Column(name = "verification_code", length = 15, nullable = true)
     private String verificationCode;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "status_id")
     private Status status;
 
     @OneToOne
     @JoinColumn(name = "users_id")
     private User user;
+
+    @Column(name = "last_login_at")
+    private LocalDateTime lastLoginAt;
 
     @OneToMany(mappedBy = "admin")
     private Set<Product> products = new HashSet<>();
@@ -118,4 +122,13 @@ public class Admin implements Serializable {
     public Set<Product> getProducts() {
         return products;
     }
+
+    public LocalDateTime getLastLoginAt() {
+        return lastLoginAt;
+    }
+
+    public void setLastLoginAt(LocalDateTime lastLoginAt) {
+        this.lastLoginAt = lastLoginAt;
+    }
+
 }

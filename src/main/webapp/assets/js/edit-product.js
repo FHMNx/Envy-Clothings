@@ -167,7 +167,6 @@ function renderDropdowns(selector, list) {
     })
 }
 
-
 async function updateSelectedProduct() {
     let image1 = document.getElementById("img1");
     let image2 = document.getElementById("img2");
