@@ -111,7 +111,7 @@ public class ProductService {
                 try {
 
                     Admin admin = hibernateSession.find(Admin.class, sessionAdmin.getId());
-                    if (admin == null || !admin.getStatus().getName().equals(Status.Type.VERIFIED.name())) {
+                    if (admin == null || !admin.getStatus().getName().equals(Status.Type.ACTIVE.name())) {
                         message = "unauthorized admin";
                     } else {
 
@@ -326,8 +326,8 @@ public class ProductService {
 
             if (admin == null) {
                 message = "Admin not found! Please register as an admin.";
-            } else if (!admin.getStatus().getName().equals(Status.Type.VERIFIED.name())) {
-                message = "Admin status not verified!";
+            } else if (!admin.getStatus().getName().equals(Status.Type.ACTIVE.name())) {
+                message = "Admin account is inactive!";
             } else {
 
                 //PAGINATION
@@ -466,8 +466,8 @@ public class ProductService {
                 if (admin == null) {
                     message = "admin account not found";
                 } else {
-                    if (!admin.getStatus().getName().equals(Status.Type.VERIFIED.name())) {
-                        message = "your admin account is not verified";
+                    if (!admin.getStatus().getName().equals(Status.Type.ACTIVE.name())) {
+                        message = "admin account is inactive";
                     } else {
                         Model model = hibernateSession.find(Model.class, productDTO.getModelId());
                         if (model == null) {
