@@ -6,10 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.core.Context;
-import lk.jiat.envy.dto.AddressDTO;
-import lk.jiat.envy.dto.ProductDTO;
-import lk.jiat.envy.dto.StockDTO;
-import lk.jiat.envy.dto.UserDTO;
+import lk.jiat.envy.dto.*;
 import lk.jiat.envy.entity.*;
 import lk.jiat.envy.mail.ForgotPasswordMailTemplate;
 import lk.jiat.envy.mail.VerificationMailTemplate;
@@ -25,6 +22,7 @@ import org.hibernate.Transaction;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class UserService {
@@ -426,6 +424,132 @@ public class UserService {
         responseObject.addProperty("status", status);
         responseObject.addProperty("message", message);
 
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
+    public String loadCustomerInfo(int id, HttpServletRequest request) {
+        JsonObject responseObject = new JsonObject();
+        boolean status = false;
+        String message;
+
+        HttpSession httpSession = request.getSession(false);
+
+        if (httpSession == null || httpSession.getAttribute("admin") == null) {
+            message = "Session expired. Please login as an admin!";
+        } else {
+
+            Admin sessionAdmin = (Admin) httpSession.getAttribute("admin");
+
+            try (Session hibernateSession = HibernateUtil.getSessionFactory().openSession()) {
+
+                Admin admin = hibernateSession.find(Admin.class, sessionAdmin.getId());
+
+                if (admin == null) {
+                    message = "Admin not found!";
+                }
+                else if (!Status.Type.ACTIVE.name().equals(admin.getStatus().getName())) {
+                    message = "Admin account is inactive!";
+                }else {
+
+                    User user = hibernateSession.createQuery("FROM User u WHERE u.id = :id", User.class)
+                            .setParameter("id", id)
+                            .uniqueResult();
+
+                    if (user == null) {
+                        message = "Customer not found!";
+                    } else {
+
+                        UserDTO dto = new UserDTO();
+                        dto.setId(user.getId());
+                        dto.setStatusId(user.getStatus().getId());
+
+                        List<AddressDTO> addressDTOList = new ArrayList<>();
+
+                        for (Address address : user.getAddresses()) {
+                            AddressDTO addressDTO = new AddressDTO();
+                            addressDTO.setId(address.getId());
+                            addressDTO.setPostalCode(address.getPostalCode());
+                            addressDTO.setLineOne(address.getLineOne());
+                            addressDTO.setLineTwo(address.getLineTwo());
+                            addressDTOList.add(addressDTO);
+                        }
+
+                        dto.setSetAddressDTOList(addressDTOList);
+
+                        responseObject.add("customer", AppUtil.GSON.toJsonTree(dto));
+                        status = true;
+                        message = "Customer details loaded successfully";
+                    }
+                }
+
+            } catch (HibernateException e) {
+                message = "Something went wrong while loading customer data";
+            }
+        }
+
+        responseObject.addProperty("status", status);
+        responseObject.addProperty("message", message);
+
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
+    public String loadAllStatus() {
+        JsonObject responseObject = new JsonObject();
+
+        Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+
+        List<Integer> allowedStatusIds = Arrays.asList(2, 4, 10);
+        List<Status> statusList = hibernateSession.createQuery("FROM Status s WHERE s.id IN :ids", Status.class)
+                .setParameter("ids", allowedStatusIds)
+                .getResultList();
+
+        responseObject.add("status", AppUtil.GSON.toJsonTree(statusList));
+        hibernateSession.close();
+
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
+    public String updateCustomerStatus(UserDTO userDTO, HttpServletRequest request) {
+        JsonObject responseObject = new JsonObject();
+        boolean status = false;
+        String message = "";
+
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("admin") == null) {
+            message = "Session expired. Please login as admin!";
+        } else {
+            Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+            Transaction transaction = hibernateSession.beginTransaction();
+
+            try {
+                User user = hibernateSession.find(User.class, userDTO.getId());
+
+                if (user == null) {
+                    message = "user not found!";
+                } else {
+
+                    Status newStatus = hibernateSession.find(Status.class, userDTO.getStatusId());
+                    if (newStatus == null) {
+                        message = "Invalid status";
+                    } else {
+                        user.setStatus(newStatus);
+                        hibernateSession.update(user);
+                        transaction.commit();
+                        status = true;
+                        message = "Customer status updated successfully!";
+                    }
+                }
+
+            } catch (HibernateException e) {
+                if (transaction != null) transaction.rollback();
+                message = "Failed to update customer status: " + e.getMessage();
+            } finally {
+                hibernateSession.close();
+            }
+        }
+
+        responseObject.addProperty("status", status);
+        responseObject.addProperty("message", message);
         return AppUtil.GSON.toJson(responseObject);
     }
 

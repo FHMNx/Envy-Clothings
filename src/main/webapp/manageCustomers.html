@@ -64,7 +64,7 @@
                 </li>
 
                 <li class="pc-item">
-                    <a href="#" class="pc-link">
+                    <a href="settings.html" class="pc-link">
                         <span class="pc-micon"><i class="bi bi-gear"></i></span>
                         <span class="pc-mtext">Envy Settings</span>
                     </a>
@@ -233,6 +233,67 @@
             </div>
         </div>
 
+    </div>
+</div>
+
+<!-- Customer View / Edit Modal -->
+<div class="modal fade" id="customerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <!-- Header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="customerModalTitle">Customer Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+                <form id="orderForm">
+                    <div class="row g-3">
+
+                        <!-- Order ID -->
+                        <div class="col-md-6">
+                            <label class="form-label">Customer ID</label>
+                            <input type="text" id="mCustomerId" class="form-control shadow-none" readonly>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Postal Code</label>
+                            <input type="text" id="mPostalCode" class="form-control shadow-none" readonly>
+                        </div>
+
+                        <!-- Address Line 1 -->
+                        <div class="col-12">
+                            <label class="form-label">Address Line 1</label>
+                            <input type="text" id="mAddress1" class="form-control shadow-none" readonly>
+                        </div>
+
+                        <!-- Address Line 2 -->
+                        <div class="col-12">
+                            <label class="form-label">Address Line 2</label>
+                            <input type="text" id="mAddress2" class="form-control shadow-none" readonly>
+                        </div>
+
+                        <!-- Order Status -->
+                        <div class="col-md-6">
+                            <label class="form-label">Status</label>
+                            <select id="statusSelect" class="form-select shadow-none">
+                                <option value="">Select status</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-dark" id="updateCustomerBtn">Update Customer</button>
+            </div>
+
+        </div>
     </div>
 </div>
 

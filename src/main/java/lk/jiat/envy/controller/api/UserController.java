@@ -9,8 +9,10 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lk.jiat.envy.annotation.IsUser;
+import lk.jiat.envy.dto.OrderDTO;
 import lk.jiat.envy.dto.UserDTO;
 import lk.jiat.envy.entity.User;
+import lk.jiat.envy.service.ContentService;
 import lk.jiat.envy.service.UserService;
 import lk.jiat.envy.util.AppUtil;
 
@@ -91,4 +93,32 @@ public class UserController {
         String responseJson = new UserService().getAllCustomers(request, page, size);
         return Response.ok().entity(responseJson).build();
     }
+
+    @Path("/{id}/userInfo")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getOrderDetails(@PathParam("id") int id, @Context HttpServletRequest request) {
+        String responseJson = new UserService().loadCustomerInfo(id, request);
+        return Response.ok().entity(responseJson).build();
+    }
+
+    @Path("/status")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response loadStatus() {
+        String loadAllStatus = new UserService().loadAllStatus();
+        return Response.ok().entity(loadAllStatus).build();
+    }
+
+    @Path("/{customerId}/updateCustomer")
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateOrder(@PathParam("customerId") int customerId, String requestBody, @Context HttpServletRequest request) {
+        UserDTO userDTO = AppUtil.GSON.fromJson(requestBody, UserDTO.class);
+        userDTO.setId(customerId);
+        String responseJson = new UserService().updateCustomerStatus(userDTO, request);
+        return Response.ok().entity(responseJson).build();
+    }
+
 }

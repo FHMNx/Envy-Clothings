@@ -14,6 +14,7 @@ public class AdminDTO implements Serializable {
     private String confirmPassword;
     private int cityId;
     private String cityName;
+    private String token;
 
     public AdminDTO() {
     }
@@ -96,5 +97,13 @@ public class AdminDTO implements Serializable {
 
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }
