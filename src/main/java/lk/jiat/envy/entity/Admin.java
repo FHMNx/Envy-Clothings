@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -26,9 +27,6 @@ public class Admin implements Serializable {
     @Column(length = 100, nullable = false)
     private String password;
 
-    @Column(name = "verification_code", length = 15, nullable = true)
-    private String verificationCode;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "status_id")
     private Status status;
@@ -46,6 +44,12 @@ public class Admin implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id", nullable = false)
     private City city;
+
+    @Column(name = "password_reset_token", length = 255)
+    private String passwordResetToken;
+
+    @Column(name = "password_reset_expiry")
+    private LocalDateTime passwordResetExpiry;
 
     public int getId() {
         return id;
@@ -95,14 +99,6 @@ public class Admin implements Serializable {
         this.password = password;
     }
 
-    public String getVerificationCode() {
-        return verificationCode;
-    }
-
-    public void setVerificationCode(String verificationCode) {
-        this.verificationCode = verificationCode;
-    }
-
     public Status getStatus() {
         return status;
     }
@@ -131,4 +127,19 @@ public class Admin implements Serializable {
         this.lastLoginAt = lastLoginAt;
     }
 
+    public String getPasswordResetToken() {
+        return passwordResetToken;
+    }
+
+    public void setPasswordResetToken(String passwordResetToken) {
+        this.passwordResetToken = passwordResetToken;
+    }
+
+    public LocalDateTime getPasswordResetExpiry() {
+        return passwordResetExpiry;
+    }
+
+    public void setPasswordResetExpiry(LocalDateTime passwordResetExpiry) {
+        this.passwordResetExpiry = passwordResetExpiry;
+    }
 }
