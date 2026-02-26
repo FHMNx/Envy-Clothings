@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lk.jiat.envy.annotation.IsUser;
+import lk.jiat.envy.dto.MessageDTO;
 import lk.jiat.envy.dto.OrderDTO;
 import lk.jiat.envy.dto.UserDTO;
 import lk.jiat.envy.entity.User;
@@ -118,6 +119,16 @@ public class UserController {
         UserDTO userDTO = AppUtil.GSON.fromJson(requestBody, UserDTO.class);
         userDTO.setId(customerId);
         String responseJson = new UserService().updateCustomerStatus(userDTO, request);
+        return Response.ok().entity(responseJson).build();
+    }
+
+    @Path("/messages")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response submitMessages(String jsonData, @Context HttpServletRequest request) {
+        MessageDTO messageDTO = AppUtil.GSON.fromJson(jsonData, MessageDTO.class);
+        String responseJson = new UserService().submitMessage(messageDTO, request);
         return Response.ok().entity(responseJson).build();
     }
 

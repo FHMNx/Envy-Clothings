@@ -54,7 +54,13 @@ public class User extends BaseEntity {
     @Column(name = "password_reset_expiry")
     private LocalDateTime passwordResetExpiry;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Message>  messages = new HashSet<>();
 
+
+    public Set<Message> getMessages() {
+        return messages;
+    }
 
     public int getId() {
         return id;
@@ -155,4 +161,6 @@ public class User extends BaseEntity {
     public Set<Cart> getCarts() {
         return carts;
     }
+
+
 }
