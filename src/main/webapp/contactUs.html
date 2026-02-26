@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Us | Envy Clothings</title>
+
+    <link rel="stylesheet" href="assets/css/header.css" />
+    <link rel="icon" href="assets/images/logo/envy.png" type="image/x-icon" />
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+
+    <style>
+        body{
+            background: #ffffff;
+            font-family: Arial, Helvetica, sans-serif;
+            color:#1a1a1a;
+        }
+
+        .contact-page{
+            padding:110px 9% 50px;
+            min-height: calc(100vh - 110px);
+        }
+
+        /* FULL SCREEN MODE (no card) */
+        .contact-wrapper{
+            max-width: 100%;
+            margin: 0;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            border-radius: 0;
+            overflow: visible;
+        }
+
+        .contact-top{
+            padding: 0 0 18px;
+            border-bottom: 1px solid rgba(92,71,66,0.18);
+            display:flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .contact-top h1{
+            margin:0 0 6px;
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: .2px;
+            color:#5C4742; /* Envy style */
+        }
+
+        .contact-top p{
+            margin:0;
+            font-size: 13px;
+            color:#6b5b57;
+            line-height: 1.7;
+        }
+
+        .support-pills{
+            display:flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items:center;
+        }
+
+        .pill{
+            display:flex;
+            align-items:center;
+            gap: 8px;
+            padding: 9px 12px;
+            font-size: 13px;
+            border: 1px solid rgba(92,71,66,0.18);
+            background: rgba(255,255,255,0.7);
+            border-radius: 40px;
+            color:#5C4742;
+            white-space: nowrap;
+            transition: 0.2s ease;
+        }
+
+        .pill:hover{
+            background:#fff;
+            border-color: rgba(92,71,66,0.35);
+            transform: translateY(-1px);
+        }
+
+        .pill i{ font-size: 16px; }
+
+        .contact-body{
+            display:grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 22px;
+            min-height: 520px;
+        }
+
+        /* LEFT: FORM (still clean but not a card page) */
+        .contact-form-area{
+            padding: 0;
+            border-right: none;
+            background: transparent;
+        }
+
+        .form-grid{
+            display:grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .field{
+            display:flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .field.full{ grid-column: 1 / -1; }
+
+        label{
+            font-size: 13px;
+            font-weight: 700;
+            color:#5C4742;
+        }
+
+        input, select, textarea{
+            width: 100%;
+            padding: 12px 12px;
+            border: 1px solid rgba(92,71,66,0.22);
+            border-radius: 12px;
+            font-size: 14px;
+            outline: none;
+            background: rgba(255,255,255,0.9);
+            transition: 0.2s ease;
+        }
+
+        input:focus, select:focus, textarea:focus{
+            border-color:#5C4742;
+            background:#fff;
+            box-shadow: 0 0 0 4px rgba(92,71,66,0.12);
+        }
+
+        textarea{
+            resize: vertical;
+            min-height: 140px;
+        }
+
+        .form-actions{
+            margin-top: 16px;
+            display:flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items:center;
+            padding-top: 16px;
+            border-top: 1px solid rgba(92,71,66,0.18);
+        }
+
+        .hint{
+            font-size: 12px;
+            color:#6b5b57;
+            line-height: 1.6;
+        }
+
+        .btn{
+            padding: 11px 16px;
+            border: 1px solid #5C4742;
+            background: #5C4742;
+            color:#fff;
+            cursor:pointer;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 700;
+            transition: 0.2s ease;
+            display:flex;
+            align-items:center;
+            gap: 8px;
+        }
+
+        .btn:hover{
+            background: #483531;
+            border-color:#483531;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline{
+            background: transparent;
+            color:#5C4742;
+            border-color: rgba(92,71,66,0.35);
+            font-weight: 700;
+        }
+
+        .btn-outline:hover{
+            background:#5C4742;
+            color:#fff;
+            border-color:#5C4742;
+        }
+
+        /* RIGHT: MAP */
+        .contact-map-area{
+            padding: 0;
+            background: transparent;
+            display:flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .map-head h3{
+            margin:0;
+            font-size: 16px;
+            font-weight: 900;
+            color:#5C4742;
+        }
+
+        .map-head p{
+            margin: 4px 0 0;
+            font-size: 13px;
+            color:#6b5b57;
+            line-height: 1.6;
+        }
+
+        .map-box{
+            flex: 1;
+            border: 1px solid rgba(92,71,66,0.22);
+            border-radius: 16px;
+            overflow: hidden;
+            background:#fff;
+            min-height: 320px;
+            box-shadow: 0 10px 25px rgba(92,71,66,0.08);
+        }
+
+        .map-box iframe{
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display:block;
+        }
+
+        .map-foot{
+            display:grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .info-card{
+            border: 1px solid rgba(92,71,66,0.18);
+            background: rgba(255,255,255,0.75);
+            border-radius: 14px;
+            padding: 12px;
+            transition: 0.2s ease;
+        }
+
+        .info-card:hover{
+            background:#fff;
+            transform: translateY(-1px);
+            border-color: rgba(92,71,66,0.30);
+        }
+
+        .info-card .title{
+            font-size: 13px;
+            font-weight: 900;
+            margin: 0 0 6px;
+            color:#5C4742;
+        }
+
+        .info-card .text{
+            font-size: 13px;
+            color:#5d514e;
+            line-height: 1.6;
+            margin:0;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px){
+            .contact-body{
+                grid-template-columns: 1fr;
+            }
+            .map-foot{
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px){
+            .contact-page{
+                padding: 100px 5% 30px;
+            }
+            .form-grid{
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="site-header">
+    <header-content></header-content>
+</header>
+
+<main class="contact-page">
+    <div class="contact-wrapper">
+
+        <!-- TOP BAR -->
+        <div class="contact-top">
+            <div>
+                <h1>Contact Us</h1>
+                <p>
+                    Need help with an order, delivery, sizes, or returns? Send us a message and we’ll get back to you soon.
+                </p>
+            </div>
+
+            <div class="support-pills">
+                <div class="pill"><i class="bx bx-phone"></i> +94 77 123 4567</div>
+                <div class="pill"><i class="bx bx-envelope"></i> support@envyclothings.lk</div>
+                <div class="pill"><i class="bx bx-time-five"></i> Mon–Sat: 9.00AM–6.00PM</div>
+            </div>
+        </div>
+
+        <div class="contact-body">
+
+            <!-- LEFT: FORM -->
+            <div class="contact-form-area">
+                <form id="contactForm">
+
+                    <div class="form-grid">
+                        <div class="field">
+                            <label for="fullName">Full Name</label>
+                            <input id="fullName" type="text" placeholder="Enter your name" required />
+                        </div>
+
+                        <div class="field">
+                            <label for="phone">Phone</label>
+                            <input id="phone" type="tel" placeholder="+94 77 000 0000" />
+                        </div>
+
+                        <div class="field">
+                            <label for="email">Email</label>
+                            <input id="email" type="email" placeholder="Enter your email" required />
+                        </div>
+
+                        <div class="field">
+                            <label for="topic">Topic</label>
+                            <select id="topic" required>
+                                <option value="" selected disabled>Select a topic</option>
+                                <option>Order Support</option>
+                                <option>Delivery & Shipping</option>
+                                <option>Returns & Refunds</option>
+                                <option>Product Inquiry</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+
+                        <div class="field full">
+                            <label for="message">Message</label>
+                            <textarea id="message" placeholder="Type your message..." required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <p class="hint">
+                            By submitting, you agree to our <a href="privacy.html" style="color:#000; text-decoration:underline;">Privacy Policy</a>.
+                        </p>
+
+                        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                            <button type="reset" class="btn btn-outline">
+                                <i class="bx bx-refresh"></i> Reset
+                            </button>
+                            <button type="submit" class="btn" id="submit">
+                                <i class="bx bx-send"></i> Send Message
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- RIGHT: MAP -->
+            <div class="contact-map-area">
+                <div class="map-head">
+                    <div>
+                        <h3>Our Store Location</h3>
+                        <p>ENVY Clothings</p>
+                    </div>
+                </div>
+
+                <div class="map-box">
+
+                    <iframe
+                            src="https://www.google.com/maps?q=Kandy%20Sri%20Lanka&output=embed"
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            title="Envy Clothings Location"
+                    ></iframe>
+                </div>
+
+                <div class="map-foot">
+                    <div class="info-card">
+                        <p class="title"><i class="bx bx-map"></i> Address</p>
+                        <p class="text">No. 23/B, Kandy Road, Kandy, Sri Lanka</p>
+                    </div>
+
+                    <div class="info-card">
+                        <p class="title"><i class="bx bx-support"></i> Support</p>
+                        <p class="text">Quick replies within 24 hours (working days).</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<footer>
+    <footer-content></footer-content>
+</footer>
+
+<script src="assets/js/header.js"></script>
+<script src="assets/js/footer.js"></script>
+<script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
+<script src="assets/js/contactUs.js"></script>
+
+</body>
+</html>

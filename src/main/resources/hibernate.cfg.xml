@@ -32,5 +32,6 @@
         <mapping class="lk.jiat.envy.entity.WishList"/>
         <mapping class="lk.jiat.envy.entity.PaymentType"/>
         <mapping class="lk.jiat.envy.entity.Delivery"/>
+        <mapping class="lk.jiat.envy.entity.Message"/>
     </session-factory>
 </hibernate-configuration>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Terms & Conditions | Envy Clothings</title>
+
+    <link rel="stylesheet" href="assets/css/header.css" />
+    <link rel="stylesheet" href="assets/css/manage-product.css" />
+    <link rel="icon" href="assets/images/logo/envy.png" type="image/x-icon" />
+
+    <style>
+        body{
+            background:#f6f6f6;
+            font-family: Arial, Helvetica, sans-serif;
+            color:#1a1a1a;
+        }
+
+        .legal-page{
+            padding:110px 9% 50px;
+        }
+
+        .legal-wrap{
+            max-width: 1100px;
+            margin: 0 auto;
+            background:#fff;
+            border: 1px solid #e9e9e9;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            padding: 35px;
+        }
+
+        .legal-head{
+            display:flex;
+            justify-content: space-between;
+            align-items:flex-start;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .legal-title h1{
+            font-size: 24px;
+            margin: 0 0 6px;
+            font-weight: 800;
+            letter-spacing: .2px;
+        }
+
+        .legal-title p{
+            margin: 0;
+            font-size: 13px;
+            color: #453535;
+            line-height: 1.6;
+        }
+
+        .legal-meta{
+            text-align: right;
+            font-size: 13px;
+            color:#444;
+        }
+
+        .legal-meta span{
+            display:block;
+            margin-bottom: 6px;
+        }
+
+        .legal-body{
+            display:grid;
+            grid-template-columns: 280px 1fr;
+            gap: 25px;
+            margin-top: 22px;
+        }
+
+        /* Sidebar nav */
+        .legal-nav{
+            border: 1px solid #eee;
+            padding: 18px;
+            background: #fafafa;
+            height: fit-content;
+            position: sticky;
+            top: 110px;
+        }
+
+        .legal-nav h3{
+            font-size: 14px;
+            margin: 0 0 12px;
+            font-weight: 800;
+            letter-spacing: .3px;
+        }
+
+        .legal-nav a{
+            display:block;
+            text-decoration: none;
+            color:#1a1a1a;
+            font-size: 13px;
+            padding: 10px 10px;
+            border: 1px solid transparent;
+            margin-bottom: 8px;
+            background: #e4e3e3;
+            transition: 0.2s ease;
+            border-radius: 8px;
+        }
+
+        .legal-nav a:hover{
+            border-color:#000;
+        }
+
+        /* Content */
+        .legal-content section{
+            padding: 18px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .legal-content section:last-child{
+            border-bottom: none;
+        }
+
+        .legal-content h2{
+            font-size: 16px;
+            margin: 0 0 10px;
+            font-weight: 800;
+        }
+
+        .legal-content p{
+            font-size: 14px;
+            color:#333;
+            line-height: 1.8;
+            margin: 0 0 10px;
+        }
+
+        .legal-content ul{
+            padding-left: 18px;
+            margin: 8px 0 0;
+            line-height: 1.9;
+            font-size: 14px;
+            color:#333;
+        }
+
+        .notice-box{
+            border: 1px solid #000;
+            padding: 14px 16px;
+            background:  #e4e3e3;
+            margin-top: 12px;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .legal-actions{
+            margin-top: 25px;
+            display:flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .btn{
+            display:inline-block;
+            padding: 10px 16px;
+            border: 1px solid #000;
+            background: #402626;
+            cursor: pointer;
+            text-decoration: none;
+            color: #ffffff;
+            font-size: 14px;
+            transition: 0.2s ease;
+        }
+
+        .btn:hover{
+            background:#000;
+            color:#fff;
+        }
+
+        .btn-light{
+            border-color:#ccc;
+            color: #ffffff;
+        }
+
+        .btn-light:hover{
+            border-color:#000;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px){
+            .legal-body{
+                grid-template-columns: 1fr;
+            }
+            .legal-nav{
+                position: relative;
+                top: unset;
+            }
+            .legal-meta{
+                text-align:left;
+            }
+        }
+
+        @media (max-width: 576px){
+            .legal-page{
+                padding: 100px 5% 30px;
+            }
+            .legal-wrap{
+                padding: 22px;
+            }
+            .legal-title h1{
+                font-size: 20px;
+            }
+        }
+
+        @media print{
+            body{ background:#fff; }
+            .legal-nav, .legal-actions{ display:none; }
+            .legal-wrap{
+                box-shadow:none;
+                border: none;
+                padding: 0;
+            }
+            .legal-page{ padding: 0; }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="site-header">
+    <header-content></header-content>
+</header>
+
+<main class="legal-page">
+    <div class="legal-wrap">
+
+        <div class="legal-head">
+            <div class="legal-title">
+                <h1>Terms & Conditions</h1>
+                <p>These Terms govern your use of Envy Clothings website and purchases. Please read carefully.</p>
+            </div>
+
+            <div class="legal-meta">
+                <span><strong>Effective:</strong> 17 Dec 2025</span>
+                <span><strong>Store:</strong> Envy Clothings (Sri Lanka)</span>
+            </div>
+        </div>
+
+        <div class="legal-body">
+
+            <aside class="legal-nav">
+                <h3>Quick Navigation</h3>
+                <a href="#about">1. About Envy</a>
+                <a href="#eligibility">2. Eligibility</a>
+                <a href="#orders">3. Orders</a>
+                <a href="#pricing">4. Pricing & Payments</a>
+                <a href="#shipping">5. Shipping</a>
+                <a href="#returns">6. Returns & Refunds</a>
+                <a href="#accounts">7. Accounts</a>
+                <a href="#content">8. Site Content</a>
+                <a href="#liability">9. Liability</a>
+                <a href="#changes">10. Changes</a>
+                <a href="#contact">11. Contact</a>
+            </aside>
+
+            <div class="legal-content">
+
+                <section id="about">
+                    <h2>1) About Envy Clothings</h2>
+                    <p>Envy Clothings is an online fashion store. By using this website, you agree to comply with these Terms.</p>
+                </section>
+
+                <section id="eligibility">
+                    <h2>2) Eligibility</h2>
+                    <p>You must be able to form a legal contract to purchase from us. If you are under 18, use this website only with a parent/guardian.</p>
+                </section>
+
+                <section id="orders">
+                    <h2>3) Orders</h2>
+                    <ul>
+                        <li>Orders are confirmed only after successful payment (or confirmation for COD).</li>
+                        <li>We may refuse/cancel an order due to stock issues, incorrect pricing, suspected fraud, or delivery limitations.</li>
+                        <li>Product images are for display; slight color variations may occur due to screen settings.</li>
+                    </ul>
+                </section>
+
+                <section id="pricing">
+                    <h2>4) Pricing & Payments</h2>
+                    <ul>
+                        <li>Prices are shown in LKR unless stated otherwise.</li>
+                        <li>Payment methods may include Card (gateway) and Cash on Delivery (COD).</li>
+                        <li>In case of a pricing error, we may cancel the order and refund any paid amount.</li>
+                    </ul>
+
+                    <div class="notice-box">
+                        <strong>Important:</strong> Never share OTP / card PIN. Payments should be done only through trusted payment pages.
+                    </div>
+                </section>
+
+                <section id="shipping">
+                    <h2>5) Shipping</h2>
+                    <ul>
+                        <li>Shipping charges (if any) are shown at checkout.</li>
+                        <li>Delivery timelines are estimates and can vary due to courier delays, holidays, or weather.</li>
+                        <li>Please ensure your delivery address and phone number are correct.</li>
+                    </ul>
+                </section>
+
+                <section id="returns">
+                    <h2>6) Returns & Refunds</h2>
+                    <p>We accept returns based on our return policy. Common conditions:</p>
+                    <ul>
+                        <li>Items should be unused, unwashed, and with original tags/packaging (where applicable).</li>
+                        <li>Refunds are processed to the original payment method (or as store credit if applicable).</li>
+                        <li>Some items may be non-returnable for hygiene reasons.</li>
+                    </ul>
+                </section>
+
+                <section id="accounts">
+                    <h2>7) Accounts & Security</h2>
+                    <ul>
+                        <li>You are responsible for maintaining account confidentiality.</li>
+                        <li>Notify us immediately if you suspect unauthorized access.</li>
+                        <li>We may suspend accounts for misuse or suspicious activity.</li>
+                    </ul>
+                </section>
+
+                <section id="content">
+                    <h2>8) Website Content</h2>
+                    <p>All website content (logos, designs, product photos, text) belongs to Envy Clothings or its licensors. Do not copy or reuse without permission.</p>
+                </section>
+
+                <section id="liability">
+                    <h2>9) Limitation of Liability</h2>
+                    <p>To the maximum extent allowed by law, Envy Clothings is not liable for indirect damages, loss of profits, or loss of data related to your use of the site.</p>
+                </section>
+
+                <section id="changes">
+                    <h2>10) Changes to These Terms</h2>
+                    <p>We may update these Terms occasionally. Updated versions will be published on this page with a revised effective date.</p>
+                </section>
+
+                <section id="contact">
+                    <h2>11) Contact</h2>
+                    <p>If you have questions, contact us via the support page or email/phone shown on the website.</p>
+                </section>
+
+                <div class="legal-actions">
+                    <a href="index.html" class="btn btn-light">← Back to Home</a>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <a href="privacy.html" class="btn">View Privacy Policy</a>
+                        <button class="btn" onclick="window.print()">Print</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer>
+    <footer-content></footer-content>
+</footer>
+
+<script src="assets/js/header.js"></script>
+<script src="assets/js/footer.js"></script>
+</body>
+</html>

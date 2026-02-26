@@ -446,10 +446,9 @@ public class UserService {
 
                 if (admin == null) {
                     message = "Admin not found!";
-                }
-                else if (!Status.Type.ACTIVE.name().equals(admin.getStatus().getName())) {
+                } else if (!Status.Type.ACTIVE.name().equals(admin.getStatus().getName())) {
                     message = "Admin account is inactive!";
-                }else {
+                } else {
 
                     User user = hibernateSession.createQuery("FROM User u WHERE u.id = :id", User.class)
                             .setParameter("id", id)
@@ -553,5 +552,61 @@ public class UserService {
         return AppUtil.GSON.toJson(responseObject);
     }
 
+    public String submitMessage(MessageDTO messageDTO, HttpServletRequest request) {
 
+        JsonObject responseObject = new JsonObject();
+        boolean status = false;
+        String message = "";
+
+        HttpSession httpSession = request.getSession(false);
+
+        if (httpSession == null || httpSession.getAttribute("user") == null) {
+            message = "Please sign up / log in first to send a message";
+
+        } else if (messageDTO.getTopic() == null || messageDTO.getTopic().isBlank()) {
+            message = "Topic is required";
+
+        } else if (messageDTO.getMessage() == null || messageDTO.getMessage().isBlank()) {
+            message = "Message is required";
+
+        } else {
+            // phone is optional
+            String phone = messageDTO.getPhone();
+            if (phone != null && !phone.isBlank() && !phone.matches(Validator.MOBILE_VALIDATION)) {
+                message = "Phone number is not valid";
+
+            } else {
+                User user = (User) httpSession.getAttribute("user");
+
+                Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+                Transaction transaction = hibernateSession.beginTransaction();
+
+                try {
+                    Message userMessage = new Message();
+                    userMessage.setUser(user);
+                    userMessage.setPhone((phone == null || phone.isBlank()) ? null : phone.trim());
+                    userMessage.setTopic(messageDTO.getTopic().trim());
+                    userMessage.setMessage(messageDTO.getMessage().trim());
+                    userMessage.setCreatedAt(LocalDateTime.now());
+                    userMessage.setStatus("NEW");
+
+                    hibernateSession.persist(userMessage);
+                    transaction.commit();
+
+                    status = true;
+                    message = "Customer message sent successfully";
+
+                } catch (HibernateException e) {
+                    transaction.rollback();
+                    message = "Message submission failed";
+                } finally {
+                    hibernateSession.close();
+                }
+            }
+        }
+
+        responseObject.addProperty("status", status);
+        responseObject.addProperty("message", message);
+        return AppUtil.GSON.toJson(responseObject);
+    }
 }

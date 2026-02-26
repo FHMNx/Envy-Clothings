@@ -18,9 +18,9 @@ class FooterContent extends  HTMLElement{
                 <h3>INFORMATION</h3>
                 <ul>
                     <li><a href="#">FAQ</a></li>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Terms & Conditions</a></li>
+                    <li><a href="contactUs.html">Contact Us</a></li>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                    <li><a href="terms.html">Terms & Conditions</a></li>
                     <li><a href="#">Delivery Details</a></li>
                     <li><a href="#">Return Policy</a></li>
                     <li><a href="#">Store Locations</a></li>
